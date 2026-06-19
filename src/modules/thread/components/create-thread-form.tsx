@@ -1,7 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
 import { useRouter } from "next/navigation";
+import { useActionState } from "react";
 import { createThread } from "@/modules/thread/actions";
 
 interface CreateThreadFormProps {
@@ -59,9 +59,7 @@ export function CreateThreadForm({ forumId }: CreateThreadFormProps) {
           className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
-      {state?.error && (
-        <p className="text-sm text-red-500">{state.error}</p>
-      )}
+      {state?.error && <p className="text-sm text-red-500">{state.error}</p>}
       <div className="flex items-center gap-3">
         <button
           type="submit"

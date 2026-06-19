@@ -1,8 +1,11 @@
 "use client";
 
 import { useActionState, useRef } from "react";
-import { uploadAvatar, removeAvatar as removeAvatarAction } from "@/modules/users/actions";
 import { Button } from "@/components/ui";
+import {
+  removeAvatar as removeAvatarAction,
+  uploadAvatar,
+} from "@/modules/users/actions";
 
 interface AvatarUploadProps {
   currentAvatarUrl: string | null;

@@ -1,5 +1,5 @@
-import type { ThreadWithRelations } from "@/modules/thread/types";
 import { formatDateRelative } from "@/lib/utils";
+import type { ThreadWithRelations } from "@/modules/thread/types";
 
 interface ThreadAuthorCardProps {
   thread: ThreadWithRelations;
@@ -18,7 +18,9 @@ export function ThreadAuthorCard({ thread }: ThreadAuthorCardProps) {
               className="h-full w-full rounded-full object-cover"
             />
           ) : (
-            (author.displayName ?? author.username ?? "U").charAt(0).toUpperCase()
+            (author.displayName ?? author.username ?? "U")
+              .charAt(0)
+              .toUpperCase()
           )}
         </div>
         <div className="min-w-0">

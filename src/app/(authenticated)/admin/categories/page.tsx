@@ -1,10 +1,10 @@
+import { asc } from "drizzle-orm";
 import type { Metadata } from "next";
 import { getDatabase, schema } from "@/db";
-import { asc } from "drizzle-orm";
 import { requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
-import { CategoryForm } from "@/modules/forum/components/category-form";
 import { CategoryDeleteButton } from "@/modules/forum/components/category-delete-button";
+import { CategoryForm } from "@/modules/forum/components/category-form";
+import { RoleName } from "@/types/rbac";
 
 export const metadata: Metadata = {
   title: "Manage Categories",

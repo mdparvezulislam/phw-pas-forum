@@ -1,10 +1,9 @@
-import type { Metadata } from "next";
-import { auth } from "@/lib/auth";
-import { getDatabase } from "@/db";
 import { eq } from "drizzle-orm";
-import { schema } from "@/db";
-import { ProfileSettingsForm } from "@/modules/users/components/profile-settings-form";
+import type { Metadata } from "next";
+import { getDatabase, schema } from "@/db";
+import { auth } from "@/lib/auth";
 import { AvatarUpload } from "@/modules/users/components/avatar-upload";
+import { ProfileSettingsForm } from "@/modules/users/components/profile-settings-form";
 
 export const metadata: Metadata = {
   title: "Profile settings",
@@ -27,9 +26,7 @@ export default async function ProfileSettingsPage() {
         </p>
       </div>
 
-      <AvatarUpload
-        currentAvatarUrl={profile?.avatarUrl ?? null}
-      />
+      <AvatarUpload currentAvatarUrl={profile?.avatarUrl ?? null} />
 
       <ProfileSettingsForm
         displayName={profile?.displayName ?? ""}

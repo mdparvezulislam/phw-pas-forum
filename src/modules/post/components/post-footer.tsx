@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { formatDateRelative } from "@/lib/utils";
 import { reportPost } from "@/modules/post/actions";
 import type { PostWithAuthor } from "@/modules/post/types";
@@ -12,18 +11,23 @@ interface PostFooterProps {
   isModerator: boolean;
 }
 
-export function PostFooter({ post, isOwner, isModerator }: PostFooterProps) {
+export function PostFooter({
+  post,
+  isOwner,
+  isModerator: _isModerator,
+}: PostFooterProps) {
   const [showReportForm, setShowReportForm] = useState(false);
-  const [reportState, reportAction, reportPending] = useActionState(reportPost, undefined);
+  const [reportState, reportAction, reportPending] = useActionState(
+    reportPost,
+    undefined,
+  );
 
   return (
     <div className="border-t bg-muted/10 px-4 py-2">
       <div className="flex items-center justify-between">
         <div className="text-xs text-muted-foreground">
           {post.isEdited && post.editedAt && (
-            <span>
-              Last edited {formatDateRelative(post.editedAt)}
-            </span>
+            <span>Last edited {formatDateRelative(post.editedAt)}</span>
           )}
         </div>
 
@@ -45,7 +49,10 @@ export function PostFooter({ post, isOwner, isModerator }: PostFooterProps) {
           <form action={reportAction} className="space-y-2">
             <input type="hidden" name="postId" value={post.id} />
             <div>
-              <label htmlFor={`report-reason-${post.id}`} className="mb-1 block text-xs font-medium">
+              <label
+                htmlFor={`report-reason-${post.id}`}
+                className="mb-1 block text-xs font-medium"
+              >
                 Reason
               </label>
               <select
@@ -62,7 +69,10 @@ export function PostFooter({ post, isOwner, isModerator }: PostFooterProps) {
               </select>
             </div>
             <div>
-              <label htmlFor={`report-description-${post.id}`} className="mb-1 block text-xs font-medium">
+              <label
+                htmlFor={`report-description-${post.id}`}
+                className="mb-1 block text-xs font-medium"
+              >
                 Description (optional)
               </label>
               <textarea

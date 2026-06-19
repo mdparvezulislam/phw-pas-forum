@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, index } from "drizzle-orm/pg-core";
+import { index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { posts } from "./posts";
 import { users } from "./users";
 
@@ -18,9 +18,7 @@ export const postEditHistory = pgTable(
     editedAt: timestamp("edited_at", { mode: "date" }).defaultNow().notNull(),
     reason: text("reason"),
   },
-  (table) => [
-    index("post_edit_history_post_id_idx").on(table.postId),
-  ],
+  (table) => [index("post_edit_history_post_id_idx").on(table.postId)],
 );
 
 export type PostEditHistory = typeof postEditHistory.$inferSelect;

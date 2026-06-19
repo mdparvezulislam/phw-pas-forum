@@ -1,14 +1,14 @@
 "use server";
 
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { getDatabase, schema } from "@/db";
-import { eq } from "drizzle-orm";
+import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
 import { hashPassword } from "@/modules/auth/helpers";
 import { userRepository } from "@/repositories";
-import { rateLimiter } from "@/services/rate-limit";
 import { auditService } from "@/services/audit";
-import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
-import { sendEmail, createVerificationEmail } from "@/services/email";
+import { createVerificationEmail, sendEmail } from "@/services/email";
+import { rateLimiter } from "@/services/rate-limit";
 import { RoleName } from "@/types/rbac";
 import { registerSchema } from "@/validations/auth";
 

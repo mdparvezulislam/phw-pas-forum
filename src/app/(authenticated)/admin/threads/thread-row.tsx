@@ -1,8 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
+import type { ThreadStatus } from "@/db/schema/threads";
+import { featureThread, lockThread, pinThread } from "@/modules/thread/actions";
 import { ThreadStatusBadge } from "@/modules/thread/components";
-import { pinThread, lockThread, featureThread } from "@/modules/thread/actions";
 
 interface AdminThreadRowProps {
   thread: {
@@ -28,7 +29,10 @@ interface AdminThreadRowProps {
 export function AdminThreadRow({ thread }: AdminThreadRowProps) {
   const [, pinAction, pinPending] = useActionState(pinThread, undefined);
   const [, lockAction, lockPending] = useActionState(lockThread, undefined);
-  const [, featureAction, featurePending] = useActionState(featureThread, undefined);
+  const [, featureAction, featurePending] = useActionState(
+    featureThread,
+    undefined,
+  );
 
   return (
     <tr className="hover:bg-muted/30">
@@ -37,14 +41,16 @@ export function AdminThreadRow({ thread }: AdminThreadRowProps) {
         <div className="flex gap-2 text-xs text-muted-foreground">
           {thread.isPinned && <span className="text-primary">Pinned</span>}
           {thread.isLocked && <span className="text-amber-500">Locked</span>}
-          {thread.isFeatured && <span className="text-amber-500">Featured</span>}
+          {thread.isFeatured && (
+            <span className="text-amber-500">Featured</span>
+          )}
         </div>
       </td>
       <td className="px-4 py-3 text-muted-foreground">
         {thread.author.displayName ?? thread.author.username}
       </td>
       <td className="px-4 py-3">
-        <ThreadStatusBadge status={thread.status as any} />
+        <ThreadStatusBadge status={thread.status as ThreadStatus} />
       </td>
       <td className="px-4 py-3 text-center text-muted-foreground">
         {thread.replyCount}
@@ -52,9 +58,7 @@ export function AdminThreadRow({ thread }: AdminThreadRowProps) {
       <td className="px-4 py-3 text-center text-muted-foreground">
         {thread.viewCount}
       </td>
-      <td className="px-4 py-3 text-muted-foreground">
-        {thread.forum.title}
-      </td>
+      <td className="px-4 py-3 text-muted-foreground">{thread.forum.title}</td>
       <td className="px-4 py-3">
         <div className="flex flex-wrap gap-1">
           <form action={pinAction}>

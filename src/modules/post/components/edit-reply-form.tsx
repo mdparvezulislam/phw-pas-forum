@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useActionState } from "react";
 import { updatePost } from "@/modules/post/actions";
 import type { PostWithAuthor } from "@/modules/post/types";
@@ -20,9 +19,7 @@ export function EditReplyForm({ post, onCancel }: EditReplyFormProps) {
   return (
     <div className="rounded-lg border bg-card">
       <div className="border-b bg-muted/20 px-4 py-2">
-        <h3 className="text-sm font-semibold">
-          Edit Post #{post.postNumber}
-        </h3>
+        <h3 className="text-sm font-semibold">Edit Post #{post.postNumber}</h3>
       </div>
 
       <form action={action} className="p-4">
@@ -30,7 +27,10 @@ export function EditReplyForm({ post, onCancel }: EditReplyFormProps) {
 
         <div className="space-y-4">
           <div>
-            <label htmlFor={`edit-content-${post.id}`} className="mb-1 block text-sm font-medium">
+            <label
+              htmlFor={`edit-content-${post.id}`}
+              className="mb-1 block text-sm font-medium"
+            >
               Content
             </label>
             <textarea
@@ -46,7 +46,10 @@ export function EditReplyForm({ post, onCancel }: EditReplyFormProps) {
           </div>
 
           <div>
-            <label htmlFor={`edit-reason-${post.id}`} className="mb-1 block text-sm font-medium">
+            <label
+              htmlFor={`edit-reason-${post.id}`}
+              className="mb-1 block text-sm font-medium"
+            >
               Reason for editing (optional)
             </label>
             <input

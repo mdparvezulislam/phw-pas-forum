@@ -1,10 +1,10 @@
+import type { SessionUser } from "@/types/auth";
 import {
-  RoleName,
-  Permission,
+  type Permission,
   ROLE_HIERARCHY,
   ROLE_PERMISSIONS,
+  RoleName,
 } from "@/types/rbac";
-import type { SessionUser } from "@/types/auth";
 
 export function getRoleHierarchy(role: RoleName): number {
   return ROLE_HIERARCHY[role] ?? 0;
@@ -54,16 +54,12 @@ export function isAtLeast(
   return getRoleHierarchy(user.role) >= getRoleHierarchy(minimumRole);
 }
 
-export function canModerate(
-  user: Pick<SessionUser, "role"> | null,
-): boolean {
+export function canModerate(user: Pick<SessionUser, "role"> | null): boolean {
   if (!user) return false;
   return getRoleHierarchy(user.role) >= getRoleHierarchy(RoleName.MODERATOR);
 }
 
-export function canAdmin(
-  user: Pick<SessionUser, "role"> | null,
-): boolean {
+export function canAdmin(user: Pick<SessionUser, "role"> | null): boolean {
   if (!user) return false;
   return getRoleHierarchy(user.role) >= getRoleHierarchy(RoleName.ADMIN);
 }

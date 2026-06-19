@@ -1,6 +1,6 @@
-import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Header, Footer } from "@/components/design-system";
+import { Footer, Header } from "@/components/design-system";
+import { auth } from "@/lib/auth";
 
 export default async function AuthenticatedLayout({
   children,

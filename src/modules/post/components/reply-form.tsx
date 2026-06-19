@@ -1,7 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
 import { useRouter } from "next/navigation";
+import { useActionState } from "react";
 import { createPost } from "@/modules/post/actions";
 
 interface ReplyFormProps {
@@ -10,7 +10,11 @@ interface ReplyFormProps {
   nextPostNumber: number;
 }
 
-export function ReplyForm({ threadId, isLocked, nextPostNumber }: ReplyFormProps) {
+export function ReplyForm({
+  threadId,
+  isLocked,
+  nextPostNumber,
+}: ReplyFormProps) {
   const router = useRouter();
   const [state, action, pending] = useActionState(createPost, undefined);
 
@@ -29,19 +33,18 @@ export function ReplyForm({ threadId, isLocked, nextPostNumber }: ReplyFormProps
   return (
     <div className="rounded-lg border bg-card">
       <div className="border-b bg-muted/20 px-4 py-2">
-        <h3 className="text-sm font-semibold">
-          Reply to Thread
-        </h3>
-        <p className="text-xs text-muted-foreground">
-          Post #{nextPostNumber}
-        </p>
+        <h3 className="text-sm font-semibold">Reply to Thread</h3>
+        <p className="text-xs text-muted-foreground">Post #{nextPostNumber}</p>
       </div>
 
       <form action={action} className="p-4">
         <input type="hidden" name="threadId" value={threadId} />
 
         <div>
-          <label htmlFor="reply-content" className="mb-1 block text-sm font-medium">
+          <label
+            htmlFor="reply-content"
+            className="mb-1 block text-sm font-medium"
+          >
             Content
           </label>
           <textarea

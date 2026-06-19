@@ -1,9 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
 import Link from "next/link";
-import { verifyEmail } from "@/modules/auth/actions";
+import { useActionState } from "react";
 import { Button } from "@/components/ui";
+import { verifyEmail } from "@/modules/auth/actions";
 
 interface VerifyEmailFormProps {
   token: string;

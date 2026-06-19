@@ -1,12 +1,8 @@
 import "server-only";
 
+import { hasPermission, isAtLeast } from "@/config/rbac";
 import { auth } from "@/lib/auth";
-import {
-  hasPermission,
-  isAtLeast,
-} from "@/config/rbac";
-import type { Permission } from "@/types/rbac";
-import type { RoleName } from "@/types/rbac";
+import type { Permission, RoleName } from "@/types/rbac";
 
 export async function requireAuth() {
   const session = await auth();

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getCategoryBySlug, getForumsByCategory } from "@/services/forum-stats";
 import { ForumCard } from "@/modules/forum/components";
 import { ForumBreadcrumbs } from "@/modules/forum/components/forum-breadcrumbs";
 import { ForumSidebar } from "@/modules/forum/components/forum-sidebar";
+import { getCategoryBySlug, getForumsByCategory } from "@/services/forum-stats";
 
 interface CategoryPageProps {
   params: Promise<{ categorySlug: string }>;

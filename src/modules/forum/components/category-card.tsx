@@ -12,7 +12,9 @@ export function CategoryCard({ category }: CategoryCardProps) {
       <div className="flex items-center gap-3 border-b px-5 py-3.5">
         <div
           className="flex h-8 w-8 items-center justify-center rounded-lg text-lg"
-          style={{ backgroundColor: category.color ? `${category.color}1a` : undefined }}
+          style={{
+            backgroundColor: category.color ? `${category.color}1a` : undefined,
+          }}
         >
           {category.icon ?? "📁"}
         </div>

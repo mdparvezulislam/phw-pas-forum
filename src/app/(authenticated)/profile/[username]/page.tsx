@@ -1,8 +1,7 @@
-import type { Metadata } from "next";
-import { getDatabase } from "@/db";
 import { eq } from "drizzle-orm";
-import { schema } from "@/db";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getDatabase, schema } from "@/db";
 import { formatDate } from "@/lib/utils";
 
 interface ProfilePageProps {

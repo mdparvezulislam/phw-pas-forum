@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getDatabase, schema } from "@/db";
-import { desc } from "drizzle-orm";
-import { requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
-import { ThreadStatusBadge } from "@/modules/thread/components";
+import { getDatabase } from "@/db";
 import { formatDateRelative } from "@/lib/utils";
+import { requireRole } from "@/modules/auth/guards";
+import { ThreadStatusBadge } from "@/modules/thread/components";
+import { RoleName } from "@/types/rbac";
 
 export const metadata: Metadata = {
   title: "Moderator - Thread Management",
@@ -15,7 +14,7 @@ export default async function ModThreadsPage() {
   await requireRole(RoleName.MODERATOR);
 
   const db = getDatabase();
-  const threads = await db.query.threads.findMany({
+  const threads = (await db.query.threads.findMany({
     orderBy: (threads, { desc }) => [desc(threads.createdAt)],
     limit: 100,
     with: {
@@ -31,7 +30,30 @@ export default async function ModThreadsPage() {
         },
       },
     },
-  }) as any[];
+  })) as {
+    id: string;
+    title: string;
+    slug: string;
+    status: string;
+    isPinned: boolean;
+    isLocked: boolean;
+    isFeatured: boolean;
+    replyCount: number;
+    viewCount: number;
+    createdAt: Date;
+    author: {
+      id: string;
+      username: string | null;
+      displayName: string | null;
+      image: string | null;
+    };
+    forum: {
+      id: string;
+      title: string;
+      slug: string;
+      category: { slug: string };
+    };
+  }[];
 
   return (
     <div className="space-y-6">
@@ -58,14 +80,20 @@ export default async function ModThreadsPage() {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {threads.map((thread: any) => (
+              {threads.map((thread) => (
                 <tr key={thread.id} className="hover:bg-muted/30">
                   <td className="px-4 py-3">
                     <div className="font-medium">{thread.title}</div>
                     <div className="flex gap-2 text-xs text-muted-foreground">
-                      {thread.isPinned && <span className="text-primary">Pinned</span>}
-                      {thread.isLocked && <span className="text-amber-500">Locked</span>}
-                      {thread.isFeatured && <span className="text-amber-500">Featured</span>}
+                      {thread.isPinned && (
+                        <span className="text-primary">Pinned</span>
+                      )}
+                      {thread.isLocked && (
+                        <span className="text-amber-500">Locked</span>
+                      )}
+                      {thread.isFeatured && (
+                        <span className="text-amber-500">Featured</span>
+                      )}
                     </div>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
@@ -100,7 +128,10 @@ export default async function ModThreadsPage() {
               ))}
               {threads.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
+                  <td
+                    colSpan={8}
+                    className="px-4 py-8 text-center text-muted-foreground"
+                  >
                     No threads found.
                   </td>
                 </tr>

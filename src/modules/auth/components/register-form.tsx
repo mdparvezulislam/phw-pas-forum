@@ -1,9 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
 import Link from "next/link";
-import { register } from "@/modules/auth/actions";
+import { useActionState } from "react";
 import { Button, Input, Label } from "@/components/ui";
+import { register } from "@/modules/auth/actions";
 
 export function RegisterForm() {
   const [state, formAction, pending] = useActionState(register, undefined);

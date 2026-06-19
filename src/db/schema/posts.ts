@@ -1,15 +1,20 @@
 import {
+  boolean,
+  index,
+  integer,
   pgTable,
   text,
-  integer,
-  boolean,
   timestamp,
-  index,
 } from "drizzle-orm/pg-core";
 import { threads } from "./threads";
 import { users } from "./users";
 
-export const postStatus = ["PUBLISHED", "DELETED", "HIDDEN", "MODERATED"] as const;
+export const postStatus = [
+  "PUBLISHED",
+  "DELETED",
+  "HIDDEN",
+  "MODERATED",
+] as const;
 export type PostStatus = (typeof postStatus)[number];
 
 export const posts = pgTable(

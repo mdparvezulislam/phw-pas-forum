@@ -1,12 +1,12 @@
 "use server";
 
-import { z } from "zod";
-import { getDatabase, schema } from "@/db";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
+import { DISPLAY_NAME_REGEX } from "@/constants";
+import { getDatabase, schema } from "@/db";
+import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
 import { auth } from "@/lib/auth";
 import { auditService } from "@/services/audit";
-import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
-import { DISPLAY_NAME_REGEX } from "@/constants";
 
 const updateProfileSchema = z.object({
   displayName: z
@@ -17,7 +17,10 @@ const updateProfileSchema = z.object({
       DISPLAY_NAME_REGEX,
       "Display name can only contain letters, numbers, spaces, underscores, and hyphens",
     ),
-  biography: z.string().max(500, "Biography must be at most 500 characters").optional(),
+  biography: z
+    .string()
+    .max(500, "Biography must be at most 500 characters")
+    .optional(),
   website: z.string().url("Invalid URL").optional().or(z.literal("")),
   location: z.string().max(100).optional(),
   signature: z.string().max(500).optional(),

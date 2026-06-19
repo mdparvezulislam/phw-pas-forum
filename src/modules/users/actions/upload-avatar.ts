@@ -1,12 +1,12 @@
 "use server";
 
+import { eq } from "drizzle-orm";
+import { FILE_LIMITS } from "@/constants";
+import { getDatabase, schema } from "@/db";
+import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
 import { auth } from "@/lib/auth";
 import { storage } from "@/lib/r2";
-import { getDatabase, schema } from "@/db";
-import { eq } from "drizzle-orm";
 import { auditService } from "@/services/audit";
-import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
-import { FILE_LIMITS } from "@/constants";
 
 export type UploadAvatarState = {
   error?: string;
@@ -30,8 +30,7 @@ export async function uploadAvatar(
 
   if (!FILE_LIMITS.AVATAR_ALLOWED_TYPES.includes(file.type as any)) {
     return {
-      error:
-        "Invalid file type. Allowed: JPEG, PNG, WebP",
+      error: "Invalid file type. Allowed: JPEG, PNG, WebP",
     };
   }
 
@@ -40,7 +39,7 @@ export async function uploadAvatar(
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const ext = (file.type.split("/")[1] ?? "jpg");
+  const ext = file.type.split("/")[1] ?? "jpg";
   const key = `avatars/${session.user.id}/${crypto.randomUUID()}.${ext}`;
 
   const { url } = await storage.upload(key, buffer, file.type);
@@ -64,7 +63,10 @@ export async function uploadAvatar(
   return { success: true, avatarUrl: url };
 }
 
-export async function removeAvatar(): Promise<{ error?: string; success?: boolean }> {
+export async function removeAvatar(): Promise<{
+  error?: string;
+  success?: boolean;
+}> {
   const session = await auth();
   if (!session?.user?.id) {
     return { error: "Authentication required" };

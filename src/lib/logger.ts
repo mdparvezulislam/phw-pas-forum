@@ -7,8 +7,7 @@ const LOG_LEVELS = {
 
 type LogLevel = keyof typeof LOG_LEVELS;
 
-const currentLevel: LogLevel =
-  (process.env.LOG_LEVEL as LogLevel) ?? "info";
+const currentLevel: LogLevel = (process.env.LOG_LEVEL as LogLevel) ?? "info";
 
 interface LogEntry {
   timestamp: string;
@@ -76,11 +75,7 @@ class Logger {
     this.log("warn", message, metadata);
   }
 
-  error(
-    message: string,
-    error?: Error,
-    metadata?: Record<string, unknown>,
-  ) {
+  error(message: string, error?: Error, metadata?: Record<string, unknown>) {
     this.log("error", message, metadata, error);
   }
 }

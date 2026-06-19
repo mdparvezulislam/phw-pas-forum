@@ -1,18 +1,15 @@
 "use client";
 
 import { useActionState } from "react";
-import { deleteForum } from "@/modules/forum/actions";
 import { Button } from "@/components/ui";
+import { deleteForum } from "@/modules/forum/actions";
 
 interface ForumDeleteButtonProps {
   id: string;
 }
 
 export function ForumDeleteButton({ id }: ForumDeleteButtonProps) {
-  const [state, formAction, pending] = useActionState(
-    deleteForum,
-    undefined,
-  );
+  const [state, formAction, pending] = useActionState(deleteForum, undefined);
 
   return (
     <form action={formAction}>

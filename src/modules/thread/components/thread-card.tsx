@@ -1,6 +1,6 @@
 import Link from "next/link";
-import type { ThreadWithRelations } from "@/modules/thread/types";
 import { formatDateRelative } from "@/lib/utils";
+import type { ThreadWithRelations } from "@/modules/thread/types";
 import { ThreadStatusBadge } from "./thread-status-badge";
 
 interface ThreadCardProps {
@@ -9,7 +9,11 @@ interface ThreadCardProps {
   forumSlug: string;
 }
 
-export function ThreadCard({ thread, categorySlug, forumSlug }: ThreadCardProps) {
+export function ThreadCard({
+  thread,
+  categorySlug,
+  forumSlug,
+}: ThreadCardProps) {
   return (
     <div className="group rounded-lg border bg-card p-4 transition-colors hover:border-muted-foreground/25">
       <div className="flex items-start gap-4">
@@ -42,7 +46,9 @@ export function ThreadCard({ thread, categorySlug, forumSlug }: ThreadCardProps)
               </span>
             </span>
             <span aria-hidden="true">·</span>
-            <span>{formatDateRelative(thread.publishedAt ?? thread.createdAt)}</span>
+            <span>
+              {formatDateRelative(thread.publishedAt ?? thread.createdAt)}
+            </span>
             <span aria-hidden="true">·</span>
             <span>{thread.replyCount} replies</span>
             <span aria-hidden="true">·</span>

@@ -24,11 +24,10 @@ export function ForumStats({
   return (
     <div className="grid grid-cols-5 gap-px overflow-hidden rounded-lg border bg-muted">
       {stats.map((stat) => (
-        <div
-          key={stat.label}
-          className="bg-card px-3 py-3 text-center"
-        >
-          <div className="text-lg font-bold tabular-nums">{stat.value.toLocaleString()}</div>
+        <div key={stat.label} className="bg-card px-3 py-3 text-center">
+          <div className="text-lg font-bold tabular-nums">
+            {stat.value.toLocaleString()}
+          </div>
           <div className="text-xs text-muted-foreground">{stat.label}</div>
         </div>
       ))}

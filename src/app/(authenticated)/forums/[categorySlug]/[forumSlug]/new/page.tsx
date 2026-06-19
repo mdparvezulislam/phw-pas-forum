@@ -1,18 +1,26 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getCategoryBySlug, getForumBySlugAndCategory } from "@/services/forum-stats";
 import { auth } from "@/lib/auth";
 import { ForumBreadcrumbs } from "@/modules/forum/components";
 import { CreateThreadForm } from "@/modules/thread/components";
+import {
+  getCategoryBySlug,
+  getForumBySlugAndCategory,
+} from "@/services/forum-stats";
 
 interface NewThreadPageProps {
   params: Promise<{ categorySlug: string; forumSlug: string }>;
 }
 
-export async function generateMetadata(props: NewThreadPageProps): Promise<Metadata> {
+export async function generateMetadata(
+  props: NewThreadPageProps,
+): Promise<Metadata> {
   const params = await props.params;
-  const category = await getCategoryBySlug(params.categorySlug);
-  const forum = await getForumBySlugAndCategory(params.categorySlug, params.forumSlug);
+  const _category = await getCategoryBySlug(params.categorySlug);
+  const forum = await getForumBySlugAndCategory(
+    params.categorySlug,
+    params.forumSlug,
+  );
   return {
     title: `New Thread - ${forum?.title ?? "Forum"} | BHW PAS`,
     description: `Create a new thread in ${forum?.title}`,
@@ -34,7 +42,10 @@ export default async function NewThreadPage(props: NewThreadPageProps) {
   const category = await getCategoryBySlug(params.categorySlug);
   if (!category) notFound();
 
-  const forum = await getForumBySlugAndCategory(params.categorySlug, params.forumSlug);
+  const forum = await getForumBySlugAndCategory(
+    params.categorySlug,
+    params.forumSlug,
+  );
   if (!forum) notFound();
 
   if (forum.isLocked) {
@@ -50,7 +61,10 @@ export default async function NewThreadPage(props: NewThreadPageProps) {
       <ForumBreadcrumbs
         items={[
           { label: category.title, href: `/forums/${category.slug}` },
-          { label: forum.title, href: `/forums/${category.slug}/${forum.slug}` },
+          {
+            label: forum.title,
+            href: `/forums/${category.slug}/${forum.slug}`,
+          },
           { label: "New Thread" },
         ]}
       />

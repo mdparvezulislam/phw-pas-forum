@@ -1,6 +1,6 @@
 import Link from "next/link";
-import type { ForumWithChildren } from "@/modules/forum/types";
 import { formatDateRelative } from "@/lib/utils";
+import type { ForumWithChildren } from "@/modules/forum/types";
 import { SubForumList } from "./subforum-list";
 
 interface ForumCardProps {
@@ -28,10 +28,7 @@ export function ForumCard({ forum, categorySlug }: ForumCardProps) {
             </p>
           )}
           {forum.children.length > 0 && (
-            <SubForumList
-              forums={forum.children}
-              categorySlug={categorySlug}
-            />
+            <SubForumList forums={forum.children} categorySlug={categorySlug} />
           )}
         </div>
         <div className="hidden shrink-0 text-right text-sm text-muted-foreground md:block">
@@ -40,7 +37,9 @@ export function ForumCard({ forum, categorySlug }: ForumCardProps) {
         </div>
         {forum.lastActivityAt && (
           <div className="hidden shrink-0 text-right text-sm text-muted-foreground lg:block">
-            <div className="text-xs">{formatDateRelative(forum.lastActivityAt)}</div>
+            <div className="text-xs">
+              {formatDateRelative(forum.lastActivityAt)}
+            </div>
           </div>
         )}
       </div>

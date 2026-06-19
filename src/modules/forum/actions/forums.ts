@@ -1,21 +1,21 @@
 "use server";
 
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getDatabase, schema } from "@/db";
-import { eq } from "drizzle-orm";
-import { auth } from "@/lib/auth";
-import { auditService } from "@/services/audit";
-import { requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
-import { slugify } from "@/lib/utils";
-import {
-  createForumSchema,
-  updateForumSchema,
-  type CreateForumInput,
-  type UpdateForumInput,
-} from "@/validations/forum";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
+import { auth } from "@/lib/auth";
+import { slugify } from "@/lib/utils";
+import { requireRole } from "@/modules/auth/guards";
+import { auditService } from "@/services/audit";
 import { getCategoryBySlug } from "@/services/forum-stats";
+import { RoleName } from "@/types/rbac";
+import {
+  type CreateForumInput,
+  createForumSchema,
+  type UpdateForumInput,
+  updateForumSchema,
+} from "@/validations/forum";
 
 export type ForumActionState = {
   error?: string;
@@ -32,7 +32,9 @@ export async function createForum(
     categoryId: formData.get("categoryId") as string,
     parentForumId: (formData.get("parentForumId") as string) || undefined,
     title: formData.get("title") as string,
-    slug: (formData.get("slug") as string) || slugify(formData.get("title") as string),
+    slug:
+      (formData.get("slug") as string) ||
+      slugify(formData.get("title") as string),
     description: (formData.get("description") as string) || undefined,
     icon: (formData.get("icon") as string) || undefined,
     position: Number(formData.get("position")) || 0,
@@ -43,17 +45,23 @@ export async function createForum(
 
   const parsed = createForumSchema.safeParse(raw);
   if (!parsed.success) {
-    return { error: parsed.error.flatten().fieldErrors.title?.[0] ?? "Invalid input" };
+    return {
+      error: parsed.error.flatten().fieldErrors.title?.[0] ?? "Invalid input",
+    };
   }
 
   const db = getDatabase();
   await db.insert(schema.forums).values(parsed.data);
 
   const session = await auth();
-  await auditService.log(session?.user?.id ?? null, AUDIT_ACTIONS.FORUM_CREATE, {
-    resource: "forum",
-    metadata: { title: parsed.data.title, slug: parsed.data.slug },
-  });
+  await auditService.log(
+    session?.user?.id ?? null,
+    AUDIT_ACTIONS.FORUM_CREATE,
+    {
+      resource: "forum",
+      metadata: { title: parsed.data.title, slug: parsed.data.slug },
+    },
+  );
 
   revalidatePath("/forums");
   revalidatePath("/admin/forums");
@@ -74,10 +82,21 @@ export async function updateForum(
     slug: (formData.get("slug") as string) || undefined,
     description: (formData.get("description") as string) || undefined,
     icon: (formData.get("icon") as string) || undefined,
-    position: formData.get("position") ? Number(formData.get("position")) : undefined,
-    isVisible: formData.get("isVisible") !== undefined ? formData.get("isVisible") === "on" : undefined,
-    isLocked: formData.get("isLocked") !== undefined ? formData.get("isLocked") === "on" : undefined,
-    isPremiumOnly: formData.get("isPremiumOnly") !== undefined ? formData.get("isPremiumOnly") === "on" : undefined,
+    position: formData.get("position")
+      ? Number(formData.get("position"))
+      : undefined,
+    isVisible:
+      formData.get("isVisible") !== undefined
+        ? formData.get("isVisible") === "on"
+        : undefined,
+    isLocked:
+      formData.get("isLocked") !== undefined
+        ? formData.get("isLocked") === "on"
+        : undefined,
+    isPremiumOnly:
+      formData.get("isPremiumOnly") !== undefined
+        ? formData.get("isPremiumOnly") === "on"
+        : undefined,
   };
 
   const parsed = updateForumSchema.safeParse(raw);
@@ -92,10 +111,14 @@ export async function updateForum(
     .where(eq(schema.forums.id, parsed.data.id));
 
   const session = await auth();
-  await auditService.log(session?.user?.id ?? null, AUDIT_ACTIONS.FORUM_UPDATE, {
-    resource: "forum",
-    resourceId: parsed.data.id,
-  });
+  await auditService.log(
+    session?.user?.id ?? null,
+    AUDIT_ACTIONS.FORUM_UPDATE,
+    {
+      resource: "forum",
+      resourceId: parsed.data.id,
+    },
+  );
 
   revalidatePath("/forums");
   revalidatePath("/admin/forums");
@@ -115,10 +138,14 @@ export async function deleteForum(
   await db.delete(schema.forums).where(eq(schema.forums.id, id));
 
   const session = await auth();
-  await auditService.log(session?.user?.id ?? null, AUDIT_ACTIONS.FORUM_DELETE, {
-    resource: "forum",
-    resourceId: id,
-  });
+  await auditService.log(
+    session?.user?.id ?? null,
+    AUDIT_ACTIONS.FORUM_DELETE,
+    {
+      resource: "forum",
+      resourceId: id,
+    },
+  );
 
   revalidatePath("/forums");
   revalidatePath("/admin/forums");

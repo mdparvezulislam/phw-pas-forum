@@ -1,12 +1,12 @@
 "use server";
 
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { getDatabase, schema } from "@/db";
-import { eq } from "drizzle-orm";
-import { rateLimiter } from "@/services/rate-limit";
-import { auditService } from "@/services/audit";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
-import { sendEmail, createPasswordResetEmail } from "@/services/email";
+import { auditService } from "@/services/audit";
+import { createPasswordResetEmail, sendEmail } from "@/services/email";
+import { rateLimiter } from "@/services/rate-limit";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Invalid email address"),

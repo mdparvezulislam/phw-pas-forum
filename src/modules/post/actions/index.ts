@@ -1,10 +1,10 @@
 export {
   createPost,
-  updatePost,
   deletePost,
   hidePost,
-  unhidePost,
-  restorePost,
   reportPost,
   resolveReport,
+  restorePost,
+  unhidePost,
+  updatePost,
 } from "./posts";

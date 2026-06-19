@@ -1,12 +1,12 @@
+import type { AdapterAccountType } from "@auth/core/adapters";
 import {
+  boolean,
+  integer,
   pgTable,
+  primaryKey,
   text,
   timestamp,
-  integer,
-  boolean,
-  primaryKey,
 } from "drizzle-orm/pg-core";
-import type { AdapterAccountType } from "@auth/core/adapters";
 
 import { users } from "./users";
 

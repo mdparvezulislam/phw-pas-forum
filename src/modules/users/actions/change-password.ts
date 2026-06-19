@@ -1,12 +1,12 @@
 "use server";
 
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { getDatabase, schema } from "@/db";
-import { eq } from "drizzle-orm";
+import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
 import { auth } from "@/lib/auth";
 import { hashPassword, verifyPassword } from "@/modules/auth/helpers";
 import { auditService } from "@/services/audit";
-import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
 
 const changePasswordSchema = z
   .object({

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { formatDate } from "@/lib/utils";
 
 interface PostAuthorSidebarProps {
@@ -16,13 +17,17 @@ export function PostAuthorSidebar({ author }: PostAuthorSidebarProps) {
       <div className="flex items-center gap-3 md:flex-col md:items-start">
         <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xl text-primary">
           {author.image ? (
-            <img
+            <Image
               src={author.image}
               alt=""
+              width={48}
+              height={48}
               className="h-full w-full rounded-full object-cover"
             />
           ) : (
-            (author.displayName ?? author.username ?? "U").charAt(0).toUpperCase()
+            (author.displayName ?? author.username ?? "U")
+              .charAt(0)
+              .toUpperCase()
           )}
         </div>
         <div className="min-w-0">

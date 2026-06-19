@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { ThemeProvider } from "./theme-provider";
-import { AuthProvider } from "./auth-provider";
 import type { SessionUser } from "@/types/auth";
+import { AuthProvider } from "./auth-provider";
+import { ThemeProvider } from "./theme-provider";
 
 interface ProvidersProps {
   children: ReactNode;
@@ -11,9 +11,7 @@ interface ProvidersProps {
 export function Providers({ children, sessionUser }: ProvidersProps) {
   return (
     <ThemeProvider defaultTheme="dark" storageKey="bhw-theme">
-      <AuthProvider sessionUser={sessionUser}>
-        {children}
-      </AuthProvider>
+      <AuthProvider sessionUser={sessionUser}>{children}</AuthProvider>
     </ThemeProvider>
   );
 }

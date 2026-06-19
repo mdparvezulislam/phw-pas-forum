@@ -1,8 +1,8 @@
 import {
+  boolean,
+  integer,
   pgTable,
   text,
-  integer,
-  boolean,
   timestamp,
 } from "drizzle-orm/pg-core";
 import { categories } from "./categories";

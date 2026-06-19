@@ -1,24 +1,28 @@
 "use server";
 
+import { and, asc, desc, eq, ne, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { getDatabase, schema } from "@/db";
-import { eq, and, desc, asc, sql, ne } from "drizzle-orm";
-import { auth } from "@/lib/auth";
-import { auditService } from "@/services/audit";
-import { requireAuth } from "@/modules/auth/guards";
-import { Permission } from "@/types/rbac";
 import { hasPermission } from "@/config/rbac";
+import { getDatabase, schema } from "@/db";
+import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
+import { auth } from "@/lib/auth";
 import { slugify } from "@/lib/utils";
+import { requireAuth } from "@/modules/auth/guards";
+import type {
+  PaginatedResult,
+  ThreadListOptions,
+  ThreadWithRelations,
+} from "@/modules/thread/types";
+import { auditService } from "@/services/audit";
+import { Permission } from "@/types/rbac";
 import {
+  type CreateThreadInput,
   createThreadSchema,
   updateThreadSchema,
-  type CreateThreadInput,
 } from "@/validations/thread";
-import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
-import type { PaginatedResult, ThreadWithRelations, ThreadListOptions } from "@/modules/thread/types";
 
 function generateUniqueSlug(title: string, existingSlugs: string[]): string {
-  let slug = slugify(title);
+  const slug = slugify(title);
   if (!existingSlugs.includes(slug)) return slug;
 
   let counter = 2;
@@ -29,7 +33,9 @@ function generateUniqueSlug(title: string, existingSlugs: string[]): string {
 }
 
 export async function createThread(
-  prevState: { error?: string; success?: boolean; threadId?: string } | undefined,
+  prevState:
+    | { error?: string; success?: boolean; threadId?: string }
+    | undefined,
   formData: FormData,
 ): Promise<{ error?: string; success?: boolean; threadId?: string }> {
   const user = await requireAuth();
@@ -47,7 +53,9 @@ export async function createThread(
 
   const parsed = createThreadSchema.safeParse(raw);
   if (!parsed.success) {
-    return { error: parsed.error.flatten().fieldErrors.title?.[0] ?? "Invalid input" };
+    return {
+      error: parsed.error.flatten().fieldErrors.title?.[0] ?? "Invalid input",
+    };
   }
 
   const db = getDatabase();
@@ -126,7 +134,10 @@ export async function updateThread(
     where: (threads, { eq }) => eq(threads.id, id),
   });
   if (!thread) return { error: "Thread not found" };
-  if (thread.authorId !== user.id && !hasPermission(user, Permission.MODERATE_THREAD)) {
+  if (
+    thread.authorId !== user.id &&
+    !hasPermission(user, Permission.MODERATE_THREAD)
+  ) {
     return { error: "Not authorized" };
   }
 
@@ -134,7 +145,10 @@ export async function updateThread(
     id,
     title: title || undefined,
     content: content || undefined,
-    tags: tagsStr?.split(",").map((t) => t.trim()).filter(Boolean),
+    tags: tagsStr
+      ?.split(",")
+      .map((t) => t.trim())
+      .filter(Boolean),
   });
   if (!parsed.success) return { error: "Invalid input" };
 
@@ -150,7 +164,9 @@ export async function updateThread(
     .where(eq(schema.threads.id, id));
 
   if (parsed.data.tags) {
-    await db.delete(schema.threadTags).where(eq(schema.threadTags.threadId, id));
+    await db
+      .delete(schema.threadTags)
+      .where(eq(schema.threadTags.threadId, id));
     await db.insert(schema.threadTags).values(
       parsed.data.tags.map((tag) => ({
         threadId: id,
@@ -181,7 +197,10 @@ export async function deleteThread(
     where: (threads, { eq }) => eq(threads.id, id),
   });
   if (!thread) return { error: "Thread not found" };
-  if (thread.authorId !== user.id && !hasPermission(user, Permission.MODERATE_THREAD)) {
+  if (
+    thread.authorId !== user.id &&
+    !hasPermission(user, Permission.MODERATE_THREAD)
+  ) {
     return { error: "Not authorized" };
   }
 

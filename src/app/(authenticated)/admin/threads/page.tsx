@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { getDatabase, schema } from "@/db";
-import { desc } from "drizzle-orm";
+import { getDatabase } from "@/db";
 import { requireRole } from "@/modules/auth/guards";
 import { RoleName } from "@/types/rbac";
-import { ThreadStatusBadge } from "@/modules/thread/components";
 import { AdminThreadRow } from "./thread-row";
 
 export const metadata: Metadata = {
@@ -14,7 +12,7 @@ export default async function AdminThreadsPage() {
   await requireRole(RoleName.MODERATOR);
 
   const db = getDatabase();
-  const threads = await db.query.threads.findMany({
+  const threads = (await db.query.threads.findMany({
     orderBy: (threads, { desc }) => [desc(threads.publishedAt)],
     limit: 100,
     with: {
@@ -30,7 +28,24 @@ export default async function AdminThreadsPage() {
         },
       },
     },
-  }) as any[];
+  })) as {
+    id: string;
+    title: string;
+    slug: string;
+    status: string;
+    isPinned: boolean;
+    isLocked: boolean;
+    isFeatured: boolean;
+    replyCount: number;
+    viewCount: number;
+    author: { id: string; username: string | null; displayName: string | null };
+    forum: {
+      id: string;
+      title: string;
+      slug: string;
+      category: { slug: string };
+    };
+  }[];
 
   return (
     <div className="space-y-6">
@@ -56,12 +71,15 @@ export default async function AdminThreadsPage() {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {threads.map((thread: any) => (
+              {threads.map((thread) => (
                 <AdminThreadRow key={thread.id} thread={thread} />
               ))}
               {threads.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
+                  <td
+                    colSpan={7}
+                    className="px-4 py-8 text-center text-muted-foreground"
+                  >
                     No threads found.
                   </td>
                 </tr>

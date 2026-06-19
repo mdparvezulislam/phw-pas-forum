@@ -1,16 +1,25 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { getCategoryBySlug, getForumBySlugAndCategory } from "@/services/forum-stats";
-import { getThread } from "@/services/thread";
 import { auth } from "@/lib/auth";
 import { ForumBreadcrumbs } from "@/modules/forum/components";
 import { EditThreadForm } from "@/modules/thread/components";
+import {
+  getCategoryBySlug,
+  getForumBySlugAndCategory,
+} from "@/services/forum-stats";
+import { getThread } from "@/services/thread";
 
 interface EditThreadPageProps {
-  params: Promise<{ categorySlug: string; forumSlug: string; threadSlug: string }>;
+  params: Promise<{
+    categorySlug: string;
+    forumSlug: string;
+    threadSlug: string;
+  }>;
 }
 
-export async function generateMetadata(props: EditThreadPageProps): Promise<Metadata> {
+export async function generateMetadata(
+  props: EditThreadPageProps,
+): Promise<Metadata> {
   const params = await props.params;
   const thread = await getThread(params.threadSlug);
   return {
@@ -29,7 +38,10 @@ export default async function EditThreadPage(props: EditThreadPageProps) {
   const category = await getCategoryBySlug(params.categorySlug);
   if (!category) notFound();
 
-  const forum = await getForumBySlugAndCategory(params.categorySlug, params.forumSlug);
+  const forum = await getForumBySlugAndCategory(
+    params.categorySlug,
+    params.forumSlug,
+  );
   if (!forum) notFound();
 
   const thread = await getThread(params.threadSlug);
@@ -48,8 +60,14 @@ export default async function EditThreadPage(props: EditThreadPageProps) {
       <ForumBreadcrumbs
         items={[
           { label: category.title, href: `/forums/${category.slug}` },
-          { label: forum.title, href: `/forums/${category.slug}/${forum.slug}` },
-          { label: thread.title, href: `/forums/${category.slug}/${forum.slug}/${thread.slug}` },
+          {
+            label: forum.title,
+            href: `/forums/${category.slug}/${forum.slug}`,
+          },
+          {
+            label: thread.title,
+            href: `/forums/${category.slug}/${forum.slug}/${thread.slug}`,
+          },
           { label: "Edit" },
         ]}
       />

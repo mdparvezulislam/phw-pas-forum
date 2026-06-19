@@ -1,9 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
 import Link from "next/link";
-import { login } from "@/modules/auth/actions";
+import { useActionState } from "react";
 import { Button, Input, Label } from "@/components/ui";
+import { login } from "@/modules/auth/actions";
 
 export function LoginForm() {
   const [state, formAction, pending] = useActionState(login, undefined);

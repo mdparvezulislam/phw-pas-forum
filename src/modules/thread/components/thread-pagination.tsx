@@ -6,12 +6,20 @@ interface ThreadPaginationProps {
   baseUrl: string;
 }
 
-export function ThreadPagination({ currentPage, totalPages, baseUrl }: ThreadPaginationProps) {
+export function ThreadPagination({
+  currentPage,
+  totalPages,
+  baseUrl,
+}: ThreadPaginationProps) {
   if (totalPages <= 1) return null;
 
   const pages: (number | "ellipsis")[] = [];
   for (let i = 1; i <= totalPages; i++) {
-    if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+    if (
+      i === 1 ||
+      i === totalPages ||
+      (i >= currentPage - 1 && i <= currentPage + 1)
+    ) {
       pages.push(i);
     } else if (pages[pages.length - 1] !== "ellipsis") {
       pages.push("ellipsis");
@@ -19,7 +27,10 @@ export function ThreadPagination({ currentPage, totalPages, baseUrl }: ThreadPag
   }
 
   return (
-    <nav aria-label="Thread pagination" className="mt-6 flex items-center justify-center gap-1">
+    <nav
+      aria-label="Thread pagination"
+      className="mt-6 flex items-center justify-center gap-1"
+    >
       {currentPage > 1 && (
         <Link
           href={`${baseUrl}?page=${currentPage - 1}`}

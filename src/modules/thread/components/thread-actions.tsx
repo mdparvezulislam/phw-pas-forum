@@ -1,8 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
 import { useRouter } from "next/navigation";
-import { watchThread, bookmarkThread } from "@/modules/thread/actions";
+import { useActionState } from "react";
+import { bookmarkThread, watchThread } from "@/modules/thread/actions";
 import type { ThreadWithRelations } from "@/modules/thread/types";
 
 interface ThreadActionsProps {
@@ -12,11 +12,19 @@ interface ThreadActionsProps {
   forumSlug: string;
 }
 
-export function ThreadActions({ thread, isOwner, categorySlug, forumSlug }: ThreadActionsProps) {
+export function ThreadActions({
+  thread,
+  isOwner,
+  categorySlug,
+  forumSlug,
+}: ThreadActionsProps) {
   const router = useRouter();
 
   const [, watchAction, watchPending] = useActionState(watchThread, undefined);
-  const [, bookmarkAction, bookmarkPending] = useActionState(bookmarkThread, undefined);
+  const [, bookmarkAction, bookmarkPending] = useActionState(
+    bookmarkThread,
+    undefined,
+  );
 
   return (
     <div className="flex flex-wrap items-center gap-2">

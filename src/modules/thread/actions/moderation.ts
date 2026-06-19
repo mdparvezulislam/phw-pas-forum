@@ -1,13 +1,13 @@
 "use server";
 
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getDatabase, schema } from "@/db";
-import { eq, and } from "drizzle-orm";
-import { auth } from "@/lib/auth";
-import { auditService } from "@/services/audit";
-import { requireAuth, requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
+import { auth } from "@/lib/auth";
+import { requireAuth, requireRole } from "@/modules/auth/guards";
+import { auditService } from "@/services/audit";
+import { RoleName } from "@/types/rbac";
 
 export async function pinThread(
   prevState: any,
@@ -28,7 +28,9 @@ export async function pinThread(
     .where(eq(schema.threads.id, id));
 
   const session = await auth();
-  const action = thread.isPinned ? AUDIT_ACTIONS.THREAD_UNPIN : AUDIT_ACTIONS.THREAD_PIN;
+  const action = thread.isPinned
+    ? AUDIT_ACTIONS.THREAD_UNPIN
+    : AUDIT_ACTIONS.THREAD_PIN;
   await auditService.log(session?.user?.id ?? null, action, {
     resource: "thread",
     resourceId: id,
@@ -57,7 +59,9 @@ export async function lockThread(
     .where(eq(schema.threads.id, id));
 
   const session = await auth();
-  const action = thread.isLocked ? AUDIT_ACTIONS.THREAD_UNLOCK : AUDIT_ACTIONS.THREAD_LOCK;
+  const action = thread.isLocked
+    ? AUDIT_ACTIONS.THREAD_UNLOCK
+    : AUDIT_ACTIONS.THREAD_LOCK;
   await auditService.log(session?.user?.id ?? null, action, {
     resource: "thread",
     resourceId: id,
@@ -86,7 +90,9 @@ export async function featureThread(
     .where(eq(schema.threads.id, id));
 
   const session = await auth();
-  const action = thread.isFeatured ? AUDIT_ACTIONS.THREAD_UNFEATURE : AUDIT_ACTIONS.THREAD_FEATURE;
+  const action = thread.isFeatured
+    ? AUDIT_ACTIONS.THREAD_UNFEATURE
+    : AUDIT_ACTIONS.THREAD_FEATURE;
   await auditService.log(session?.user?.id ?? null, action, {
     resource: "thread",
     resourceId: id,

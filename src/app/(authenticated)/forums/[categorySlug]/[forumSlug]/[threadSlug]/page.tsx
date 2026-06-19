@@ -1,21 +1,35 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getCategoryBySlug, getForumBySlugAndCategory } from "@/services/forum-stats";
-import { getThreadWithUserState, incrementThreadView } from "@/services/thread";
-import { getPosts, getNextPostNumber, getPostCount, getPostHistory } from "@/services/post";
-import { ThreadBreadcrumbs, ThreadHeader, ThreadActions, ThreadAuthorCard } from "@/modules/thread/components";
-import { PostCard, PostPagination, ReplyForm } from "@/modules/post/components";
-import { ForumSidebar } from "@/modules/forum/components";
-import { auth } from "@/lib/auth";
 import { hasPermission } from "@/config/rbac";
+import { auth } from "@/lib/auth";
+import { ForumSidebar } from "@/modules/forum/components";
+import { PostCard, PostPagination, ReplyForm } from "@/modules/post/components";
+import {
+  ThreadActions,
+  ThreadAuthorCard,
+  ThreadBreadcrumbs,
+  ThreadHeader,
+} from "@/modules/thread/components";
+import {
+  getCategoryBySlug,
+  getForumBySlugAndCategory,
+} from "@/services/forum-stats";
+import { getNextPostNumber, getPosts } from "@/services/post";
+import { getThreadWithUserState, incrementThreadView } from "@/services/thread";
 import { Permission } from "@/types/rbac";
 
 interface ThreadPageProps {
-  params: Promise<{ categorySlug: string; forumSlug: string; threadSlug: string }>;
+  params: Promise<{
+    categorySlug: string;
+    forumSlug: string;
+    threadSlug: string;
+  }>;
   searchParams: Promise<{ page?: string }>;
 }
 
-export async function generateMetadata(props: ThreadPageProps): Promise<Metadata> {
+export async function generateMetadata(
+  props: ThreadPageProps,
+): Promise<Metadata> {
   const params = await props.params;
   const thread = await getThreadWithUserState(params.threadSlug, null);
   if (!thread) return { title: "Not found" };
@@ -27,7 +41,9 @@ export async function generateMetadata(props: ThreadPageProps): Promise<Metadata
       title: `${thread.title} | BHW PAS`,
       description: thread.excerpt ?? undefined,
       type: "article",
-      authors: [thread.author.displayName ?? thread.author.username ?? "Unknown"],
+      authors: [
+        thread.author.displayName ?? thread.author.username ?? "Unknown",
+      ],
     },
   };
 }
@@ -40,16 +56,24 @@ export default async function ThreadPage(props: ThreadPageProps) {
   const category = await getCategoryBySlug(params.categorySlug);
   if (!category) notFound();
 
-  const forum = await getForumBySlugAndCategory(params.categorySlug, params.forumSlug);
+  const forum = await getForumBySlugAndCategory(
+    params.categorySlug,
+    params.forumSlug,
+  );
   if (!forum) notFound();
 
-  const thread = await getThreadWithUserState(params.threadSlug, session?.user?.id ?? null);
+  const thread = await getThreadWithUserState(
+    params.threadSlug,
+    session?.user?.id ?? null,
+  );
   if (!thread) notFound();
 
   await incrementThreadView(thread.id);
 
   const isOwner = session?.user?.id === thread.authorId;
-  const isModerator = session?.user ? hasPermission(session.user, Permission.POST_MODERATE) : false;
+  const isModerator = session?.user
+    ? hasPermission(session.user, Permission.POST_MODERATE)
+    : false;
 
   const page = Number(searchParams.page) || 1;
   const perPage = 50;
@@ -71,14 +95,26 @@ export default async function ThreadPage(props: ThreadPageProps) {
           items={[
             { label: "Forums", href: "/forums" },
             { label: category.title, href: `/forums/${category.slug}` },
-            { label: forum.title, href: `/forums/${category.slug}/${forum.slug}` },
+            {
+              label: forum.title,
+              href: `/forums/${category.slug}/${forum.slug}`,
+            },
             { label: thread.title },
           ]}
         />
 
-        <ThreadHeader thread={thread} categorySlug={category.slug} forumSlug={forum.slug} isOwner={isOwner} />
+        <ThreadHeader
+          thread={thread}
+          categorySlug={category.slug}
+          forumSlug={forum.slug}
+          isOwner={isOwner}
+        />
 
-        <ThreadActions thread={thread} categorySlug={category.slug} forumSlug={forum.slug} />
+        <ThreadActions
+          thread={thread}
+          categorySlug={category.slug}
+          forumSlug={forum.slug}
+        />
 
         <div className="rounded-lg border bg-card p-6">
           <div className="prose prose-sm dark:prose-invert max-w-none">
@@ -98,7 +134,6 @@ export default async function ThreadPage(props: ThreadPageProps) {
               <PostCard
                 key={post.id}
                 post={post}
-                threadId={thread.id}
                 isOwner={session?.user?.id === post.authorId}
                 isModerator={isModerator}
                 baseUrl={baseUrl}

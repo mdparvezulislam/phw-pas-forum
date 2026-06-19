@@ -1,7 +1,7 @@
 import "server-only";
 
-import { cache } from "@/lib/redis";
 import { RATE_LIMITS } from "@/constants";
+import { cache } from "@/lib/redis";
 
 type RateLimitKey = keyof typeof RATE_LIMITS;
 

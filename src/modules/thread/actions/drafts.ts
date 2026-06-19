@@ -1,8 +1,8 @@
 "use server";
 
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getDatabase, schema } from "@/db";
-import { eq, and } from "drizzle-orm";
 import { requireAuth } from "@/modules/auth/guards";
 
 export async function saveDraft(
@@ -54,7 +54,12 @@ export async function deleteDraft(
 
   await db
     .delete(schema.threadDrafts)
-    .where(and(eq(schema.threadDrafts.id, draftId), eq(schema.threadDrafts.userId, user.id)));
+    .where(
+      and(
+        eq(schema.threadDrafts.id, draftId),
+        eq(schema.threadDrafts.userId, user.id),
+      ),
+    );
 
   revalidatePath(`/forums`);
   return { success: true };

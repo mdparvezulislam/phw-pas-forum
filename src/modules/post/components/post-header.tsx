@@ -12,7 +12,12 @@ interface PostHeaderProps {
   baseUrl: string;
 }
 
-export function PostHeader({ post, isOwner, isModerator, baseUrl }: PostHeaderProps) {
+export function PostHeader({
+  post,
+  isOwner,
+  isModerator,
+  baseUrl,
+}: PostHeaderProps) {
   const [, deleteAction, deletePending] = useActionState(deletePost, undefined);
   const [, hideAction, hidePending] = useActionState(hidePost, undefined);
   const [, unhideAction, unhidePending] = useActionState(unhidePost, undefined);
@@ -32,9 +37,7 @@ export function PostHeader({ post, isOwner, isModerator, baseUrl }: PostHeaderPr
           </span>
         )}
         {post.isEdited && (
-          <span className="text-xs text-muted-foreground">
-            (edited)
-          </span>
+          <span className="text-xs text-muted-foreground">(edited)</span>
         )}
       </div>
 
@@ -57,33 +60,30 @@ export function PostHeader({ post, isOwner, isModerator, baseUrl }: PostHeaderPr
             </form>
           )}
 
-          {isModerator && (
-            <>
-              {post.status === "HIDDEN" ? (
-                <form action={unhideAction}>
-                  <input type="hidden" name="postId" value={post.id} />
-                  <button
-                    type="submit"
-                    disabled={unhidePending}
-                    className="rounded px-2 py-1 text-xs text-muted-foreground hover:bg-accent disabled:opacity-50"
-                  >
-                    Unhide
-                  </button>
-                </form>
-              ) : (
-                <form action={hideAction}>
-                  <input type="hidden" name="postId" value={post.id} />
-                  <button
-                    type="submit"
-                    disabled={hidePending}
-                    className="rounded px-2 py-1 text-xs text-muted-foreground hover:bg-accent disabled:opacity-50"
-                  >
-                    Hide
-                  </button>
-                </form>
-              )}
-            </>
-          )}
+          {isModerator &&
+            (post.status === "HIDDEN" ? (
+              <form action={unhideAction}>
+                <input type="hidden" name="postId" value={post.id} />
+                <button
+                  type="submit"
+                  disabled={unhidePending}
+                  className="rounded px-2 py-1 text-xs text-muted-foreground hover:bg-accent disabled:opacity-50"
+                >
+                  Unhide
+                </button>
+              </form>
+            ) : (
+              <form action={hideAction}>
+                <input type="hidden" name="postId" value={post.id} />
+                <button
+                  type="submit"
+                  disabled={hidePending}
+                  className="rounded px-2 py-1 text-xs text-muted-foreground hover:bg-accent disabled:opacity-50"
+                >
+                  Hide
+                </button>
+              </form>
+            ))}
         </div>
       </div>
     </div>

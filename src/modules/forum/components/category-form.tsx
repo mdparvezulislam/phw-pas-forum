@@ -1,9 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
-import { createCategory, updateCategory } from "@/modules/forum/actions";
 import { Button, Input, Label } from "@/components/ui";
 import type { Category } from "@/db/schema/categories";
+import { createCategory, updateCategory } from "@/modules/forum/actions";
 
 interface CategoryFormProps {
   category?: Category;

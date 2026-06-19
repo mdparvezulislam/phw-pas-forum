@@ -4,10 +4,7 @@ interface DeletedPostCardProps {
 
 export function DeletedPostCard({ postNumber }: DeletedPostCardProps) {
   return (
-    <div
-      id={`post-${postNumber}`}
-      className="scroll-mt-20"
-    >
+    <div id={`post-${postNumber}`} className="scroll-mt-20">
       <div className="rounded-lg border bg-muted/30">
         <div className="flex items-center justify-between border-b bg-muted/20 px-4 py-2">
           <div className="flex items-center gap-2">

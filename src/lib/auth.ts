@@ -1,13 +1,12 @@
 import "server-only";
 
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { getDatabase } from "@/db";
-import { schema } from "@/db";
+import { getDatabase, schema } from "@/db";
 import { verifyPassword } from "@/modules/auth/helpers";
 import type { SessionUser } from "@/types/auth";
-import { RoleName, type Permission } from "@/types/rbac";
+import { type Permission, RoleName } from "@/types/rbac";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(getDatabase(), {
@@ -108,7 +107,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         id: token.id as string,
         username: (token.username as string) ?? "",
         email: session.user?.email ?? "",
-        displayName: (token.displayName as string) ?? (token.name as string) ?? "",
+        displayName:
+          (token.displayName as string) ?? (token.name as string) ?? "",
         image: (session.user?.image as string) ?? null,
         isBanned: (token.isBanned as boolean) ?? false,
         isVerified: (token.isVerified as boolean) ?? false,

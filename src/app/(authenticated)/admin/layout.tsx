@@ -1,9 +1,9 @@
-import { auth } from "@/lib/auth";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Footer, Header } from "@/components/design-system";
+import { auth } from "@/lib/auth";
 import { requireRole } from "@/modules/auth/guards";
 import { RoleName } from "@/types/rbac";
-import { Header, Footer } from "@/components/design-system";
-import Link from "next/link";
 
 export default async function AdminLayout({
   children,

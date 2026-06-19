@@ -1,14 +1,20 @@
 import {
+  boolean,
+  integer,
   pgTable,
   text,
-  integer,
-  boolean,
   timestamp,
 } from "drizzle-orm/pg-core";
 import { forums } from "./forums";
 import { users } from "./users";
 
-export const threadStatus = ["DRAFT", "PENDING", "PUBLISHED", "ARCHIVED", "DELETED"] as const;
+export const threadStatus = [
+  "DRAFT",
+  "PENDING",
+  "PUBLISHED",
+  "ARCHIVED",
+  "DELETED",
+] as const;
 export type ThreadStatus = (typeof threadStatus)[number];
 
 export const threadVisibility = ["PUBLIC", "PRIVATE", "PREMIUM"] as const;

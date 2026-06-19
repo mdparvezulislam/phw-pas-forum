@@ -8,19 +8,34 @@ export const createPostSchema = z.object({
   threadId: z.string().min(1, "Thread is required"),
   content: z
     .string()
-    .min(POST_CONTENT_MIN, `Content must be at least ${POST_CONTENT_MIN} characters`)
-    .max(POST_CONTENT_MAX, `Content must be at most ${POST_CONTENT_MAX} characters`),
+    .min(
+      POST_CONTENT_MIN,
+      `Content must be at least ${POST_CONTENT_MIN} characters`,
+    )
+    .max(
+      POST_CONTENT_MAX,
+      `Content must be at most ${POST_CONTENT_MAX} characters`,
+    ),
 });
 
 export const updatePostSchema = z.object({
   id: z.string().min(1),
   content: z
     .string()
-    .min(POST_CONTENT_MIN, `Content must be at least ${POST_CONTENT_MIN} characters`)
-    .max(POST_CONTENT_MAX, `Content must be at most ${POST_CONTENT_MAX} characters`),
+    .min(
+      POST_CONTENT_MIN,
+      `Content must be at least ${POST_CONTENT_MIN} characters`,
+    )
+    .max(
+      POST_CONTENT_MAX,
+      `Content must be at most ${POST_CONTENT_MAX} characters`,
+    ),
   reason: z
     .string()
-    .max(EDIT_REASON_MAX, `Reason must be at most ${EDIT_REASON_MAX} characters`)
+    .max(
+      EDIT_REASON_MAX,
+      `Reason must be at most ${EDIT_REASON_MAX} characters`,
+    )
     .optional(),
 });
 

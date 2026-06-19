@@ -1,4 +1,4 @@
-export { createCategory, updateCategory, deleteCategory } from "./categories";
 export type { CategoryActionState } from "./categories";
-export { createForum, updateForum, deleteForum } from "./forums";
+export { createCategory, deleteCategory, updateCategory } from "./categories";
 export type { ForumActionState } from "./forums";
+export { createForum, deleteForum, updateForum } from "./forums";

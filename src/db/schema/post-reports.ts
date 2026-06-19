@@ -1,11 +1,22 @@
-import { pgTable, text, timestamp, index } from "drizzle-orm/pg-core";
+import { index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { posts } from "./posts";
 import { users } from "./users";
 
-export const postReportStatus = ["OPEN", "REVIEWING", "RESOLVED", "REJECTED"] as const;
+export const postReportStatus = [
+  "OPEN",
+  "REVIEWING",
+  "RESOLVED",
+  "REJECTED",
+] as const;
 export type PostReportStatus = (typeof postReportStatus)[number];
 
-export const postReportReason = ["SPAM", "ABUSE", "SCAM", "DUPLICATE", "OTHER"] as const;
+export const postReportReason = [
+  "SPAM",
+  "ABUSE",
+  "SCAM",
+  "DUPLICATE",
+  "OTHER",
+] as const;
 export type PostReportReason = (typeof postReportReason)[number];
 
 export const postReports = pgTable(

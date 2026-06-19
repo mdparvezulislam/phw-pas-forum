@@ -9,7 +9,10 @@ export const createCategorySchema = z.object({
     .string()
     .min(1, "Slug is required")
     .max(100)
-    .regex(/^[a-z0-9-]+$/, "Slug can only contain lowercase letters, numbers, and hyphens"),
+    .regex(
+      /^[a-z0-9-]+$/,
+      "Slug can only contain lowercase letters, numbers, and hyphens",
+    ),
   description: z.string().max(500).optional(),
   icon: z.string().max(50).optional(),
   color: z

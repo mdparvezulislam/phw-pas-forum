@@ -1,7 +1,13 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import type { ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 type Theme = "light" | "dark" | "system";
 type ResolvedTheme = "light" | "dark";
@@ -49,8 +55,7 @@ export function ThemeProvider({
         localStorage.setItem(storageKey, newTheme);
       } catch {}
 
-      const resolved =
-        newTheme === "system" ? resolveSystemTheme() : newTheme;
+      const resolved = newTheme === "system" ? resolveSystemTheme() : newTheme;
       applyTheme(resolved);
     },
     [storageKey, resolveSystemTheme, applyTheme],

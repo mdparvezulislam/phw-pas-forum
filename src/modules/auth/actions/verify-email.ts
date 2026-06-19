@@ -1,10 +1,10 @@
 "use server";
 
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { getDatabase, schema } from "@/db";
-import { eq } from "drizzle-orm";
-import { auditService } from "@/services/audit";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
+import { auditService } from "@/services/audit";
 
 const verifyEmailSchema = z.object({
   token: z.string().min(1),
@@ -29,8 +29,7 @@ export async function verifyEmail(
   const db = getDatabase();
 
   const verificationToken = await db.query.verificationTokens.findFirst({
-    where: (tokens, { eq, gt }) =>
-      eq(tokens.token, parsed.data.token),
+    where: (tokens, { eq, gt }) => eq(tokens.token, parsed.data.token),
   });
 
   if (!verificationToken) {
@@ -57,7 +56,9 @@ export async function verifyEmail(
 
   await db
     .delete(schema.verificationTokens)
-    .where(eq(schema.verificationTokens.identifier, verificationToken.identifier));
+    .where(
+      eq(schema.verificationTokens.identifier, verificationToken.identifier),
+    );
 
   await auditService.log(user.id, AUDIT_ACTIONS.VERIFY_EMAIL);
 

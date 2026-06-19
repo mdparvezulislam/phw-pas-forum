@@ -1,4 +1,10 @@
-import { pgTable, text, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 
 export const categories = pgTable("category", {
   id: text("id")

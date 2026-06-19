@@ -1,8 +1,8 @@
 import "server-only";
 
+import { headers } from "next/headers";
 import { getDatabase, schema } from "@/db";
 import type { NewAuditLog } from "@/db/schema/audit-logs";
-import { headers } from "next/headers";
 
 export class AuditService {
   async log(
@@ -22,7 +22,10 @@ export class AuditService {
       action,
       resource: options.resource,
       resourceId: options.resourceId,
-      ipAddress: headersList.get("x-forwarded-for") ?? headersList.get("x-real-ip") ?? "unknown",
+      ipAddress:
+        headersList.get("x-forwarded-for") ??
+        headersList.get("x-real-ip") ??
+        "unknown",
       userAgent: headersList.get("user-agent") ?? "unknown",
       metadata: options.metadata ?? null,
     };
@@ -30,11 +33,7 @@ export class AuditService {
     await db.insert(schema.auditLogs).values(entry);
   }
 
-  async getByUser(
-    userId: string,
-    limit = 50,
-    offset = 0,
-  ) {
+  async getByUser(userId: string, limit = 50, offset = 0) {
     const db = getDatabase();
     return db.query.auditLogs.findMany({
       where: (logs, { eq }) => eq(logs.userId, userId),

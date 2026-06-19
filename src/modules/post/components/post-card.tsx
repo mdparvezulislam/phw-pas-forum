@@ -1,28 +1,29 @@
 import type { PostWithAuthor } from "@/modules/post/types";
+import { DeletedPostCard } from "./deleted-post-card";
 import { PostAuthorSidebar } from "./post-author-sidebar";
 import { PostContent } from "./post-content";
 import { PostFooter } from "./post-footer";
 import { PostHeader } from "./post-header";
-import { DeletedPostCard } from "./deleted-post-card";
 
 interface PostCardProps {
   post: PostWithAuthor;
-  threadId: string;
   isOwner: boolean;
   isModerator: boolean;
   baseUrl: string;
 }
 
-export function PostCard({ post, threadId, isOwner, isModerator, baseUrl }: PostCardProps) {
+export function PostCard({
+  post,
+  isOwner,
+  isModerator,
+  baseUrl,
+}: PostCardProps) {
   if (post.status === "DELETED") {
     return <DeletedPostCard postNumber={post.postNumber} />;
   }
 
   return (
-    <div
-      id={`post-${post.postNumber}`}
-      className="scroll-mt-20"
-    >
+    <div id={`post-${post.postNumber}`} className="scroll-mt-20">
       <div className="rounded-lg border bg-card">
         <div className="flex flex-col md:flex-row">
           <PostAuthorSidebar author={post.author} />

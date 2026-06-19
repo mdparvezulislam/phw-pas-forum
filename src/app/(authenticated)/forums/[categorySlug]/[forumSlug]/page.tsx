@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getCategoryBySlug, getForumBySlugAndCategory, getSubForums } from "@/services/forum-stats";
-import { getThreads, getPinnedThreads } from "@/services/thread";
-import { ForumHeader, ForumBreadcrumbs, ForumSidebar, EmptyForumState } from "@/modules/forum/components";
+import { notFound } from "next/navigation";
+import { auth } from "@/lib/auth";
+import {
+  EmptyForumState,
+  ForumBreadcrumbs,
+  ForumHeader,
+  ForumSidebar,
+} from "@/modules/forum/components";
 import { SubForumList } from "@/modules/forum/components/subforum-list";
 import { ThreadCard, ThreadPagination } from "@/modules/thread/components";
-import { auth } from "@/lib/auth";
+import {
+  getCategoryBySlug,
+  getForumBySlugAndCategory,
+  getSubForums,
+} from "@/services/forum-stats";
+import { getPinnedThreads, getThreads } from "@/services/thread";
 
 interface ForumPageProps {
   params: Promise<{ categorySlug: string; forumSlug: string }>;
@@ -20,7 +29,10 @@ export async function generateMetadata(
   const category = await getCategoryBySlug(params.categorySlug);
   if (!category) return { title: "Not found" };
 
-  const forum = await getForumBySlugAndCategory(params.categorySlug, params.forumSlug);
+  const forum = await getForumBySlugAndCategory(
+    params.categorySlug,
+    params.forumSlug,
+  );
   if (!forum) return { title: "Not found" };
 
   return {
@@ -41,7 +53,10 @@ export default async function ForumPage(props: ForumPageProps) {
   const category = await getCategoryBySlug(params.categorySlug);
   if (!category) notFound();
 
-  const forum = await getForumBySlugAndCategory(params.categorySlug, params.forumSlug);
+  const forum = await getForumBySlugAndCategory(
+    params.categorySlug,
+    params.forumSlug,
+  );
   if (!forum) notFound();
 
   const subForums = await getSubForums(forum.id);
@@ -58,7 +73,10 @@ export default async function ForumPage(props: ForumPageProps) {
         <ForumBreadcrumbs
           items={[
             { label: category.title, href: `/forums/${category.slug}` },
-            { label: forum.title, href: `/forums/${category.slug}/${forum.slug}` },
+            {
+              label: forum.title,
+              href: `/forums/${category.slug}/${forum.slug}`,
+            },
           ]}
         />
 
@@ -83,10 +101,7 @@ export default async function ForumPage(props: ForumPageProps) {
         {subForums.length > 0 && (
           <div className="rounded-lg border p-4">
             <h2 className="mb-3 font-semibold">Sub-forums</h2>
-            <SubForumList
-              forums={subForums}
-              categorySlug={category.slug}
-            />
+            <SubForumList forums={subForums} categorySlug={category.slug} />
           </div>
         )}
 

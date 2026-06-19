@@ -1,13 +1,12 @@
 "use server";
 
+import { and, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getDatabase, schema } from "@/db";
-import { eq, and } from "drizzle-orm";
-import { auth } from "@/lib/auth";
-import { auditService } from "@/services/audit";
-import { requireAuth } from "@/modules/auth/guards";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
-import { sql } from "drizzle-orm";
+import { auth } from "@/lib/auth";
+import { requireAuth } from "@/modules/auth/guards";
+import { auditService } from "@/services/audit";
 
 export async function watchThread(
   prevState: any,
@@ -82,7 +81,9 @@ export async function bookmarkThread(
       );
     await db
       .update(schema.threads)
-      .set({ bookmarkCount: sql`GREATEST(${schema.threads.bookmarkCount} - 1, 0)` })
+      .set({
+        bookmarkCount: sql`GREATEST(${schema.threads.bookmarkCount} - 1, 0)`,
+      })
       .where(eq(schema.threads.id, threadId));
     await auditService.log(user.id, AUDIT_ACTIONS.THREAD_UNBOOKMARK, {
       resource: "thread",

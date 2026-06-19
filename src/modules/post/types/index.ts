@@ -1,5 +1,8 @@
-import type { Post, PostStatus } from "@/db/schema/posts";
-import type { PostReportStatus, PostReportReason } from "@/db/schema/post-reports";
+import type {
+  PostReportReason,
+  PostReportStatus,
+} from "@/db/schema/post-reports";
+import type { Post } from "@/db/schema/posts";
 
 export interface PostWithAuthor extends Post {
   author: {

@@ -1,8 +1,11 @@
 import "server-only";
 
+import { and, asc, count, eq, or } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
-import { eq, asc, or, and, count } from "drizzle-orm";
-import type { CategoryWithForums, ForumWithChildren } from "@/modules/forum/types";
+import type {
+  CategoryWithForums,
+  ForumWithChildren,
+} from "@/modules/forum/types";
 
 export async function getCategoriesWithForums(): Promise<CategoryWithForums[]> {
   const db = getDatabase();
@@ -90,17 +93,13 @@ export async function getSubForums(parentForumId: string) {
 export async function getStats() {
   const db = getDatabase();
 
-  const [forumCount] = await db
-    .select({ value: count() })
-    .from(schema.forums);
+  const [forumCount] = await db.select({ value: count() }).from(schema.forums);
 
   const [categoryCount] = await db
     .select({ value: count() })
     .from(schema.categories);
 
-  const [memberCount] = await db
-    .select({ value: count() })
-    .from(schema.users);
+  const [memberCount] = await db.select({ value: count() }).from(schema.users);
 
   const totalThreads = await db
     .select({ value: count() })

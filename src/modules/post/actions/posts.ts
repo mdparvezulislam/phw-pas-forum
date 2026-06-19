@@ -1,26 +1,26 @@
 "use server";
 
+import { eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { getDatabase, schema } from "@/db";
-import { eq, and, sql } from "drizzle-orm";
-import { requireAuth } from "@/modules/auth/guards";
 import { hasPermission } from "@/config/rbac";
-import { Permission } from "@/types/rbac";
-import { auditService } from "@/services/audit";
+import { getDatabase, schema } from "@/db";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
-import { getNextPostNumber, getPostById, getPostHistory } from "@/services/post";
-import {
-  createPostSchema,
-  updatePostSchema,
-  reportPostSchema,
-  resolveReportSchema,
-  type CreatePostInput,
-  type UpdatePostInput,
-} from "@/validations/post";
+import { requireAuth } from "@/modules/auth/guards";
+import { auditService } from "@/services/audit";
+import { getNextPostNumber, getPostById } from "@/services/post";
 import { rateLimiter } from "@/services/rate-limit";
+import { Permission } from "@/types/rbac";
+import {
+  type CreatePostInput,
+  createPostSchema,
+  reportPostSchema,
+  updatePostSchema,
+} from "@/validations/post";
 
 export async function createPost(
-  prevState: { error?: string; success?: boolean; postId?: string } | undefined,
+  _prevState:
+    | { error?: string; success?: boolean; postId?: string }
+    | undefined,
   formData: FormData,
 ): Promise<{ error?: string; success?: boolean; postId?: string }> {
   const user = await requireAuth();
@@ -32,7 +32,9 @@ export async function createPost(
 
   const parsed = createPostSchema.safeParse(raw);
   if (!parsed.success) {
-    return { error: parsed.error.flatten().fieldErrors.content?.[0] ?? "Invalid input" };
+    return {
+      error: parsed.error.flatten().fieldErrors.content?.[0] ?? "Invalid input",
+    };
   }
 
   const rateLimit = await rateLimiter.check("FORUM_POST", user.id);
@@ -65,7 +67,7 @@ export async function createPost(
     .update(schema.threads)
     .set({
       replyCount: sql`${schema.threads.replyCount} + 1`,
-      lastActivityAt: new Date(),
+      updatedAt: new Date(),
     })
     .where(eq(schema.threads.id, parsed.data.threadId));
 
@@ -88,7 +90,7 @@ export async function createPost(
 }
 
 export async function updatePost(
-  prevState: { error?: string; success?: boolean } | undefined,
+  _prevState: { error?: string; success?: boolean } | undefined,
   formData: FormData,
 ): Promise<{ error?: string; success?: boolean }> {
   const user = await requireAuth();
@@ -104,7 +106,9 @@ export async function updatePost(
     reason: raw.reason || undefined,
   });
   if (!parsed.success) {
-    return { error: parsed.error.flatten().fieldErrors.content?.[0] ?? "Invalid input" };
+    return {
+      error: parsed.error.flatten().fieldErrors.content?.[0] ?? "Invalid input",
+    };
   }
 
   const db = getDatabase();
@@ -145,7 +149,7 @@ export async function updatePost(
 }
 
 export async function deletePost(
-  prevState: { error?: string; success?: boolean } | undefined,
+  _prevState: { error?: string; success?: boolean } | undefined,
   formData: FormData,
 ): Promise<{ error?: string; success?: boolean }> {
   const user = await requireAuth();
@@ -198,7 +202,7 @@ export async function deletePost(
 }
 
 export async function hidePost(
-  prevState: { error?: string; success?: boolean } | undefined,
+  _prevState: { error?: string; success?: boolean } | undefined,
   formData: FormData,
 ): Promise<{ error?: string; success?: boolean }> {
   const user = await requireAuth();
@@ -227,7 +231,7 @@ export async function hidePost(
 }
 
 export async function unhidePost(
-  prevState: { error?: string; success?: boolean } | undefined,
+  _prevState: { error?: string; success?: boolean } | undefined,
   formData: FormData,
 ): Promise<{ error?: string; success?: boolean }> {
   const user = await requireAuth();
@@ -253,7 +257,7 @@ export async function unhidePost(
 }
 
 export async function restorePost(
-  prevState: { error?: string; success?: boolean } | undefined,
+  _prevState: { error?: string; success?: boolean } | undefined,
   formData: FormData,
 ): Promise<{ error?: string; success?: boolean }> {
   const user = await requireAuth();
@@ -267,7 +271,8 @@ export async function restorePost(
   const post = await db.query.posts.findFirst({
     where: (p, { eq }) => eq(p.id, postId),
   });
-  if (!post || post.status !== "DELETED") return { error: "Post not found or not deleted" };
+  if (!post || post.status !== "DELETED")
+    return { error: "Post not found or not deleted" };
 
   await db
     .update(schema.posts)
@@ -303,14 +308,19 @@ export async function restorePost(
 }
 
 export async function reportPost(
-  prevState: { error?: string; success?: boolean } | undefined,
+  _prevState: { error?: string; success?: boolean } | undefined,
   formData: FormData,
 ): Promise<{ error?: string; success?: boolean }> {
   const user = await requireAuth();
 
   const raw = {
     postId: formData.get("postId") as string,
-    reason: formData.get("reason") as "SPAM" | "ABUSE" | "SCAM" | "DUPLICATE" | "OTHER",
+    reason: formData.get("reason") as
+      | "SPAM"
+      | "ABUSE"
+      | "SCAM"
+      | "DUPLICATE"
+      | "OTHER",
     description: formData.get("description") as string | null,
   };
 
@@ -326,7 +336,11 @@ export async function reportPost(
 
   const existing = await db.query.postReports.findFirst({
     where: (r, { and, eq }) =>
-      and(eq(r.postId, parsed.data.postId), eq(r.reporterId, user.id), eq(r.status, "OPEN")),
+      and(
+        eq(r.postId, parsed.data.postId),
+        eq(r.reporterId, user.id),
+        eq(r.status, "OPEN"),
+      ),
   });
   if (existing) {
     return { error: "You have already reported this post" };
@@ -350,7 +364,7 @@ export async function reportPost(
 }
 
 export async function resolveReport(
-  prevState: { error?: string; success?: boolean } | undefined,
+  _prevState: { error?: string; success?: boolean } | undefined,
   formData: FormData,
 ): Promise<{ error?: string; success?: boolean }> {
   const user = await requireAuth();
@@ -376,7 +390,10 @@ export async function resolveReport(
     })
     .where(eq(schema.postReports.id, reportId));
 
-  const auditAction = action === "RESOLVED" ? AUDIT_ACTIONS.POST_REPORT_RESOLVE : AUDIT_ACTIONS.POST_REPORT_REJECT;
+  const auditAction =
+    action === "RESOLVED"
+      ? AUDIT_ACTIONS.POST_REPORT_RESOLVE
+      : AUDIT_ACTIONS.POST_REPORT_REJECT;
   await auditService.log(user.id, auditAction, {
     resource: "post_report",
     resourceId: reportId,

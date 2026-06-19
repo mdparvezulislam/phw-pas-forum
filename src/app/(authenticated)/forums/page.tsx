@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { CategoryCard } from "@/modules/forum/components";
-import { ForumStats } from "@/modules/forum/components/forum-stats";
 import { ForumSidebar } from "@/modules/forum/components/forum-sidebar";
+import { ForumStats } from "@/modules/forum/components/forum-stats";
 import { MobileForumMenu } from "@/modules/forum/components/mobile-forum-menu";
 import { getCategoriesWithForums, getStats } from "@/services/forum-stats";
 

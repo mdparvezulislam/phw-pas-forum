@@ -1,8 +1,7 @@
-import type { Metadata } from "next";
-import { auth } from "@/lib/auth";
-import { getDatabase } from "@/db";
 import { eq } from "drizzle-orm";
-import { schema } from "@/db";
+import type { Metadata } from "next";
+import { getDatabase, schema } from "@/db";
+import { auth } from "@/lib/auth";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {

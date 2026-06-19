@@ -1,7 +1,7 @@
 "use client";
 
-import { useTheme } from "@/hooks";
 import { Label } from "@/components/ui";
+import { useTheme } from "@/hooks";
 
 export default function AppearanceSettingsPage() {
   const { theme, setTheme } = useTheme();

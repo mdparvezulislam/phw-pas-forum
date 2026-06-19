@@ -1,9 +1,9 @@
 import "server-only";
 
 import { eq } from "drizzle-orm";
-import { BaseRepository } from "./base";
 import { schema } from "@/db";
 import type { NewUser } from "@/db/schema/users";
+import { BaseRepository } from "./base";
 
 export class UserRepository extends BaseRepository {
   async findByEmail(email: string) {

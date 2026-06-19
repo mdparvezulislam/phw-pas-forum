@@ -1,12 +1,15 @@
 "use client";
 
-import { useActionState } from "react";
 import Link from "next/link";
-import { forgotPassword } from "@/modules/auth/actions";
+import { useActionState } from "react";
 import { Button, Input, Label } from "@/components/ui";
+import { forgotPassword } from "@/modules/auth/actions";
 
 export function ForgotPasswordForm() {
-  const [state, formAction, pending] = useActionState(forgotPassword, undefined);
+  const [state, formAction, pending] = useActionState(
+    forgotPassword,
+    undefined,
+  );
 
   if (state?.success) {
     return (

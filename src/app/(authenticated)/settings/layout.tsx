@@ -1,5 +1,5 @@
-import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
 import { SettingsSidebar } from "@/modules/users/components/settings-sidebar";
 
 export default async function SettingsLayout({

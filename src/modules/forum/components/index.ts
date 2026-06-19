@@ -1,9 +1,9 @@
 export { CategoryCard } from "./category-card";
+export { EmptyForumState } from "./empty-forum-state";
+export { ForumBreadcrumbs } from "./forum-breadcrumbs";
 export { ForumCard } from "./forum-card";
-export { SubForumList } from "./subforum-list";
 export { ForumHeader } from "./forum-header";
 export { ForumSidebar } from "./forum-sidebar";
-export { ForumBreadcrumbs } from "./forum-breadcrumbs";
 export { ForumStats } from "./forum-stats";
 export { MobileForumMenu } from "./mobile-forum-menu";
-export { EmptyForumState } from "./empty-forum-state";
+export { SubForumList } from "./subforum-list";

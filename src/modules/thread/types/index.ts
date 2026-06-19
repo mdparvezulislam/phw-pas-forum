@@ -1,4 +1,8 @@
-import type { Thread, ThreadStatus, ThreadVisibility } from "@/db/schema/threads";
+import type {
+  Thread,
+  ThreadStatus,
+  ThreadVisibility,
+} from "@/db/schema/threads";
 
 export interface ThreadWithRelations extends Thread {
   author: {

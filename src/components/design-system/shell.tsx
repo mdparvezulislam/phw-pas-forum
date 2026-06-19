@@ -5,11 +5,7 @@ interface ShellProps {
 }
 
 export function Shell({ children }: ShellProps) {
-  return (
-    <div className="relative flex min-h-screen flex-col">
-      {children}
-    </div>
-  );
+  return <div className="relative flex min-h-screen flex-col">{children}</div>;
 }
 
 export function ShellHeader({ children }: { children: ReactNode }) {

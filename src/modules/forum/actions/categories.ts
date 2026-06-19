@@ -1,20 +1,20 @@
 "use server";
 
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getDatabase, schema } from "@/db";
-import { eq } from "drizzle-orm";
-import { auth } from "@/lib/auth";
-import { auditService } from "@/services/audit";
-import { requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
-import { slugify } from "@/lib/utils";
-import {
-  createCategorySchema,
-  updateCategorySchema,
-  type CreateCategoryInput,
-  type UpdateCategoryInput,
-} from "@/validations/forum";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
+import { auth } from "@/lib/auth";
+import { slugify } from "@/lib/utils";
+import { requireRole } from "@/modules/auth/guards";
+import { auditService } from "@/services/audit";
+import { RoleName } from "@/types/rbac";
+import {
+  type CreateCategoryInput,
+  createCategorySchema,
+  type UpdateCategoryInput,
+  updateCategorySchema,
+} from "@/validations/forum";
 
 export type CategoryActionState = {
   error?: string;
@@ -29,7 +29,9 @@ export async function createCategory(
 
   const raw: CreateCategoryInput = {
     title: formData.get("title") as string,
-    slug: (formData.get("slug") as string) || slugify(formData.get("title") as string),
+    slug:
+      (formData.get("slug") as string) ||
+      slugify(formData.get("title") as string),
     description: (formData.get("description") as string) || undefined,
     icon: (formData.get("icon") as string) || undefined,
     color: (formData.get("color") as string) || undefined,
@@ -40,17 +42,23 @@ export async function createCategory(
 
   const parsed = createCategorySchema.safeParse(raw);
   if (!parsed.success) {
-    return { error: parsed.error.flatten().fieldErrors.title?.[0] ?? "Invalid input" };
+    return {
+      error: parsed.error.flatten().fieldErrors.title?.[0] ?? "Invalid input",
+    };
   }
 
   const db = getDatabase();
   await db.insert(schema.categories).values(parsed.data);
 
   const session = await auth();
-  await auditService.log(session?.user?.id ?? null, AUDIT_ACTIONS.FORUM_CATEGORY_CREATE, {
-    resource: "category",
-    metadata: { title: parsed.data.title, slug: parsed.data.slug },
-  });
+  await auditService.log(
+    session?.user?.id ?? null,
+    AUDIT_ACTIONS.FORUM_CATEGORY_CREATE,
+    {
+      resource: "category",
+      metadata: { title: parsed.data.title, slug: parsed.data.slug },
+    },
+  );
 
   revalidatePath("/forums");
   revalidatePath("/admin/categories");
@@ -70,9 +78,17 @@ export async function updateCategory(
     description: (formData.get("description") as string) || undefined,
     icon: (formData.get("icon") as string) || undefined,
     color: (formData.get("color") as string) || undefined,
-    position: formData.get("position") ? Number(formData.get("position")) : undefined,
-    isVisible: formData.get("isVisible") !== undefined ? formData.get("isVisible") === "on" : undefined,
-    isPremiumOnly: formData.get("isPremiumOnly") !== undefined ? formData.get("isPremiumOnly") === "on" : undefined,
+    position: formData.get("position")
+      ? Number(formData.get("position"))
+      : undefined,
+    isVisible:
+      formData.get("isVisible") !== undefined
+        ? formData.get("isVisible") === "on"
+        : undefined,
+    isPremiumOnly:
+      formData.get("isPremiumOnly") !== undefined
+        ? formData.get("isPremiumOnly") === "on"
+        : undefined,
   };
 
   const parsed = updateCategorySchema.safeParse(raw);
@@ -87,10 +103,14 @@ export async function updateCategory(
     .where(eq(schema.categories.id, parsed.data.id));
 
   const session = await auth();
-  await auditService.log(session?.user?.id ?? null, AUDIT_ACTIONS.FORUM_CATEGORY_UPDATE, {
-    resource: "category",
-    resourceId: parsed.data.id,
-  });
+  await auditService.log(
+    session?.user?.id ?? null,
+    AUDIT_ACTIONS.FORUM_CATEGORY_UPDATE,
+    {
+      resource: "category",
+      resourceId: parsed.data.id,
+    },
+  );
 
   revalidatePath("/forums");
   revalidatePath("/admin/categories");
@@ -110,10 +130,14 @@ export async function deleteCategory(
   await db.delete(schema.categories).where(eq(schema.categories.id, id));
 
   const session = await auth();
-  await auditService.log(session?.user?.id ?? null, AUDIT_ACTIONS.FORUM_CATEGORY_DELETE, {
-    resource: "category",
-    resourceId: id,
-  });
+  await auditService.log(
+    session?.user?.id ?? null,
+    AUDIT_ACTIONS.FORUM_CATEGORY_DELETE,
+    {
+      resource: "category",
+      resourceId: id,
+    },
+  );
 
   revalidatePath("/forums");
   revalidatePath("/admin/categories");

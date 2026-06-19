@@ -1,8 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
-import { deleteCategory } from "@/modules/forum/actions";
 import { Button } from "@/components/ui";
+import { deleteCategory } from "@/modules/forum/actions";
 
 interface CategoryDeleteButtonProps {
   id: string;

@@ -1,9 +1,8 @@
 import "server-only";
 
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
-import { eq, and, desc, asc, sql, count } from "drizzle-orm";
-import type { Post, PostStatus } from "@/db/schema/posts";
-import type { PostReportStatus } from "@/db/schema/post-reports";
+import type { Post } from "@/db/schema/posts";
 import type { PaginatedResult } from "@/modules/thread/types";
 
 export interface PostWithAuthor extends Post {
@@ -24,21 +23,19 @@ export interface PostListOptions {
   includeDeleted?: boolean;
 }
 
-const postWithAuthor = {
-  with: {
-    author: {
-      columns: { id: true, username: true, displayName: true, image: true, createdAt: true },
-    },
-  },
-} as any;
-
 export async function getPosts(
   options: PostListOptions,
 ): Promise<PaginatedResult<PostWithAuthor>> {
   const db = getDatabase();
-  const { threadId, page, perPage, sort = "asc", includeDeleted = false } = options;
+  const {
+    threadId,
+    page,
+    perPage,
+    sort = "asc",
+    includeDeleted = false,
+  } = options;
 
-  const conditions: any[] = [eq(schema.posts.threadId, threadId)];
+  const conditions = [eq(schema.posts.threadId, threadId)];
   if (!includeDeleted) {
     conditions.push(sql`${schema.posts.status} != 'DELETED'`);
   }
@@ -51,15 +48,28 @@ export async function getPosts(
     .where(where)
     .then((r) => Number(r[0].count));
 
-  const orderBy = sort === "desc" ? [desc(schema.posts.postNumber)] : [asc(schema.posts.postNumber)];
+  const orderBy =
+    sort === "desc"
+      ? [desc(schema.posts.postNumber)]
+      : [asc(schema.posts.postNumber)];
 
-  const items = await (db.query.posts as any).findMany({
+  const items = (await db.query.posts.findMany({
     where,
     orderBy,
     limit: perPage,
     offset: (page - 1) * perPage,
-    ...postWithAuthor,
-  }) as PostWithAuthor[];
+    with: {
+      author: {
+        columns: {
+          id: true,
+          username: true,
+          displayName: true,
+          image: true,
+          createdAt: true,
+        },
+      },
+    },
+  })) as PostWithAuthor[];
 
   return {
     items,
@@ -72,17 +82,29 @@ export async function getPosts(
 
 export async function getPostById(id: string): Promise<PostWithAuthor | null> {
   const db = getDatabase();
-  const post = await (db.query.posts as any).findFirst({
-    where: (p: any, { eq }: any) => eq(p.id, id),
-    ...postWithAuthor,
-  }) as PostWithAuthor | null;
+  const post = (await db.query.posts.findFirst({
+    where: (posts, { eq }) => eq(posts.id, id),
+    with: {
+      author: {
+        columns: {
+          id: true,
+          username: true,
+          displayName: true,
+          image: true,
+          createdAt: true,
+        },
+      },
+    },
+  })) as PostWithAuthor | null;
   return post;
 }
 
 export async function getNextPostNumber(threadId: string): Promise<number> {
   const db = getDatabase();
   const result = await db
-    .select({ maxPostNumber: sql<number>`coalesce(max(${schema.posts.postNumber}), 0)` })
+    .select({
+      maxPostNumber: sql<number>`coalesce(max(${schema.posts.postNumber}), 0)`,
+    })
     .from(schema.posts)
     .where(eq(schema.posts.threadId, threadId))
     .then((r) => Number(r[0].maxPostNumber));
@@ -104,9 +126,25 @@ export async function getPostCount(threadId: string): Promise<number> {
   return result;
 }
 
-export async function getPostHistory(postId: string) {
+export interface PostEditHistoryItem {
+  id: string;
+  postId: string;
+  previousContent: string;
+  editedBy: string;
+  reason: string | null;
+  editedAt: Date;
+  editor: {
+    id: string;
+    username: string | null;
+    displayName: string | null;
+  };
+}
+
+export async function getPostHistory(
+  postId: string,
+): Promise<PostEditHistoryItem[]> {
   const db = getDatabase();
-  return db.query.postEditHistory.findMany({
+  return (await db.query.postEditHistory.findMany({
     where: (h, { eq }) => eq(h.postId, postId),
     orderBy: (h, { desc }) => desc(h.editedAt),
     with: {
@@ -114,12 +152,47 @@ export async function getPostHistory(postId: string) {
         columns: { id: true, username: true, displayName: true },
       },
     },
-  }) as any[];
+  })) as PostEditHistoryItem[];
 }
 
-export async function getOpenReports(limit = 50, offset = 0) {
+export interface PostReportItem {
+  id: string;
+  postId: string;
+  reporterId: string;
+  reason: string;
+  description: string | null;
+  status: string;
+  resolvedBy: string | null;
+  resolvedAt: Date | null;
+  createdAt: Date;
+  post: {
+    id: string;
+    content: string;
+    postNumber: number;
+    thread: {
+      id: string;
+      title: string;
+      slug: string;
+    };
+    author: {
+      id: string;
+      username: string | null;
+      displayName: string | null;
+    };
+  };
+  reporter: {
+    id: string;
+    username: string | null;
+    displayName: string | null;
+  };
+}
+
+export async function getOpenReports(
+  limit = 50,
+  offset = 0,
+): Promise<PostReportItem[]> {
   const db = getDatabase();
-  return db.query.postReports.findMany({
+  return (await db.query.postReports.findMany({
     where: (r, { eq }) => eq(r.status, "OPEN"),
     orderBy: (r, { desc }) => desc(r.createdAt),
     limit,
@@ -140,7 +213,7 @@ export async function getOpenReports(limit = 50, offset = 0) {
         columns: { id: true, username: true, displayName: true },
       },
     },
-  }) as any[];
+  })) as PostReportItem[];
 }
 
 export async function getReportCount(): Promise<number> {

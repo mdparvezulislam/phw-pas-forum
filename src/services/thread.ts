@@ -1,7 +1,11 @@
+import { and, asc, desc, eq, ne, or, sql } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
-import { eq, and, desc, asc, sql, or, ne } from "drizzle-orm";
 import type { Thread, ThreadStatus } from "@/db/schema/threads";
-import type { ThreadListOptions, ThreadWithRelations, PaginatedResult } from "@/modules/thread/types";
+import type {
+  PaginatedResult,
+  ThreadListOptions,
+  ThreadWithRelations,
+} from "@/modules/thread/types";
 
 const threadWithRelations = {
   with: {
@@ -14,17 +18,30 @@ const threadWithRelations = {
   },
 } as any;
 
-export async function getThreads(options: ThreadListOptions): Promise<PaginatedResult<ThreadWithRelations>> {
+export async function getThreads(
+  options: ThreadListOptions,
+): Promise<PaginatedResult<ThreadWithRelations>> {
   const db = getDatabase();
-  const { forumId, authorId, status, isPinned, isFeatured, page, perPage, sort } = options;
+  const {
+    forumId,
+    authorId,
+    status,
+    isPinned,
+    isFeatured,
+    page,
+    perPage,
+    sort,
+  } = options;
 
   const conditions: any[] = [];
   if (forumId) conditions.push(eq(schema.threads.forumId, forumId));
   if (authorId) conditions.push(eq(schema.threads.authorId, authorId));
   if (status) conditions.push(eq(schema.threads.status, status));
   else conditions.push(ne(schema.threads.status, "DELETED"));
-  if (isPinned !== undefined) conditions.push(eq(schema.threads.isPinned, isPinned));
-  if (isFeatured !== undefined) conditions.push(eq(schema.threads.isFeatured, isFeatured));
+  if (isPinned !== undefined)
+    conditions.push(eq(schema.threads.isPinned, isPinned));
+  if (isFeatured !== undefined)
+    conditions.push(eq(schema.threads.isFeatured, isFeatured));
 
   const where = conditions.length > 0 ? and(...conditions) : undefined;
 
@@ -36,20 +53,27 @@ export async function getThreads(options: ThreadListOptions): Promise<PaginatedR
 
   const orderBy = (() => {
     switch (sort) {
-      case "oldest": return [asc(schema.threads.publishedAt)];
-      case "most_viewed": return [desc(schema.threads.viewCount)];
-      case "most_replies": return [desc(schema.threads.replyCount)];
-      default: return [desc(schema.threads.isPinned), desc(schema.threads.publishedAt)];
+      case "oldest":
+        return [asc(schema.threads.publishedAt)];
+      case "most_viewed":
+        return [desc(schema.threads.viewCount)];
+      case "most_replies":
+        return [desc(schema.threads.replyCount)];
+      default:
+        return [
+          desc(schema.threads.isPinned),
+          desc(schema.threads.publishedAt),
+        ];
     }
   })();
 
-  const items = await (db.query.threads as any).findMany({
+  const items = (await (db.query.threads as any).findMany({
     where,
     orderBy,
     limit: perPage,
     offset: (page - 1) * perPage,
     ...threadWithRelations,
-  }) as ThreadWithRelations[];
+  })) as ThreadWithRelations[];
 
   return {
     items,
@@ -60,21 +84,25 @@ export async function getThreads(options: ThreadListOptions): Promise<PaginatedR
   };
 }
 
-export async function getThread(slug: string): Promise<ThreadWithRelations | null> {
+export async function getThread(
+  slug: string,
+): Promise<ThreadWithRelations | null> {
   const db = getDatabase();
-  const thread = await (db.query.threads as any).findFirst({
+  const thread = (await (db.query.threads as any).findFirst({
     where: (t: any, { eq }: any) => eq(t.slug, slug),
     ...threadWithRelations,
-  }) as ThreadWithRelations | null;
+  })) as ThreadWithRelations | null;
   return thread;
 }
 
-export async function getThreadById(id: string): Promise<ThreadWithRelations | null> {
+export async function getThreadById(
+  id: string,
+): Promise<ThreadWithRelations | null> {
   const db = getDatabase();
-  const thread = await (db.query.threads as any).findFirst({
+  const thread = (await (db.query.threads as any).findFirst({
     where: (t: any, { eq }: any) => eq(t.id, id),
     ...threadWithRelations,
-  }) as ThreadWithRelations | null;
+  })) as ThreadWithRelations | null;
   return thread;
 }
 
@@ -86,21 +114,29 @@ export async function incrementThreadView(id: string): Promise<void> {
     .where(eq(schema.threads.id, id));
 }
 
-export async function getPinnedThreads(forumId: string): Promise<ThreadWithRelations[]> {
+export async function getPinnedThreads(
+  forumId: string,
+): Promise<ThreadWithRelations[]> {
   const db = getDatabase();
-  const items = await (db.query.threads as any).findMany({
+  const items = (await (db.query.threads as any).findMany({
     where: (t: any, { and, eq }: any) =>
-      and(eq(t.forumId, forumId), eq(t.isPinned, true), ne(t.status, "DELETED")),
+      and(
+        eq(t.forumId, forumId),
+        eq(t.isPinned, true),
+        ne(t.status, "DELETED"),
+      ),
     orderBy: (t: any, { desc }: any) => desc(t.publishedAt),
     ...threadWithRelations,
-  }) as ThreadWithRelations[];
+  })) as ThreadWithRelations[];
   return items;
 }
 
 export async function getThreadWithUserState(
   slug: string,
   userId: string | null,
-): Promise<ThreadWithRelations & { isWatched: boolean; isBookmarked: boolean } | null> {
+): Promise<
+  (ThreadWithRelations & { isWatched: boolean; isBookmarked: boolean }) | null
+> {
   const thread = await getThread(slug);
   if (!thread) return null;
 

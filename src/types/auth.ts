@@ -1,5 +1,5 @@
 import type { User } from "@/db/schema/users";
-import type { RoleName, Permission } from "./rbac";
+import type { Permission, RoleName } from "./rbac";
 
 export type SessionUser = Pick<
   User,

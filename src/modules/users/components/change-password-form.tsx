@@ -1,11 +1,14 @@
 "use client";
 
 import { useActionState } from "react";
-import { changePassword } from "@/modules/users/actions";
 import { Button, Input, Label } from "@/components/ui";
+import { changePassword } from "@/modules/users/actions";
 
 export function ChangePasswordForm() {
-  const [state, formAction, pending] = useActionState(changePassword, undefined);
+  const [state, formAction, pending] = useActionState(
+    changePassword,
+    undefined,
+  );
 
   return (
     <form action={formAction} className="space-y-4">

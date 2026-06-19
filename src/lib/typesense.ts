@@ -105,14 +105,17 @@ export class SearchClient {
       perPage?: number;
     } = {},
   ): Promise<SearchResult> {
-    return this.client.collections(collection).documents().search({
-      q: query,
-      query_by: options.queryBy ?? "name",
-      filter_by: options.filterBy,
-      sort_by: options.sortBy,
-      page: options.page ?? 1,
-      per_page: options.perPage ?? 20,
-    });
+    return this.client
+      .collections(collection)
+      .documents()
+      .search({
+        q: query,
+        query_by: options.queryBy ?? "name",
+        filter_by: options.filterBy,
+        sort_by: options.sortBy,
+        page: options.page ?? 1,
+        per_page: options.perPage ?? 20,
+      });
   }
 
   async health(): Promise<boolean> {

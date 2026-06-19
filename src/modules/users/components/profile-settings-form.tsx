@@ -1,8 +1,8 @@
 "use client";
 
 import { useActionState } from "react";
-import { updateProfile } from "@/modules/users/actions";
 import { Button, Input, Label } from "@/components/ui";
+import { updateProfile } from "@/modules/users/actions";
 
 interface ProfileSettingsFormProps {
   displayName: string;

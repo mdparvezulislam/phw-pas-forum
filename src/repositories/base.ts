@@ -1,6 +1,6 @@
 import "server-only";
 
-import { getDatabase, type Database } from "@/db";
+import { type Database, getDatabase } from "@/db";
 
 export abstract class BaseRepository {
   protected db: Database;

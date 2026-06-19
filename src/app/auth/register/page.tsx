@@ -10,9 +10,7 @@ export default function RegisterPage() {
     <div className="space-y-6">
       <div className="text-center">
         <h1 className="text-2xl font-bold">Create an account</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Join our community
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">Join our community</p>
       </div>
       <RegisterForm />
     </div>

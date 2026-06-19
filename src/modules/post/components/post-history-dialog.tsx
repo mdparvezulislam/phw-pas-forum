@@ -5,15 +5,19 @@ import { formatDateRelative } from "@/lib/utils";
 import type { PostEditHistoryItem } from "@/modules/post/types";
 
 interface PostHistoryDialogProps {
-  postId: string;
   postNumber: number;
   currentContent: string;
   history: PostEditHistoryItem[];
 }
 
-export function PostHistoryDialog({ postId, postNumber, currentContent, history }: PostHistoryDialogProps) {
+export function PostHistoryDialog({
+  postNumber,
+  currentContent,
+  history,
+}: PostHistoryDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedVersion, setSelectedVersion] = useState<PostEditHistoryItem | null>(null);
+  const [selectedVersion, setSelectedVersion] =
+    useState<PostEditHistoryItem | null>(null);
 
   if (history.length === 0) return null;
 
@@ -39,8 +43,19 @@ export function PostHistoryDialog({ postId, postNumber, currentContent, history 
                 onClick={() => setIsOpen(false)}
                 className="rounded p-1 hover:bg-accent"
               >
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -53,7 +68,9 @@ export function PostHistoryDialog({ postId, postNumber, currentContent, history 
                       Current Version
                     </span>
                   </div>
-                  <p className="whitespace-pre-wrap text-sm">{currentContent}</p>
+                  <p className="whitespace-pre-wrap text-sm">
+                    {currentContent}
+                  </p>
                 </div>
 
                 {history.map((item) => (
@@ -69,12 +86,17 @@ export function PostHistoryDialog({ postId, postNumber, currentContent, history 
                           {item.editor.displayName ?? item.editor.username}
                         </span>
                         <span className="text-muted-foreground">
-                          {" "}edited {formatDateRelative(item.editedAt)}
+                          {" "}
+                          edited {formatDateRelative(item.editedAt)}
                         </span>
                       </div>
                       <button
                         type="button"
-                        onClick={() => setSelectedVersion(selectedVersion?.id === item.id ? null : item)}
+                        onClick={() =>
+                          setSelectedVersion(
+                            selectedVersion?.id === item.id ? null : item,
+                          )
+                        }
                         className="text-xs text-primary hover:underline"
                       >
                         {selectedVersion?.id === item.id ? "Hide" : "View"}
@@ -87,7 +109,9 @@ export function PostHistoryDialog({ postId, postNumber, currentContent, history 
                     )}
                     {selectedVersion?.id === item.id && (
                       <div className="mt-2 rounded border bg-muted/30 p-2">
-                        <p className="whitespace-pre-wrap text-sm">{item.previousContent}</p>
+                        <p className="whitespace-pre-wrap text-sm">
+                          {item.previousContent}
+                        </p>
                       </div>
                     )}
                   </div>

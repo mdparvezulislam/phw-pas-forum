@@ -1,7 +1,7 @@
-import type { ThreadWithRelations } from "@/modules/thread/types";
 import { formatDateRelative } from "@/lib/utils";
-import { ThreadStatusBadge } from "./thread-status-badge";
+import type { ThreadWithRelations } from "@/modules/thread/types";
 import { ThreadActions } from "./thread-actions";
+import { ThreadStatusBadge } from "./thread-status-badge";
 
 interface ThreadHeaderProps {
   thread: ThreadWithRelations;
@@ -10,13 +10,20 @@ interface ThreadHeaderProps {
   isOwner?: boolean;
 }
 
-export function ThreadHeader({ thread, categorySlug, forumSlug, isOwner }: ThreadHeaderProps) {
+export function ThreadHeader({
+  thread,
+  categorySlug,
+  forumSlug,
+  isOwner,
+}: ThreadHeaderProps) {
   return (
     <div className="mb-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl font-bold tracking-tight">{thread.title}</h1>
+            <h1 className="text-2xl font-bold tracking-tight">
+              {thread.title}
+            </h1>
             <ThreadStatusBadge status={thread.status} />
             {thread.isPinned && (
               <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
@@ -37,7 +44,9 @@ export function ThreadHeader({ thread, categorySlug, forumSlug, isOwner }: Threa
               </span>
             </span>
             <span aria-hidden="true">·</span>
-            <span>{formatDateRelative(thread.publishedAt ?? thread.createdAt)}</span>
+            <span>
+              {formatDateRelative(thread.publishedAt ?? thread.createdAt)}
+            </span>
             <span aria-hidden="true">·</span>
             <span>{thread.replyCount} replies</span>
             <span aria-hidden="true">·</span>

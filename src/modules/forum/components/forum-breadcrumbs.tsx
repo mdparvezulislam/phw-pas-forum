@@ -21,7 +21,9 @@ export function ForumBreadcrumbs({ items }: ForumBreadcrumbsProps) {
           {i === items.length - 1 ? (
             <span className="text-foreground">{item.label}</span>
           ) : item.href ? (
-            <Link href={item.href} className="hover:text-foreground">{item.label}</Link>
+            <Link href={item.href} className="hover:text-foreground">
+              {item.label}
+            </Link>
           ) : (
             <span className="text-foreground">{item.label}</span>
           )}

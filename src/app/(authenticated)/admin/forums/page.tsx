@@ -1,10 +1,10 @@
+import { asc } from "drizzle-orm";
 import type { Metadata } from "next";
 import { getDatabase, schema } from "@/db";
-import { asc } from "drizzle-orm";
 import { requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
-import { ForumForm } from "@/modules/forum/components/forum-form";
 import { ForumDeleteButton } from "@/modules/forum/components/forum-delete-button";
+import { ForumForm } from "@/modules/forum/components/forum-form";
+import { RoleName } from "@/types/rbac";
 
 export const metadata: Metadata = {
   title: "Manage Forums",
@@ -43,8 +43,8 @@ export default async function AdminForumsPage() {
                 <div>
                   <div className="font-medium">{forum.title}</div>
                   <div className="text-sm text-muted-foreground">
-                    /{(forum as any).category?.title ?? "Unknown"} &middot; Position{" "}
-                    {forum.position}
+                    /{(forum as any).category?.title ?? "Unknown"} &middot;
+                    Position {forum.position}
                     {!forum.isVisible && " · Hidden"}
                     {forum.isLocked && " · Locked"}
                   </div>

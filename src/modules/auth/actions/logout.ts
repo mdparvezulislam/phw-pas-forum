@@ -1,8 +1,8 @@
 "use server";
 
-import { signOut, auth } from "@/lib/auth";
-import { auditService } from "@/services/audit";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
+import { auth, signOut } from "@/lib/auth";
+import { auditService } from "@/services/audit";
 
 export async function logout() {
   const session = await auth();

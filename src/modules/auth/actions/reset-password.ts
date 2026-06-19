@@ -1,16 +1,19 @@
 "use server";
 
+import { and, eq, gt, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { getDatabase, schema } from "@/db";
-import { eq, and, gt, isNull } from "drizzle-orm";
+import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
 import { hashPassword } from "@/modules/auth/helpers";
 import { auditService } from "@/services/audit";
-import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
 
 const resetPasswordSchema = z
   .object({
     token: z.string().min(1),
-    password: z.string().min(8, "Password must be at least 8 characters").max(128),
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .max(128),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {

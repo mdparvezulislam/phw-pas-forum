@@ -1,10 +1,10 @@
 "use client";
 
 import { useActionState } from "react";
-import { createForum, updateForum } from "@/modules/forum/actions";
 import { Button, Input, Label } from "@/components/ui";
-import type { Forum } from "@/db/schema/forums";
 import type { Category } from "@/db/schema/categories";
+import type { Forum } from "@/db/schema/forums";
+import { createForum, updateForum } from "@/modules/forum/actions";
 
 interface ForumFormProps {
   categories: Category[];
@@ -12,11 +12,7 @@ interface ForumFormProps {
   forum?: Forum;
 }
 
-export function ForumForm({
-  categories,
-  parentForums,
-  forum,
-}: ForumFormProps) {
+export function ForumForm({ categories, parentForums, forum }: ForumFormProps) {
   const action = forum ? updateForum : createForum;
   const [state, formAction, pending] = useActionState(action, undefined);
 
@@ -27,12 +23,7 @@ export function ForumForm({
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="space-y-1">
           <Label htmlFor="title">Title</Label>
-          <Input
-            id="title"
-            name="title"
-            defaultValue={forum?.title}
-            required
-          />
+          <Input id="title" name="title" defaultValue={forum?.title} required />
         </div>
         <div className="space-y-1">
           <Label htmlFor="slug">Slug</Label>

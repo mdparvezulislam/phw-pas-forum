@@ -1,12 +1,11 @@
 import "server-only";
 
-import { hash, compare } from "bcryptjs";
-import { getDatabase } from "@/db";
-import { schema } from "@/db";
-import { RoleName, ROLE_PERMISSIONS } from "@/types/rbac";
-import type { SessionUser } from "@/types/auth";
+import { compare, hash } from "bcryptjs";
+import { getDatabase, schema } from "@/db";
 import type { User } from "@/db/schema/users";
+import type { SessionUser } from "@/types/auth";
 import type { Permission } from "@/types/rbac";
+import { ROLE_PERMISSIONS, RoleName } from "@/types/rbac";
 
 export async function hashPassword(password: string): Promise<string> {
   return hash(password, 12);
