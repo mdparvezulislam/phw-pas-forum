@@ -1,8 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useActionState } from "react";
+import { useActionState, useCallback } from "react";
 import { createThread } from "@/modules/thread/actions";
+import { RichTextEditor } from "@/modules/editor/components";
+import { useEditorForm } from "@/modules/editor/hooks/use-editor-form";
 
 interface CreateThreadFormProps {
   forumId: string;
@@ -11,14 +13,32 @@ interface CreateThreadFormProps {
 export function CreateThreadForm({ forumId }: CreateThreadFormProps) {
   const router = useRouter();
   const [state, action, pending] = useActionState(createThread, undefined);
+  const { handleEditorChange, handleFormSubmit, contentJsonRef, contentRef } =
+    useEditorForm();
 
   if (state?.success && state.threadId) {
     router.push(`/forums`);
   }
 
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      handleFormSubmit();
+    },
+    [handleFormSubmit],
+  );
+
   return (
-    <form action={action} className="space-y-4">
+    <form action={action} onSubmit={handleSubmit} className="space-y-4">
       <input type="hidden" name="forumId" value={forumId} />
+      <input type="hidden" name="contentJson" ref={contentJsonRef} />
+      <textarea
+        name="content"
+        className="hidden"
+        defaultValue=""
+        tabIndex={-1}
+        aria-hidden="true"
+        ref={contentRef}
+      />
       <div>
         <label htmlFor="title" className="mb-1 block text-sm font-medium">
           Title
@@ -34,17 +54,14 @@ export function CreateThreadForm({ forumId }: CreateThreadFormProps) {
         />
       </div>
       <div>
-        <label htmlFor="content" className="mb-1 block text-sm font-medium">
+        <label htmlFor="thread-content" className="mb-1 block text-sm font-medium">
           Content
         </label>
-        <textarea
-          id="content"
-          name="content"
-          required
-          rows={12}
-          minLength={10}
+        <RichTextEditor
+          onChange={handleEditorChange}
+          placeholder="Write your thread content..."
           maxLength={100000}
-          className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          minHeight="200px"
         />
       </div>
       <div>

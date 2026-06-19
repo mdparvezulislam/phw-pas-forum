@@ -44,6 +44,7 @@ export async function createThread(
     forumId: formData.get("forumId") as string,
     title: formData.get("title") as string,
     content: formData.get("content") as string,
+    contentJson: (formData.get("contentJson") as string) || null,
     tags: (formData.get("tags") as string)
       ?.split(",")
       .map((t) => t.trim())
@@ -83,6 +84,7 @@ export async function createThread(
       title: parsed.data.title,
       slug,
       content: parsed.data.content,
+      contentJson: parsed.data.contentJson ?? undefined,
       excerpt,
       status: parsed.data.status,
       publishedAt: parsed.data.status === "PUBLISHED" ? new Date() : null,

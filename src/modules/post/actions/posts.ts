@@ -28,6 +28,7 @@ export async function createPost(
   const raw: CreatePostInput = {
     threadId: formData.get("threadId") as string,
     content: formData.get("content") as string,
+    contentJson: (formData.get("contentJson") as string) || null,
   };
 
   const parsed = createPostSchema.safeParse(raw);
@@ -58,6 +59,7 @@ export async function createPost(
       threadId: parsed.data.threadId,
       authorId: user.id,
       content: parsed.data.content,
+      contentJson: parsed.data.contentJson ?? undefined,
       postNumber,
       status: "PUBLISHED",
     })
@@ -98,6 +100,7 @@ export async function updatePost(
   const raw = {
     id: formData.get("id") as string,
     content: formData.get("content") as string,
+    contentJson: (formData.get("contentJson") as string) || null,
     reason: formData.get("reason") as string | null,
   };
 
@@ -133,6 +136,7 @@ export async function updatePost(
     .update(schema.posts)
     .set({
       content: parsed.data.content,
+      contentJson: parsed.data.contentJson ?? undefined,
       isEdited: true,
       editedAt: new Date(),
     })

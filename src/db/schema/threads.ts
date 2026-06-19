@@ -1,6 +1,7 @@
 import {
   boolean,
   integer,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -33,6 +34,7 @@ export const threads = pgTable("thread", {
   title: text("title").notNull(),
   slug: text("slug").notNull(),
   content: text("content").notNull(),
+  contentJson: jsonb("content_json"),
   excerpt: text("excerpt"),
   status: text("status", { enum: threadStatus })
     .$type<ThreadStatus>()

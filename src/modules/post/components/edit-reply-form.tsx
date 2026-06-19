@@ -1,8 +1,12 @@
 "use client";
 
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useActionState } from "react";
 import { updatePost } from "@/modules/post/actions";
 import type { PostWithAuthor } from "@/modules/post/types";
+import { RichTextEditor } from "@/modules/editor/components";
+import { generatePlainText } from "@/modules/editor/utils/content";
+import type { JSONContent } from "@tiptap/core";
 
 interface EditReplyFormProps {
   post: PostWithAuthor;
@@ -11,10 +15,44 @@ interface EditReplyFormProps {
 
 export function EditReplyForm({ post, onCancel }: EditReplyFormProps) {
   const [state, action, pending] = useActionState(updatePost, undefined);
+  const [editorJson, setEditorJson] = useState<JSONContent | null>(null);
+  const contentJsonRef = useRef<HTMLInputElement>(null);
+  const contentRef = useRef<HTMLTextAreaElement>(null);
+
+  const [initialContent, setInitialContent] = useState<
+    JSONContent | string | null
+  >(null);
+
+  useEffect(() => {
+    if (post.contentJson) {
+      try {
+        setInitialContent(
+          JSON.parse(post.contentJson as string) as JSONContent,
+        );
+      } catch {
+        setInitialContent(post.content);
+      }
+    } else {
+      setInitialContent(post.content);
+    }
+  }, [post.contentJson, post.content]);
 
   if (state?.success) {
     onCancel();
   }
+
+  const handleEditorChange = useCallback((json: JSONContent) => {
+    setEditorJson(json);
+  }, []);
+
+  const handleSubmit = useCallback(() => {
+    if (editorJson && contentJsonRef.current) {
+      contentJsonRef.current.value = JSON.stringify(editorJson);
+    }
+    if (editorJson && contentRef.current) {
+      contentRef.current.value = generatePlainText(editorJson);
+    }
+  }, [editorJson]);
 
   return (
     <div className="rounded-lg border bg-card">
@@ -22,28 +60,26 @@ export function EditReplyForm({ post, onCancel }: EditReplyFormProps) {
         <h3 className="text-sm font-semibold">Edit Post #{post.postNumber}</h3>
       </div>
 
-      <form action={action} className="p-4">
+      <form action={action} onSubmit={handleSubmit} className="p-4">
         <input type="hidden" name="id" value={post.id} />
+        <input type="hidden" name="contentJson" ref={contentJsonRef} />
+        <textarea
+          name="content"
+          className="hidden"
+          defaultValue={post.content}
+          tabIndex={-1}
+          aria-hidden="true"
+          ref={contentRef}
+        />
 
         <div className="space-y-4">
-          <div>
-            <label
-              htmlFor={`edit-content-${post.id}`}
-              className="mb-1 block text-sm font-medium"
-            >
-              Content
-            </label>
-            <textarea
-              id={`edit-content-${post.id}`}
-              name="content"
-              required
-              rows={6}
-              minLength={2}
-              maxLength={50000}
-              defaultValue={post.content}
-              className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
+          <RichTextEditor
+            content={initialContent}
+            onChange={handleEditorChange}
+            placeholder="Edit your post..."
+            maxLength={50000}
+            minHeight="150px"
+          />
 
           <div>
             <label

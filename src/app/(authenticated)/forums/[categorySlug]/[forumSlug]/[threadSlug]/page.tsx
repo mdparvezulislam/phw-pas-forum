@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasPermission } from "@/config/rbac";
 import { auth } from "@/lib/auth";
+import { ContentRenderer } from "@/modules/editor/components";
 import { ForumSidebar } from "@/modules/forum/components";
 import { PostCard, PostPagination, ReplyForm } from "@/modules/post/components";
 import {
@@ -117,9 +118,7 @@ export default async function ThreadPage(props: ThreadPageProps) {
         />
 
         <div className="rounded-lg border bg-card p-6">
-          <div className="prose prose-sm dark:prose-invert max-w-none">
-            {thread.content}
-          </div>
+          <ContentRenderer content={thread.contentJson ?? thread.content} />
         </div>
 
         <div className="space-y-4">

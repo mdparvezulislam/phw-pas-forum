@@ -41,9 +41,19 @@ export const FILE_LIMITS = {
     "image/jpeg",
     "image/png",
     "image/webp",
+    "image/gif",
     "application/pdf",
     "application/zip",
+    "application/x-rar-compressed",
+    "video/mp4",
   ],
+  IMAGE_ALLOWED_TYPES: ["image/jpeg", "image/png", "image/webp", "image/gif"],
+  DOCUMENT_ALLOWED_TYPES: ["application/pdf", "application/zip", "application/x-rar-compressed"],
+  VIDEO_ALLOWED_TYPES: ["video/mp4"],
+  IMAGE_MAX_SIZE: 5 * 1024 * 1024,
+  VIDEO_MAX_SIZE: 50 * 1024 * 1024,
+  DOCUMENT_MAX_SIZE: 10 * 1024 * 1024,
+  MAX_IMAGE_DIMENSIONS: { width: 4096, height: 4096 },
 } as const;
 
 export const USERNAME_REGEX = /^[a-zA-Z0-9_-]{3,30}$/;

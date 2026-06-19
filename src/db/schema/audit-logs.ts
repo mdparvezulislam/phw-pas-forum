@@ -64,4 +64,11 @@ export const AUDIT_ACTIONS = {
   POST_REPORT_CREATE: "post_report:create",
   POST_REPORT_RESOLVE: "post_report:resolve",
   POST_REPORT_REJECT: "post_report:reject",
+  ATTACHMENT_UPLOAD: "attachment:upload",
+  ATTACHMENT_DELETE: "attachment:delete",
+  ATTACHMENT_DELETE_OWN: "attachment:delete_own",
+  MEDIA_UPLOAD: "media:upload",
+  MEDIA_DELETE: "media:delete",
+  EDITOR_DRAFT_SAVE: "editor_draft:save",
+  EDITOR_DRAFT_RECOVER: "editor_draft:recover",
 } as const;

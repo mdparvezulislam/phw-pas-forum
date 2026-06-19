@@ -2,6 +2,7 @@ import {
   boolean,
   index,
   integer,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -30,6 +31,7 @@ export const posts = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     content: text("content").notNull(),
+    contentJson: jsonb("content_json"),
     postNumber: integer("post_number").notNull(),
     status: text("status", { enum: postStatus })
       .$type<PostStatus>()

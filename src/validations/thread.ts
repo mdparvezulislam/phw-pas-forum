@@ -1,5 +1,23 @@
 import { z } from "zod";
 
+const contentJsonField = z
+  .string()
+  .max(500_000, "Content JSON is too large")
+  .transform((val) => {
+    try {
+      const parsed = JSON.parse(val);
+      if (!parsed || typeof parsed !== "object" || !parsed.type) {
+        return null;
+      }
+      return JSON.stringify(parsed) as string;
+    } catch {
+      return null;
+    }
+  })
+  .nullable()
+  .optional()
+  .default(null);
+
 export const createThreadSchema = z.object({
   forumId: z.string().min(1, "Forum is required"),
   title: z
@@ -10,6 +28,7 @@ export const createThreadSchema = z.object({
     .string()
     .min(10, "Content must be at least 10 characters")
     .max(100000, "Content must be at most 100,000 characters"),
+  contentJson: contentJsonField,
   tags: z.array(z.string().max(50)).max(10).optional(),
   status: z.enum(["DRAFT", "PUBLISHED"]).default("PUBLISHED"),
 });
@@ -26,6 +45,7 @@ export const updateThreadSchema = z.object({
     .min(10, "Content must be at least 10 characters")
     .max(100000)
     .optional(),
+  contentJson: contentJsonField,
   tags: z.array(z.string().max(50)).max(10).optional(),
 });
 

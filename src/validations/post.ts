@@ -16,6 +16,23 @@ export const createPostSchema = z.object({
       POST_CONTENT_MAX,
       `Content must be at most ${POST_CONTENT_MAX} characters`,
     ),
+  contentJson: z
+    .string()
+    .max(500_000, "Content JSON is too large")
+    .transform((val) => {
+      try {
+        const parsed = JSON.parse(val);
+        if (!parsed || typeof parsed !== "object" || !parsed.type) {
+          return null;
+        }
+        return JSON.stringify(parsed) as string;
+      } catch {
+        return null;
+      }
+    })
+    .nullable()
+    .optional()
+    .default(null),
 });
 
 export const updatePostSchema = z.object({
@@ -30,6 +47,23 @@ export const updatePostSchema = z.object({
       POST_CONTENT_MAX,
       `Content must be at most ${POST_CONTENT_MAX} characters`,
     ),
+  contentJson: z
+    .string()
+    .max(500_000, "Content JSON is too large")
+    .transform((val) => {
+      try {
+        const parsed = JSON.parse(val);
+        if (!parsed || typeof parsed !== "object" || !parsed.type) {
+          return null;
+        }
+        return JSON.stringify(parsed) as string;
+      } catch {
+        return null;
+      }
+    })
+    .nullable()
+    .optional()
+    .default(null),
   reason: z
     .string()
     .max(
