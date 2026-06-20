@@ -20,6 +20,16 @@ import {
     type ListingChangesRequestedEvent,
     type SellerVerifiedEvent,
     type ListingReportedEvent,
+    type OrderCreatedEvent,
+    type OrderAcceptedEvent,
+    type OrderDeliveredEvent,
+    type OrderCompletedEvent,
+    type OrderCancelledEvent,
+    type DisputeCreatedEvent,
+    type DisputeResolvedEvent,
+    type ReviewCreatedEvent,
+    type ITraderCreatedEvent,
+    type TrustUpdatedEvent,
 } from "@/lib/event-bus";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
 import { auditService } from "./audit";
@@ -53,8 +63,15 @@ class NotificationService {
             case "LEVEL_UP":
                 return prefs.levelUpNotifications;
             case "SYSTEM_ANNOUNCEMENT":
-                // For now, gate by systemNotifications (announcementNotifications is for announcements module).
                 return prefs.systemNotifications;
+            case "ORDER_EVENT":
+                return prefs.orderNotifications;
+            case "DISPUTE_EVENT":
+                return prefs.disputeNotifications;
+            case "REVIEW_EVENT":
+                return prefs.reviewNotifications;
+            case "MARKETPLACE_EVENT":
+                return prefs.marketplaceNotifications;
             default:
                 return true;
         }
@@ -113,6 +130,36 @@ class NotificationService {
                 break;
             case "LISTING_REPORTED":
                 await this.handleListingReported(event as any);
+                break;
+            case "ORDER_CREATED":
+                await this.handleOrderCreated(event as OrderCreatedEvent);
+                break;
+            case "ORDER_ACCEPTED":
+                await this.handleOrderAccepted(event as OrderAcceptedEvent);
+                break;
+            case "ORDER_DELIVERED":
+                await this.handleOrderDelivered(event as OrderDeliveredEvent);
+                break;
+            case "ORDER_COMPLETED":
+                await this.handleOrderCompleted(event as OrderCompletedEvent);
+                break;
+            case "ORDER_CANCELLED":
+                await this.handleOrderCancelled(event as OrderCancelledEvent);
+                break;
+            case "DISPUTE_CREATED":
+                await this.handleDisputeCreated(event as DisputeCreatedEvent);
+                break;
+            case "DISPUTE_RESOLVED":
+                await this.handleDisputeResolved(event as DisputeResolvedEvent);
+                break;
+            case "REVIEW_CREATED":
+                await this.handleReviewCreated(event as ReviewCreatedEvent);
+                break;
+            case "ITRADER_CREATED":
+                await this.handleITraderCreated(event as ITraderCreatedEvent);
+                break;
+            case "TRUST_UPDATED":
+                await this.handleTrustUpdated(event as TrustUpdatedEvent);
                 break;
         }
     }
@@ -696,6 +743,268 @@ class NotificationService {
             const count = await this.getUnreadCount(mod.id);
             realtimeService.publishUnreadCount(mod.id, count);
         }
+    }
+
+    private async handleOrderCreated(event: OrderCreatedEvent): Promise<void> {
+        const db = getDatabase();
+        const type: NotificationType = "ORDER_EVENT";
+
+        const sellerDeliver = await this.shouldDeliver(event.sellerId, type);
+        if (sellerDeliver) {
+            const [notif] = await db.insert(schema.notifications).values({
+                userId: event.sellerId,
+                type,
+                title: "New Order Received",
+                message: `Order #${event.orderNumber} has been placed for $${(event.amount / 100).toFixed(2)}`,
+                entityId: event.orderId,
+                entityType: "ORDER",
+                actorId: event.actorId,
+            }).returning();
+            realtimeService.publishNotification(event.sellerId, notif as any);
+            const count = await this.getUnreadCount(event.sellerId);
+            realtimeService.publishUnreadCount(event.sellerId, count);
+        }
+
+        const buyerDeliver = await this.shouldDeliver(event.buyerId, type);
+        if (buyerDeliver) {
+            const [notif] = await db.insert(schema.notifications).values({
+                userId: event.buyerId,
+                type,
+                title: "Order Placed",
+                message: `Your order #${event.orderNumber} has been placed successfully`,
+                entityId: event.orderId,
+                entityType: "ORDER",
+                actorId: event.actorId,
+            }).returning();
+            realtimeService.publishNotification(event.buyerId, notif as any);
+            const count = await this.getUnreadCount(event.buyerId);
+            realtimeService.publishUnreadCount(event.buyerId, count);
+        }
+    }
+
+    private async handleOrderAccepted(event: OrderAcceptedEvent): Promise<void> {
+        const db = getDatabase();
+        const type: NotificationType = "ORDER_EVENT";
+
+        const deliver = await this.shouldDeliver(event.buyerId, type);
+        if (!deliver) return;
+
+        const [notif] = await db.insert(schema.notifications).values({
+            userId: event.buyerId,
+            type,
+            title: "Order Accepted",
+            message: `Order #${event.orderNumber} has been accepted by the seller`,
+            entityId: event.orderId,
+            entityType: "ORDER",
+            actorId: event.actorId,
+        }).returning();
+
+        realtimeService.publishNotification(event.buyerId, notif as any);
+        const count = await this.getUnreadCount(event.buyerId);
+        realtimeService.publishUnreadCount(event.buyerId, count);
+    }
+
+    private async handleOrderDelivered(event: OrderDeliveredEvent): Promise<void> {
+        const db = getDatabase();
+        const type: NotificationType = "ORDER_EVENT";
+
+        const deliver = await this.shouldDeliver(event.buyerId, type);
+        if (!deliver) return;
+
+        const [notif] = await db.insert(schema.notifications).values({
+            userId: event.buyerId,
+            type,
+            title: "Order Delivered",
+            message: `Order #${event.orderNumber} has been delivered. Please review and complete`,
+            entityId: event.orderId,
+            entityType: "ORDER",
+            actorId: event.actorId,
+        }).returning();
+
+        realtimeService.publishNotification(event.buyerId, notif as any);
+        const count = await this.getUnreadCount(event.buyerId);
+        realtimeService.publishUnreadCount(event.buyerId, count);
+    }
+
+    private async handleOrderCompleted(event: OrderCompletedEvent): Promise<void> {
+        const db = getDatabase();
+        const type: NotificationType = "ORDER_EVENT";
+
+        const sellerDeliver = await this.shouldDeliver(event.sellerId, type);
+        if (sellerDeliver) {
+            const [notif] = await db.insert(schema.notifications).values({
+                userId: event.sellerId,
+                type,
+                title: "Order Completed",
+                message: `Order #${event.orderNumber} has been completed`,
+                entityId: event.orderId,
+                entityType: "ORDER",
+                actorId: event.actorId,
+            }).returning();
+            realtimeService.publishNotification(event.sellerId, notif as any);
+            const count = await this.getUnreadCount(event.sellerId);
+            realtimeService.publishUnreadCount(event.sellerId, count);
+        }
+    }
+
+    private async handleOrderCancelled(event: OrderCancelledEvent): Promise<void> {
+        const db = getDatabase();
+        const type: NotificationType = "ORDER_EVENT";
+
+        const notifyId = event.buyerId === event.actorId ? event.sellerId : event.buyerId;
+        const deliver = await this.shouldDeliver(notifyId, type);
+        if (!deliver) return;
+
+        const [notif] = await db.insert(schema.notifications).values({
+            userId: notifyId,
+            type,
+            title: "Order Cancelled",
+            message: `Order #${event.orderNumber} has been cancelled${event.reason ? `: ${event.reason}` : ""}`,
+            entityId: event.orderId,
+            entityType: "ORDER",
+            actorId: event.actorId,
+        }).returning();
+
+        realtimeService.publishNotification(notifyId, notif as any);
+        const count = await this.getUnreadCount(notifyId);
+        realtimeService.publishUnreadCount(notifyId, count);
+    }
+
+    private async handleDisputeCreated(event: DisputeCreatedEvent): Promise<void> {
+        const db = getDatabase();
+        const type: NotificationType = "DISPUTE_EVENT";
+
+        const sellerDeliver = await this.shouldDeliver(event.sellerId, type);
+        if (sellerDeliver) {
+            const [notif] = await db.insert(schema.notifications).values({
+                userId: event.sellerId,
+                type,
+                title: "Dispute Filed",
+                message: `A dispute has been filed on order #${event.orderNumber}: ${event.reason}`,
+                entityId: event.disputeId,
+                entityType: "DISPUTE",
+                actorId: event.actorId,
+            }).returning();
+            realtimeService.publishNotification(event.sellerId, notif as any);
+            const count = await this.getUnreadCount(event.sellerId);
+            realtimeService.publishUnreadCount(event.sellerId, count);
+        }
+
+        const mods = await db
+            .select({ id: schema.users.id })
+            .from(schema.users)
+            .innerJoin(schema.roles, eq(schema.users.roleId, schema.roles.id))
+            .where(inArray(schema.roles.name, ["MODERATOR", "ADMIN", "SUPER_ADMIN"]));
+
+        for (const mod of mods) {
+            const modDeliver = await this.shouldDeliver(mod.id, type);
+            if (!modDeliver) continue;
+
+            const [notif] = await db.insert(schema.notifications).values({
+                userId: mod.id,
+                type,
+                title: "New Dispute Requires Review",
+                message: `Dispute on order #${event.orderNumber}: ${event.reason}`,
+                entityId: event.disputeId,
+                entityType: "DISPUTE",
+                actorId: event.actorId,
+            }).returning();
+            realtimeService.publishNotification(mod.id, notif as any);
+        }
+    }
+
+    private async handleDisputeResolved(event: DisputeResolvedEvent): Promise<void> {
+        const db = getDatabase();
+        const type: NotificationType = "DISPUTE_EVENT";
+
+        const dispute = await db.query.disputes.findFirst({
+            where: (d, { eq }) => eq(d.id, event.disputeId),
+        });
+        if (!dispute) return;
+
+        const notifyIds = [dispute.buyerId, dispute.sellerId];
+        for (const userId of notifyIds) {
+            const deliver = await this.shouldDeliver(userId, type);
+            if (!deliver) continue;
+
+            const [notif] = await db.insert(schema.notifications).values({
+                userId,
+                type,
+                title: "Dispute Resolved",
+                message: `The dispute on order #${event.orderNumber} has been resolved: ${event.resolution}`,
+                entityId: event.disputeId,
+                entityType: "DISPUTE",
+                actorId: event.actorId,
+            }).returning();
+            realtimeService.publishNotification(userId, notif as any);
+            const count = await this.getUnreadCount(userId);
+            realtimeService.publishUnreadCount(userId, count);
+        }
+    }
+
+    private async handleReviewCreated(event: ReviewCreatedEvent): Promise<void> {
+        const db = getDatabase();
+        const type: NotificationType = "REVIEW_EVENT";
+
+        const deliver = await this.shouldDeliver(event.sellerId, type);
+        if (!deliver) return;
+
+        const starRating = "⭐".repeat(event.rating);
+        const [notif] = await db.insert(schema.notifications).values({
+            userId: event.sellerId,
+            type,
+            title: "New Review",
+            message: `You received a ${event.rating}/5 review on your order: ${starRating}`,
+            entityId: event.reviewId,
+            entityType: "REVIEW",
+            actorId: event.actorId,
+        }).returning();
+
+        realtimeService.publishNotification(event.sellerId, notif as any);
+        const count = await this.getUnreadCount(event.sellerId);
+        realtimeService.publishUnreadCount(event.sellerId, count);
+    }
+
+    private async handleITraderCreated(event: ITraderCreatedEvent): Promise<void> {
+        const db = getDatabase();
+        const type: NotificationType = "REVIEW_EVENT";
+
+        const deliver = await this.shouldDeliver(event.toUserId, type);
+        if (!deliver) return;
+
+        const [notif] = await db.insert(schema.notifications).values({
+            userId: event.toUserId,
+            type,
+            title: "iTrader Feedback Received",
+            message: `You received ${event.rating} iTrader feedback on order`,
+            entityId: event.feedbackId,
+            entityType: "ITRADER",
+            actorId: event.actorId,
+        }).returning();
+
+        realtimeService.publishNotification(event.toUserId, notif as any);
+        const count = await this.getUnreadCount(event.toUserId);
+        realtimeService.publishUnreadCount(event.toUserId, count);
+    }
+
+    private async handleTrustUpdated(event: TrustUpdatedEvent): Promise<void> {
+        const db = getDatabase();
+        const type: NotificationType = "MARKETPLACE_EVENT";
+
+        const deliver = await this.shouldDeliver(event.sellerId, type);
+        if (!deliver) return;
+
+        const [notif] = await db.insert(schema.notifications).values({
+            userId: event.sellerId,
+            type,
+            title: "Trust Score Updated",
+            message: `Your seller trust score is now ${event.newTrustScore}`,
+            entityId: event.sellerId,
+            entityType: "USER",
+            actorId: event.actorId,
+        }).returning();
+
+        realtimeService.publishNotification(event.sellerId, notif as any);
     }
 }
 

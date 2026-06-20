@@ -41,6 +41,12 @@ export const notificationPreferences = pgTable("notification_preference", {
                 // Push notifications (prepared for future)
                 pushNotifications: boolean("push_notifications").default(false).notNull(),
 
+                // Marketplace notifications
+                marketplaceNotifications: boolean("marketplace_notifications").default(true).notNull(),
+                orderNotifications: boolean("order_notifications").default(true).notNull(),
+                disputeNotifications: boolean("dispute_notifications").default(true).notNull(),
+                reviewNotifications: boolean("review_notifications").default(true).notNull(),
+
                 createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
                 updatedAt: timestamp("updated_at", { mode: "date" })
                                 .defaultNow()

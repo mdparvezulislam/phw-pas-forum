@@ -7,6 +7,8 @@ export const reputationTransactionType = [
   "TROPHY_REWARD",
   "ADMIN_AWARD",
   "MARKETPLACE_REVIEW",
+  "ORDER_COMPLETED",
+  "ITRADER_FEEDBACK",
   "SYSTEM_REWARD",
 ] as const;
 export type ReputationTransactionType =

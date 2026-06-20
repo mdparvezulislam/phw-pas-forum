@@ -1,5 +1,5 @@
 import { jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { threads } from "./threads";
+import { marketplaceListings } from "./marketplace-listings";
 import { users } from "./users";
 
 export const marketplaceAuditLogs = pgTable("marketplace_audit_log", {
@@ -8,7 +8,7 @@ export const marketplaceAuditLogs = pgTable("marketplace_audit_log", {
     .$defaultFn(() => crypto.randomUUID()),
   listingId: text("listing_id")
     .notNull()
-    .references(() => threads.id, { onDelete: "cascade" }),
+    .references(() => marketplaceListings.id, { onDelete: "cascade" }),
   moderatorId: text("moderator_id").references(() => users.id, {
     onDelete: "set null",
   }),

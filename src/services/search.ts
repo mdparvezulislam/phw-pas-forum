@@ -6,7 +6,7 @@ import { emitEvent } from "@/lib/event-bus";
 import { RoleName } from "@/types/rbac";
 
 export interface SearchOptions {
-  contentType?: "all" | "threads" | "posts" | "users" | "forums" | "badges" | "trophies";
+  contentType?: "all" | "threads" | "posts" | "users" | "forums" | "badges" | "trophies" | "marketplace";
   author?: string;
   forumId?: string;
   categoryId?: string;
@@ -310,6 +310,7 @@ export class SearchService {
       case "forums": return COLLECTIONS.FORUMS;
       case "badges": return COLLECTIONS.BADGES;
       case "trophies": return COLLECTIONS.TROPHIES;
+      case "marketplace": return COLLECTIONS.MARKETPLACE_LISTINGS;
       default: return COLLECTIONS.THREADS;
     }
   }
@@ -322,6 +323,7 @@ export class SearchService {
       case "forums": return "title,description";
       case "badges": return "name,description";
       case "trophies": return "title,description";
+      case "marketplace": return "title,short_description,seller_name,category_name";
       default: return "title,content,username,displayName,name,description";
     }
   }
@@ -333,6 +335,14 @@ export class SearchService {
     if (sortOption === "most_viewed" && contentType === "threads") return "views:desc";
     if (sortOption === "most_replies" && contentType === "threads") return "replies:desc";
     if (sortOption === "reputation" && contentType === "users") return "reputation:desc";
+    if (contentType === "marketplace") {
+      if (sortOption === "price_low") return "base_price:asc";
+      if (sortOption === "price_high") return "base_price:desc";
+      if (sortOption === "sales_high") return "sales:desc";
+      if (sortOption === "rating_high") return "rating:desc";
+      if (sortOption === "newest") return "createdAt:desc";
+      if (sortOption === "oldest") return "createdAt:asc";
+    }
     return undefined;
   }
 }

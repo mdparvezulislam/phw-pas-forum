@@ -27,6 +27,21 @@ import { sellerVerifications } from "./seller-verifications";
 import { marketplaceAuditLogs } from "./marketplace-audit-logs";
 import { marketplaceFlags } from "./marketplace-flags";
 import { featuredListings } from "./featured-listings";
+import { sellerProfiles } from "./seller-profiles";
+import { marketplaceCategories } from "./marketplace-categories";
+import { marketplaceListings } from "./marketplace-listings";
+import { listingMedia } from "./listing-media";
+import { listingPackages } from "./listing-packages";
+import { listingFaq } from "./listing-faq";
+import { favoriteListings } from "./favorite-listings";
+import { membershipPlans } from "./membership-plans";
+import { membershipBenefits } from "./membership-benefits";
+import { userMemberships } from "./user-memberships";
+import { subscriptions } from "./subscriptions";
+import { listingBoosts } from "./listing-boosts";
+import { premiumResources } from "./premium-resources";
+import { userWarnings } from "./user-warnings";
+import { userBans } from "./user-bans";
 
 export const usersRelations = relations(users, ({ many, one }) => ({
   threads: many(threads),
@@ -47,6 +62,23 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   reviews: many(marketplaceReviews),
   verifications: many(sellerVerifications),
   flags: many(marketplaceFlags),
+  ordersAsBuyer: many(orders, { relationName: "buyerOrders" }),
+  ordersAsSeller: many(orders, { relationName: "sellerOrders" }),
+  trustProfile: one(sellerTrustProfiles, {
+    fields: [users.id],
+    references: [sellerTrustProfiles.sellerId],
+  }),
+  itraderReceived: many(itraderFeedback, { relationName: "itraderToUser" }),
+  itraderGiven: many(itraderFeedback, { relationName: "itraderFromUser" }),
+  disputesAsBuyer: many(disputes, { relationName: "buyerDisputes" }),
+  disputesAsSeller: many(disputes, { relationName: "sellerDisputes" }),
+  memberships: many(userMemberships),
+  subscriptions: many(subscriptions),
+  warnings: many(userWarnings),
+  ban: one(userBans, {
+    fields: [users.id],
+    references: [userBans.userId],
+  }),
 }));
 
 export const rolesRelations = relations(roles, ({ many }) => ({
@@ -74,6 +106,7 @@ export const threadsRelations = relations(threads, ({ one, many }) => ({
     fields: [threads.id],
     references: [featuredListings.listingId],
   }),
+  buyerReviews: many(buyerReviews),
 }));
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
@@ -228,9 +261,9 @@ export const searchQueriesRelations = relations(searchQueries, ({ one }) => ({
 }));
 
 export const marketplaceSubmissionsRelations = relations(marketplaceSubmissions, ({ one, many }) => ({
-  listing: one(threads, {
+  listing: one(marketplaceListings, {
     fields: [marketplaceSubmissions.listingId],
-    references: [threads.id],
+    references: [marketplaceListings.id],
   }),
   seller: one(users, {
     fields: [marketplaceSubmissions.sellerId],
@@ -266,9 +299,9 @@ export const sellerVerificationsRelations = relations(sellerVerifications, ({ on
 }));
 
 export const marketplaceAuditLogsRelations = relations(marketplaceAuditLogs, ({ one }) => ({
-  listing: one(threads, {
+  listing: one(marketplaceListings, {
     fields: [marketplaceAuditLogs.listingId],
-    references: [threads.id],
+    references: [marketplaceListings.id],
   }),
   moderator: one(users, {
     fields: [marketplaceAuditLogs.moderatorId],
@@ -277,9 +310,9 @@ export const marketplaceAuditLogsRelations = relations(marketplaceAuditLogs, ({ 
 }));
 
 export const marketplaceFlagsRelations = relations(marketplaceFlags, ({ one }) => ({
-  listing: one(threads, {
+  listing: one(marketplaceListings, {
     fields: [marketplaceFlags.listingId],
-    references: [threads.id],
+    references: [marketplaceListings.id],
   }),
   user: one(users, {
     fields: [marketplaceFlags.userId],
@@ -299,5 +332,289 @@ export const featuredListingsRelations = relations(featuredListings, ({ one }) =
   promotedByUser: one(users, {
     fields: [featuredListings.featuredBy],
     references: [users.id],
+  }),
+}));
+
+import { orders, orderMessages, orderDeliveries, orderRevisions } from "./orders";
+import { transactions } from "./transactions";
+import { itraderFeedback } from "./itrader-feedback";
+import { sellerTrustProfiles } from "./seller-trust-profiles";
+import { disputes, disputeMessages } from "./disputes";
+import { buyerReviews } from "./buyer-reviews";
+
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+  buyer: one(users, {
+    fields: [orders.buyerId],
+    references: [users.id],
+  }),
+  seller: one(users, {
+    fields: [orders.sellerId],
+    references: [users.id],
+  }),
+  listing: one(marketplaceListings, {
+    fields: [orders.listingId],
+    references: [marketplaceListings.id],
+  }),
+  package: one(listingPackages, {
+    fields: [orders.packageId],
+    references: [listingPackages.id],
+  }),
+  messages: many(orderMessages),
+  deliveries: many(orderDeliveries),
+  revisions: many(orderRevisions),
+  transactions: many(transactions),
+  dispute: one(disputes),
+  review: one(buyerReviews),
+}));
+
+export const orderMessagesRelations = relations(orderMessages, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderMessages.orderId],
+    references: [orders.id],
+  }),
+  sender: one(users, {
+    fields: [orderMessages.senderId],
+    references: [users.id],
+  }),
+}));
+
+export const orderDeliveriesRelations = relations(orderDeliveries, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderDeliveries.orderId],
+    references: [orders.id],
+  }),
+  seller: one(users, {
+    fields: [orderDeliveries.sellerId],
+    references: [users.id],
+  }),
+}));
+
+export const orderRevisionsRelations = relations(orderRevisions, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderRevisions.orderId],
+    references: [orders.id],
+  }),
+  requester: one(users, {
+    fields: [orderRevisions.requestedBy],
+    references: [users.id],
+  }),
+}));
+
+export const transactionsRelations = relations(transactions, ({ one }) => ({
+  order: one(orders, {
+    fields: [transactions.orderId],
+    references: [orders.id],
+  }),
+  buyer: one(users, {
+    fields: [transactions.buyerId],
+    references: [users.id],
+  }),
+  seller: one(users, {
+    fields: [transactions.sellerId],
+    references: [users.id],
+  }),
+}));
+
+export const itraderFeedbackRelations = relations(itraderFeedback, ({ one }) => ({
+  order: one(orders, {
+    fields: [itraderFeedback.orderId],
+    references: [orders.id],
+  }),
+  fromUser: one(users, {
+    fields: [itraderFeedback.fromUserId],
+    references: [users.id],
+  }),
+  toUser: one(users, {
+    fields: [itraderFeedback.toUserId],
+    references: [users.id],
+  }),
+}));
+
+export const sellerTrustProfilesRelations = relations(sellerTrustProfiles, ({ one }) => ({
+  seller: one(users, {
+    fields: [sellerTrustProfiles.sellerId],
+    references: [users.id],
+  }),
+}));
+
+export const disputesRelations = relations(disputes, ({ one, many }) => ({
+  order: one(orders, {
+    fields: [disputes.orderId],
+    references: [orders.id],
+  }),
+  buyer: one(users, {
+    fields: [disputes.buyerId],
+    references: [users.id],
+  }),
+  seller: one(users, {
+    fields: [disputes.sellerId],
+    references: [users.id],
+  }),
+  moderator: one(users, {
+    fields: [disputes.moderatorId],
+    references: [users.id],
+  }),
+  messages: many(disputeMessages),
+}));
+
+export const disputeMessagesRelations = relations(disputeMessages, ({ one }) => ({
+  dispute: one(disputes, {
+    fields: [disputeMessages.disputeId],
+    references: [disputes.id],
+  }),
+  sender: one(users, {
+    fields: [disputeMessages.senderId],
+    references: [users.id],
+  }),
+}));
+
+export const buyerReviewsRelations = relations(buyerReviews, ({ one }) => ({
+  order: one(orders, {
+    fields: [buyerReviews.orderId],
+    references: [orders.id],
+  }),
+  listing: one(marketplaceListings, {
+    fields: [buyerReviews.listingId],
+    references: [marketplaceListings.id],
+  }),
+  buyer: one(users, {
+    fields: [buyerReviews.buyerId],
+    references: [users.id],
+  }),
+  seller: one(users, {
+    fields: [buyerReviews.sellerId],
+    references: [users.id],
+  }),
+}));
+
+export const sellerProfilesRelations = relations(sellerProfiles, ({ one, many }) => ({
+  user: one(users, {
+    fields: [sellerProfiles.userId],
+    references: [users.id],
+  }),
+  listings: many(marketplaceListings),
+}));
+
+export const marketplaceCategoriesRelations = relations(marketplaceCategories, ({ many }) => ({
+  listings: many(marketplaceListings),
+}));
+
+export const marketplaceListingsRelations = relations(marketplaceListings, ({ one, many }) => ({
+  seller: one(sellerProfiles, {
+    fields: [marketplaceListings.sellerId],
+    references: [sellerProfiles.id],
+  }),
+  category: one(marketplaceCategories, {
+    fields: [marketplaceListings.categoryId],
+    references: [marketplaceCategories.id],
+  }),
+  media: many(listingMedia),
+  packages: many(listingPackages),
+  faqs: many(listingFaq),
+  favorites: many(favoriteListings),
+  marketplaceSubmission: one(marketplaceSubmissions, {
+    fields: [marketplaceListings.id],
+    references: [marketplaceSubmissions.listingId],
+  }),
+  marketplaceAuditLogs: many(marketplaceAuditLogs),
+  marketplaceFlags: many(marketplaceFlags),
+  featuredListing: one(featuredListings, {
+    fields: [marketplaceListings.id],
+    references: [featuredListings.listingId],
+  }),
+  orders: many(orders),
+  buyerReviews: many(buyerReviews),
+  boosts: many(listingBoosts),
+}));
+
+export const listingMediaRelations = relations(listingMedia, ({ one }) => ({
+  listing: one(marketplaceListings, {
+    fields: [listingMedia.listingId],
+    references: [marketplaceListings.id],
+  }),
+  attachment: one(attachments, {
+    fields: [listingMedia.attachmentId],
+    references: [attachments.id],
+  }),
+}));
+
+export const listingPackagesRelations = relations(listingPackages, ({ one }) => ({
+  listing: one(marketplaceListings, {
+    fields: [listingPackages.listingId],
+    references: [marketplaceListings.id],
+  }),
+}));
+
+export const listingFaqRelations = relations(listingFaq, ({ one }) => ({
+  listing: one(marketplaceListings, {
+    fields: [listingFaq.listingId],
+    references: [marketplaceListings.id],
+  }),
+}));
+
+export const favoriteListingsRelations = relations(favoriteListings, ({ one }) => ({
+  user: one(users, {
+    fields: [favoriteListings.userId],
+    references: [users.id],
+  }),
+  listing: one(marketplaceListings, {
+    fields: [favoriteListings.listingId],
+    references: [marketplaceListings.id],
+  }),
+}));
+
+export const membershipPlansRelations = relations(membershipPlans, ({ many }) => ({
+  benefits: many(membershipBenefits),
+  userMemberships: many(userMemberships),
+}));
+
+export const membershipBenefitsRelations = relations(membershipBenefits, ({ one }) => ({
+  plan: one(membershipPlans, {
+    fields: [membershipBenefits.planId],
+    references: [membershipPlans.id],
+  }),
+}));
+
+export const userMembershipsRelations = relations(userMemberships, ({ one, many }) => ({
+  user: one(users, {
+    fields: [userMemberships.userId],
+    references: [users.id],
+  }),
+  plan: one(membershipPlans, {
+    fields: [userMemberships.planId],
+    references: [membershipPlans.id],
+  }),
+  subscriptions: many(subscriptions),
+}));
+
+export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
+  user: one(users, {
+    fields: [subscriptions.userId],
+    references: [users.id],
+  }),
+  membership: one(userMemberships, {
+    fields: [subscriptions.membershipId],
+    references: [userMemberships.id],
+  }),
+}));
+
+export const listingBoostsRelations = relations(listingBoosts, ({ one }) => ({
+  listing: one(marketplaceListings, {
+    fields: [listingBoosts.listingId],
+    references: [marketplaceListings.id],
+  }),
+}));
+
+export const premiumResourcesRelations = relations(premiumResources, ({ one }) => ({
+  attachment: one(attachments, {
+    fields: [premiumResources.attachmentId],
+    references: [attachments.id],
+  }),
+}));
+
+export const attachmentsRelations = relations(attachments, ({ one }) => ({
+  premiumResource: one(premiumResources, {
+    fields: [attachments.id],
+    references: [premiumResources.attachmentId],
   }),
 }));

@@ -1,11 +1,11 @@
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { threads } from "./threads";
+import { marketplaceListings } from "./marketplace-listings";
 import { users } from "./users";
 
 export const featuredListings = pgTable("featured_listing", {
   listingId: text("listing_id")
     .primaryKey()
-    .references(() => threads.id, { onDelete: "cascade" }),
+    .references(() => marketplaceListings.id, { onDelete: "cascade" }),
   featuredUntil: timestamp("featured_until", { mode: "date" }).notNull(),
   featuredBy: text("featured_by").references(() => users.id, {
     onDelete: "set null",

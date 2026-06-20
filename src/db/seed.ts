@@ -223,6 +223,19 @@ const DEFAULT_TROPHIES = [
   },
 ];
 
+const DEFAULT_MARKETPLACE_CATEGORIES = [
+  { name: "SEO", slug: "seo", description: "Search Engine Optimization services", position: 1 },
+  { name: "Link Building", slug: "link-building", description: "Backlinks and off-page optimization", position: 2 },
+  { name: "Social Media", slug: "social-media", description: "SMM panels, signals, and marketing", position: 3 },
+  { name: "YouTube", slug: "youtube", description: "YouTube views, subscribers, and channels", position: 4 },
+  { name: "TikTok", slug: "tiktok", description: "TikTok marketing and growth", position: 5 },
+  { name: "AI Services", slug: "ai-services", description: "AI content generation, models, and tooling", position: 6 },
+  { name: "Programming", slug: "programming", description: "Scripts, software, bots, and custom development", position: 7 },
+  { name: "Design", slug: "design", description: "Logos, banners, thread designs, and UI/UX", position: 8 },
+  { name: "Domains", slug: "domains", description: "Buy, sell, and auction domain names", position: 9 },
+  { name: "Web Hosting", slug: "web-hosting", description: "Shared, VPS, and dedicated servers", position: 10 },
+];
+
 async function main() {
   const db = getDatabase();
 
@@ -256,6 +269,17 @@ async function main() {
     if (!existing) {
       await db.insert(schema.trophies).values(trophy);
       console.log(`  Created trophy: ${trophy.title}`);
+    }
+  }
+
+  console.log("Seeding marketplace categories...");
+  for (const cat of DEFAULT_MARKETPLACE_CATEGORIES) {
+    const existing = await db.query.marketplaceCategories.findFirst({
+      where: (c, { eq }) => eq(c.slug, cat.slug),
+    });
+    if (!existing) {
+      await db.insert(schema.marketplaceCategories).values(cat);
+      console.log(`  Created marketplace category: ${cat.name}`);
     }
   }
 

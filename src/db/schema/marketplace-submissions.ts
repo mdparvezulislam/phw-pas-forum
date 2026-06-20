@@ -1,5 +1,5 @@
 import { integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { threads } from "./threads";
+import { marketplaceListings } from "./marketplace-listings";
 import { users } from "./users";
 
 export const marketplaceSubmissionStatus = [
@@ -18,7 +18,7 @@ export const marketplaceSubmissions = pgTable("marketplace_submission", {
     .$defaultFn(() => crypto.randomUUID()),
   listingId: text("listing_id")
     .notNull()
-    .references(() => threads.id, { onDelete: "cascade" }),
+    .references(() => marketplaceListings.id, { onDelete: "cascade" }),
   sellerId: text("seller_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),

@@ -24,6 +24,7 @@ export const forums = pgTable("forum", {
   isVisible: boolean("is_visible").default(true).notNull(),
   isLocked: boolean("is_locked").default(false).notNull(),
   isPremiumOnly: boolean("is_premium_only").default(false).notNull(),
+  requiredMembershipLevel: text("required_membership_level"),
   threadCount: integer("thread_count").default(0).notNull(),
   postCount: integer("post_count").default(0).notNull(),
   lastActivityAt: timestamp("last_activity_at", { mode: "date" }),

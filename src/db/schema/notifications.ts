@@ -17,9 +17,13 @@ export const notificationType = [
                 "LEVEL_UP",
                 "SYSTEM_ANNOUNCEMENT",
                 "MARKETPLACE_EVENT",
+                "ORDER_EVENT",
+                "DISPUTE_EVENT",
+                "REVIEW_EVENT",
                 "PRIVATE_MESSAGE",
                 "CONVERSATION_INVITE",
                 "CONVERSATION_MENTION",
+                "MEMBERSHIP_EVENT",
 ] as const;
 
 export type NotificationType = (typeof notificationType)[number];
