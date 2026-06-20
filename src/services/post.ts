@@ -4,6 +4,9 @@ import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
 import type { Post } from "@/db/schema/posts";
 import type { PaginatedResult } from "@/modules/thread/types";
+import type { UserReputation } from "@/db/schema/user-reputation";
+import type { UserLevel } from "@/db/schema/user-levels";
+import type { Badge } from "@/db/schema/badges";
 
 export interface PostWithAuthor extends Post {
   author: {
@@ -12,6 +15,19 @@ export interface PostWithAuthor extends Post {
     displayName: string | null;
     image: string | null;
     createdAt: Date;
+  };
+}
+
+export interface PostWithAuthorReputation extends Post {
+  author: {
+    id: string;
+    username: string | null;
+    displayName: string | null;
+    image: string | null;
+    createdAt: Date;
+    reputation?: UserReputation | null;
+    level?: UserLevel | null;
+    badges?: Badge[];
   };
 }
 
@@ -78,6 +94,70 @@ export async function getPosts(
     perPage,
     totalPages: Math.ceil(total / perPage),
   };
+}
+
+export async function getPostsWithReputation(
+  options: PostListOptions,
+): Promise<PaginatedResult<PostWithAuthorReputation>> {
+  const result = await getPosts(options);
+  const db = getDatabase();
+
+  const authorIds = [
+    ...new Set(result.items.map((p) => p.author.id)),
+  ];
+
+  if (authorIds.length === 0) {
+    return result as unknown as PaginatedResult<PostWithAuthorReputation>;
+  }
+
+  const [reputations, levels, userBadges] = await Promise.all([
+    db.query.userReputation.findMany({
+      where: (r, { inArray }) => inArray(r.userId, authorIds),
+    }),
+    db.query.userLevels.findMany({
+      orderBy: (l, { desc }) => [desc(l.minPoints)],
+    }),
+    db.query.userBadges.findMany({
+      where: (ub, { inArray }) => inArray(ub.userId, authorIds),
+      with: { badge: true },
+    }),
+  ]);
+
+  const repMap = new Map(reputations.map((r) => [r.userId, r]));
+  const badgeMap = new Map<string, Badge[]>();
+  for (const ub of userBadges) {
+    const existing = badgeMap.get(ub.userId) ?? [];
+    existing.push(ub.badge);
+    badgeMap.set(ub.userId, existing);
+  }
+
+  const enriched = result.items.map((post) => {
+    const userRep = repMap.get(post.author.id) ?? null;
+    let userLevel: UserLevel | null = null;
+    if (userRep) {
+      for (const level of levels) {
+        if (userRep.reputationPoints >= level.minPoints) {
+          userLevel = level;
+          break;
+        }
+      }
+    }
+
+    return {
+      ...post,
+      author: {
+        ...post.author,
+        reputation: userRep,
+        level: userLevel,
+        badges: badgeMap.get(post.author.id) ?? [],
+      },
+    };
+  });
+
+  return {
+    ...result,
+    items: enriched,
+  } as PaginatedResult<PostWithAuthorReputation>;
 }
 
 export async function getPostById(id: string): Promise<PostWithAuthor | null> {

@@ -1,4 +1,5 @@
-import { mergeAttributes, Node, ReactNodeViewRenderer } from "@tiptap/core";
+import { mergeAttributes, Node } from "@tiptap/core";
+import { ReactNodeViewRenderer } from "@tiptap/react";
 
 interface MentionOptions {
   HTMLAttributes: Record<string, unknown>;
@@ -85,7 +86,7 @@ export const Mention = Node.create<MentionOptions>({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(({ node }) => {
+    return ReactNodeViewRenderer(({ node }: { node: any }) => {
       const attrs = node.attrs as unknown as MentionAttrs;
       const display = attrs.displayName || attrs.username;
 

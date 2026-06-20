@@ -15,7 +15,10 @@ import {
   getCategoryBySlug,
   getForumBySlugAndCategory,
 } from "@/services/forum-stats";
-import { getNextPostNumber, getPosts } from "@/services/post";
+import {
+  getNextPostNumber,
+  getPostsWithReputation,
+} from "@/services/post";
 import { getThreadWithUserState, incrementThreadView } from "@/services/thread";
 import { Permission } from "@/types/rbac";
 
@@ -79,7 +82,7 @@ export default async function ThreadPage(props: ThreadPageProps) {
   const page = Number(searchParams.page) || 1;
   const perPage = 50;
 
-  const postResult = await getPosts({
+  const postResult = await getPostsWithReputation({
     threadId: thread.id,
     page,
     perPage,

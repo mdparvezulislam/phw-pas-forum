@@ -8,14 +8,14 @@ interface SlashCommandConfig {
   items: SlashCommandItem[];
 }
 
-interface SlashCommandItem {
+export interface SlashCommandItem {
   title: string;
   description: string;
   icon: string;
   command: (props: { editor: Editor; range: Range }) => void;
 }
 
-interface SlashCommandState {
+export interface SlashCommandState {
   active: boolean;
   query: string;
   range: Range;

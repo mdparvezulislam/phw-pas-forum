@@ -15,3 +15,10 @@ export {
   resetPassword,
   verifyEmail,
 } from "@/modules/auth/actions";
+
+export { toggleReaction } from "@/modules/reputation/actions";
+export type { ReactionState } from "@/modules/reputation/actions";
+
+export { createBadge, updateBadge, assignBadge, revokeBadge } from "@/modules/reputation/actions";
+export { createTrophy, updateTrophy, assignTrophy, revokeTrophy } from "@/modules/reputation/actions";
+export { awardReputation } from "@/modules/reputation/actions";

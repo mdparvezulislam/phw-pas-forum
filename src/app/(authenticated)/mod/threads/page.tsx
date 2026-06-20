@@ -34,7 +34,7 @@ export default async function ModThreadsPage() {
     id: string;
     title: string;
     slug: string;
-    status: string;
+    status: "PENDING" | "DELETED" | "DRAFT" | "PUBLISHED" | "ARCHIVED";
     isPinned: boolean;
     isLocked: boolean;
     isFeatured: boolean;

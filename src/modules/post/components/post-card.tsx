@@ -1,4 +1,4 @@
-import type { PostWithAuthor } from "@/modules/post/types";
+import type { PostWithAuthorReputation } from "@/services/post";
 import { DeletedPostCard } from "./deleted-post-card";
 import { PostAuthorSidebar } from "./post-author-sidebar";
 import { PostContent } from "./post-content";
@@ -6,7 +6,7 @@ import { PostFooter } from "./post-footer";
 import { PostHeader } from "./post-header";
 
 interface PostCardProps {
-  post: PostWithAuthor;
+  post: PostWithAuthorReputation;
   isOwner: boolean;
   isModerator: boolean;
   baseUrl: string;

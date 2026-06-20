@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useActionState, useCallback, useEffect, useState } from "react";
+import { useActionState, useCallback, useEffect, useRef, useState } from "react";
 import { updateThread } from "@/modules/thread/actions";
 import type { ThreadWithRelations } from "@/modules/thread/types";
 import { RichTextEditor } from "@/modules/editor/components";

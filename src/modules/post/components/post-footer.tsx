@@ -3,10 +3,17 @@
 import { useActionState, useState } from "react";
 import { formatDateRelative } from "@/lib/utils";
 import { reportPost } from "@/modules/post/actions";
+import { ReactionBar } from "@/modules/reputation/components";
 import type { PostWithAuthor } from "@/modules/post/types";
 
 interface PostFooterProps {
-  post: PostWithAuthor;
+  post: PostWithAuthor & {
+    reactions?: Array<{
+      type: string;
+      count: number;
+      hasReacted: boolean;
+    }>;
+  };
   isOwner: boolean;
   isModerator: boolean;
 }
@@ -25,9 +32,25 @@ export function PostFooter({
   return (
     <div className="border-t bg-muted/10 px-4 py-2">
       <div className="flex items-center justify-between">
-        <div className="text-xs text-muted-foreground">
+        <div className="flex items-center gap-4">
+          <ReactionBar
+            targetId={post.id}
+            targetType="POST"
+            reactions={
+              post.reactions ?? [
+                { type: "LIKE", count: 0, hasReacted: false },
+                { type: "LOVE", count: 0, hasReacted: false },
+                { type: "THANKS", count: 0, hasReacted: false },
+                { type: "HELPFUL", count: 0, hasReacted: false },
+                { type: "INSIGHTFUL", count: 0, hasReacted: false },
+                { type: "FIRE", count: 0, hasReacted: false },
+              ]
+            }
+          />
           {post.isEdited && post.editedAt && (
-            <span>Last edited {formatDateRelative(post.editedAt)}</span>
+            <span className="text-xs text-muted-foreground">
+              Last edited {formatDateRelative(post.editedAt)}
+            </span>
           )}
         </div>
 

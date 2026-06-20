@@ -3,6 +3,9 @@ import type {
   PostReportStatus,
 } from "@/db/schema/post-reports";
 import type { Post } from "@/db/schema/posts";
+import type { UserReputation } from "@/db/schema/user-reputation";
+import type { UserLevel } from "@/db/schema/user-levels";
+import type { Badge } from "@/db/schema/badges";
 
 export interface PostWithAuthor extends Post {
   author: {
@@ -18,6 +21,19 @@ export interface PostWithRelations extends PostWithAuthor {
   isEdited: boolean;
   editedAt: Date | null;
   history?: PostEditHistoryItem[];
+}
+
+export interface PostWithDetails extends PostWithAuthor {
+  author: {
+    id: string;
+    username: string | null;
+    displayName: string | null;
+    image: string | null;
+    createdAt: Date;
+    reputation?: UserReputation | null;
+    level?: UserLevel | null;
+    badges?: Badge[];
+  };
 }
 
 export interface PostEditHistoryItem {
@@ -64,4 +80,12 @@ export interface PostReportWithRelations {
     username: string | null;
     displayName: string | null;
   };
+}
+
+export interface PostWithReactions extends Post {
+  reactions?: Array<{
+    type: string;
+    count: number;
+    hasReacted: boolean;
+  }>;
 }

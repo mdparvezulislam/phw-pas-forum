@@ -1,4 +1,5 @@
-import { mergeAttributes, Node, ReactNodeViewRenderer } from "@tiptap/core";
+import { mergeAttributes, Node } from "@tiptap/core";
+import { ReactNodeViewRenderer } from "@tiptap/react";
 
 interface QuoteOptions {
   HTMLAttributes: Record<string, unknown>;
@@ -116,7 +117,7 @@ export const Quote = Node.create<QuoteOptions>({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(({ node }) => {
+    return ReactNodeViewRenderer(({ node }: { node: any }) => {
       const attrs = node.attrs as unknown as QuoteAttrs;
 
       return (

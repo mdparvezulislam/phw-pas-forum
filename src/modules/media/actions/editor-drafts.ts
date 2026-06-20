@@ -74,7 +74,7 @@ export async function getEditorDraftAction(input: {
   return {
     success: true,
     data: {
-      content: draft.content,
+      content: draft.content ?? "",
       title: draft.title,
       updatedAt: draft.updatedAt.toISOString(),
     },

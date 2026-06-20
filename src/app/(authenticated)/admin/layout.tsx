@@ -17,6 +17,16 @@ export default async function AdminLayout({
     redirect("/");
   });
 
+  const tabs = [
+    { href: "/admin/categories", label: "Categories" },
+    { href: "/admin/forums", label: "Forums" },
+    { href: "/admin/threads", label: "Threads" },
+    { href: "/admin/reputation", label: "Reputation" },
+    { href: "/admin/badges", label: "Badges" },
+    { href: "/admin/trophies", label: "Trophies" },
+    { href: "/admin/search", label: "Search Index" },
+  ];
+
   return (
     <div className="relative flex min-h-screen flex-col">
       <Header />
@@ -28,25 +38,16 @@ export default async function AdminLayout({
               Manage your community
             </p>
           </div>
-          <div className="mb-6 flex gap-4 border-b">
-            <Link
-              href="/admin/categories"
-              className="border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-muted-foreground hover:text-foreground data-[active=true]:border-primary data-[active=true]:text-foreground"
-            >
-              Categories
-            </Link>
-            <Link
-              href="/admin/forums"
-              className="border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-muted-foreground hover:text-foreground"
-            >
-              Forums
-            </Link>
-            <Link
-              href="/admin/threads"
-              className="border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-muted-foreground hover:text-foreground"
-            >
-              Threads
-            </Link>
+          <div className="mb-6 flex flex-wrap gap-4 border-b">
+            {tabs.map((tab) => (
+              <Link
+                key={tab.href}
+                href={tab.href}
+                className="border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-muted-foreground hover:text-foreground data-[active=true]:border-primary data-[active=true]:text-foreground"
+              >
+                {tab.label}
+              </Link>
+            ))}
           </div>
           {children}
         </div>

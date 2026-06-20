@@ -9,6 +9,7 @@ const settingsNav = [
   { label: "Profile", href: "/settings/profile" },
   { label: "Security", href: "/settings/security" },
   { label: "Appearance", href: "/settings/appearance" },
+  { label: "Notifications", href: "/settings/notifications" },
 ];
 
 export function SettingsSidebar() {

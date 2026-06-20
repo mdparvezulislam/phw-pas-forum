@@ -15,3 +15,5 @@ export {
   getThreadWithUserState,
   incrementThreadView,
 } from "./thread";
+export { notificationService } from "./notification";
+export { conversationService } from "./conversation";
