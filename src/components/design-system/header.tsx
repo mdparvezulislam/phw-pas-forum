@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui";
 import { useAuth } from "@/hooks";
+import { UserDropdown } from "@/components/auth";
 import { GlobalSearch } from "./global-search";
 
 export function Header() {
@@ -11,20 +12,26 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-14 max-w-screen-2xl items-center px-4">
-        <Link href="/" className="flex items-center gap-2 font-semibold mr-6">
+        <Link href="/" className="mr-6 flex items-center gap-2 font-semibold">
           BHW PAS
         </Link>
 
-        <nav className="flex items-center gap-4 mr-auto">
+        <nav className="mr-auto flex items-center gap-4">
           <Link
             href="/forums"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             Forums
           </Link>
           <Link
-            href="/members/leaderboard"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            href="/marketplace"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Marketplace
+          </Link>
+          <Link
+            href="/leaderboards"
+            className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
             Leaderboard
           </Link>
@@ -32,20 +39,8 @@ export function Header() {
 
         <nav className="flex items-center gap-4">
           <GlobalSearch />
-          {isAuthenticated ? (
-            <>
-              <Link
-                href={`/profile/${user?.username}`}
-                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {user?.displayName ?? user?.username}
-              </Link>
-              <Link href="/auth/login">
-                <Button variant="ghost" size="sm">
-                  Sign out
-                </Button>
-              </Link>
-            </>
+          {isAuthenticated && user ? (
+            <UserDropdown user={user} />
           ) : (
             <>
               <Link href="/auth/login">

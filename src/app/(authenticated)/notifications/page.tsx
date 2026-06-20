@@ -1,35 +1,61 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { notificationService } from "@/services/notification";
 import { NotificationList } from "@/components/notifications";
+import { UserEmptyState } from "@/components/user";
+import { Bell, Settings, Inbox, CheckCheck } from "lucide-react";
+import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Notifications",
+  description: "Your notification center",
+};
 
 export default async function NotificationsPage() {
   const session = await auth();
-  if (!session?.user) {
-    redirect("/auth/login");
-  }
+  if (!session?.user) redirect("/auth/login");
 
   const userId = session.user.id;
-  const notifications = await notificationService.getNotifications(userId, {
-    limit: 50,
-  });
-
+  const notifications = await notificationService.getNotifications(userId, { limit: 50 });
   const unreadCount = await notificationService.getUnreadCount(userId);
 
   return (
-    <div className="container max-w-4xl py-8">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Notifications</h1>
-          <p className="text-muted-foreground mt-1">
-            {unreadCount > 0
-              ? `${unreadCount} unread notification${unreadCount === 1 ? "" : "s"}`
-              : "You're all caught up!"}
-          </p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+            <Bell className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold">Notifications</h1>
+            <p className="mt-0.5 text-sm text-muted-foreground">
+              {unreadCount > 0
+                ? `${unreadCount} unread`
+                : "You're all caught up!"}
+            </p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Link
+            href="/settings/notifications"
+            className="inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors hover:bg-accent"
+          >
+            <Settings className="h-4 w-4" />
+            Preferences
+          </Link>
         </div>
       </div>
 
-      <NotificationList notifications={notifications} />
+      {/* Notifications */}
+      {notifications.length > 0 ? (
+        <div className="overflow-hidden rounded-xl border bg-card">
+          <NotificationList notifications={notifications} />
+        </div>
+      ) : (
+        <UserEmptyState type="no-notifications" />
+      )}
     </div>
   );
 }

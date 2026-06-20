@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui";
+import { useAuth } from "@/hooks";
 
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, isAuthenticated } = useAuth();
 
   return (
     <div className="lg:hidden">
@@ -52,26 +54,61 @@ export function MobileNav() {
               Home
             </Link>
             <Link
-              href="/forum"
+              href="/forums"
               className="rounded-md px-3 py-2 text-sm hover:bg-accent"
               onClick={() => setIsOpen(false)}
             >
-              Forum
+              Forums
             </Link>
             <Link
-              href="/auth/login"
+              href="/marketplace"
               className="rounded-md px-3 py-2 text-sm hover:bg-accent"
               onClick={() => setIsOpen(false)}
             >
-              Sign in
+              Marketplace
             </Link>
             <Link
-              href="/auth/register"
+              href="/leaderboards"
               className="rounded-md px-3 py-2 text-sm hover:bg-accent"
               onClick={() => setIsOpen(false)}
             >
-              Sign up
+              Leaderboard
             </Link>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="rounded-md px-3 py-2 text-sm hover:bg-accent"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  href={`/profile/${user?.username}`}
+                  className="rounded-md px-3 py-2 text-sm hover:bg-accent"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Profile
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/auth/login"
+                  className="rounded-md px-3 py-2 text-sm hover:bg-accent"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Sign in
+                </Link>
+                <Link
+                  href="/auth/register"
+                  className="rounded-md px-3 py-2 text-sm hover:bg-accent"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       )}
