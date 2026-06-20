@@ -25,6 +25,7 @@ export default async function AdminLayout({
     { href: "/admin/badges", label: "Badges" },
     { href: "/admin/trophies", label: "Trophies" },
     { href: "/admin/search", label: "Search Index" },
+    { href: "/admin/marketplace", label: "Marketplace Rules" },
   ];
 
   return (

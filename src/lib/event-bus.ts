@@ -20,7 +20,13 @@ export type AppEvent =
                 | MarketplaceEvent
                 | PrivateMessageEvent
                 | ConversationInviteEvent
-                | ConversationMentionEvent;
+                | ConversationMentionEvent
+                | ListingSubmittedEvent
+                | ListingApprovedEvent
+                | ListingRejectedEvent
+                | ListingChangesRequestedEvent
+                | SellerVerifiedEvent
+                | ListingReportedEvent;
 
 export interface BaseEvent {
                 id: string;
@@ -163,6 +169,42 @@ export interface ConversationMentionEvent extends BaseEvent {
                 mentionedUserId: string;
 }
 
+export interface ListingSubmittedEvent extends BaseEvent {
+  type: "LISTING_SUBMITTED";
+  listingId: string;
+  submissionId: string;
+}
+
+export interface ListingApprovedEvent extends BaseEvent {
+  type: "LISTING_APPROVED";
+  listingId: string;
+  submissionId: string;
+}
+
+export interface ListingRejectedEvent extends BaseEvent {
+  type: "LISTING_REJECTED";
+  listingId: string;
+  submissionId: string;
+}
+
+export interface ListingChangesRequestedEvent extends BaseEvent {
+  type: "LISTING_CHANGES_REQUESTED";
+  listingId: string;
+  submissionId: string;
+}
+
+export interface SellerVerifiedEvent extends BaseEvent {
+  type: "SELLER_VERIFIED";
+  sellerId: string;
+  status: string;
+}
+
+export interface ListingReportedEvent extends BaseEvent {
+  type: "LISTING_REPORTED";
+  listingId: string;
+  flagId: string;
+}
+
 type EventHandler = (event: AppEvent) => Promise<void>;
 
 const handlers: EventHandler[] = [];
@@ -214,6 +256,13 @@ export function getNotificationTypeFromEvent(event: AppEvent): NotificationType 
                                                 return "CONVERSATION_INVITE";
                                 case "CONVERSATION_MENTION":
                                                 return "CONVERSATION_MENTION";
+                                case "LISTING_SUBMITTED":
+                                case "LISTING_APPROVED":
+                                case "LISTING_REJECTED":
+                                case "LISTING_CHANGES_REQUESTED":
+                                case "SELLER_VERIFIED":
+                                case "LISTING_REPORTED":
+                                                return "MARKETPLACE_EVENT";
                                 default:
                                                 return null;
                 }

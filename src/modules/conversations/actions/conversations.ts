@@ -195,13 +195,21 @@ export async function searchUsersAction(query: string): Promise<ActionResponse<a
   try {
     await requireAuth();
     if (!query || query.length < 2) return { success: true, data: [] };
-    const db = getDatabase();
-    const result = await db.query.users.findMany({
-      where: (u, { ilike }) => ilike(u.username, `%${query}%`),
-      limit: 10,
-      columns: { id: true, username: true, displayName: true, image: true },
+    
+    const { searchService } = await import("@/services/search");
+    const results = await searchService.executeSearch(query, {
+      contentType: "users",
+      perPage: 10,
     });
-    return { success: true, data: result };
+    
+    const users = results.hits.map((h: any) => ({
+      id: h.document.id,
+      username: h.document.username,
+      displayName: h.document.displayName,
+      image: null,
+    }));
+    
+    return { success: true, data: users };
   } catch (error: any) {
     return { success: false, error: error.message };
   }

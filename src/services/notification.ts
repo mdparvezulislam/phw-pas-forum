@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, sql, inArray } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
 import type { Notification, NotificationType } from "@/db/schema/notifications";
 import type { NewNotificationPreference } from "@/db/schema/notification-preferences";
@@ -14,6 +14,12 @@ import {
     type BadgeEarnedEvent,
     type TrophyUnlockedEvent,
     type LevelUpEvent,
+    type ListingSubmittedEvent,
+    type ListingApprovedEvent,
+    type ListingRejectedEvent,
+    type ListingChangesRequestedEvent,
+    type SellerVerifiedEvent,
+    type ListingReportedEvent,
 } from "@/lib/event-bus";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
 import { auditService } from "./audit";
@@ -89,6 +95,24 @@ class NotificationService {
                 break;
             case "CONVERSATION_MENTION":
                 await this.handleConversationMention(event as any);
+                break;
+            case "LISTING_SUBMITTED":
+                await this.handleListingSubmitted(event as any);
+                break;
+            case "LISTING_APPROVED":
+                await this.handleListingApproved(event as any);
+                break;
+            case "LISTING_REJECTED":
+                await this.handleListingRejected(event as any);
+                break;
+            case "LISTING_CHANGES_REQUESTED":
+                await this.handleListingChangesRequested(event as any);
+                break;
+            case "SELLER_VERIFIED":
+                await this.handleSellerVerified(event as any);
+                break;
+            case "LISTING_REPORTED":
+                await this.handleListingReported(event as any);
                 break;
         }
     }
@@ -495,6 +519,183 @@ class NotificationService {
             .update(schema.notificationPreferences)
             .set(updates)
             .where(eq(schema.notificationPreferences.userId, userId));
+    }
+
+    private async handleListingSubmitted(event: ListingSubmittedEvent): Promise<void> {
+        const db = getDatabase();
+        const thread = await db.query.threads.findFirst({
+            where: (t, { eq }) => eq(t.id, event.listingId),
+        });
+        if (!thread) return;
+
+        const userId = thread.authorId;
+        const type: NotificationType = "MARKETPLACE_EVENT";
+        const deliver = await this.shouldDeliver(userId, type);
+        if (!deliver) return;
+
+        const [notif] = await db.insert(schema.notifications).values({
+            userId,
+            type,
+            title: "Listing Submitted",
+            message: `Your listing for "${thread.title}" has been submitted and is under review.`,
+            entityId: event.listingId,
+            entityType: "THREAD",
+            actorId: event.actorId,
+        }).returning();
+
+        realtimeService.publishNotification(userId, notif as any);
+        const count = await this.getUnreadCount(userId);
+        realtimeService.publishUnreadCount(userId, count);
+    }
+
+    private async handleListingApproved(event: ListingApprovedEvent): Promise<void> {
+        const db = getDatabase();
+        const thread = await db.query.threads.findFirst({
+            where: (t, { eq }) => eq(t.id, event.listingId),
+        });
+        if (!thread) return;
+
+        const userId = thread.authorId;
+        const type: NotificationType = "MARKETPLACE_EVENT";
+        const deliver = await this.shouldDeliver(userId, type);
+        if (!deliver) return;
+
+        const [notif] = await db.insert(schema.notifications).values({
+            userId,
+            type,
+            title: "Listing Approved 🚀",
+            message: `Your listing for "${thread.title}" has been approved and is now live!`,
+            entityId: event.listingId,
+            entityType: "THREAD",
+            actorId: event.actorId,
+        }).returning();
+
+        realtimeService.publishNotification(userId, notif as any);
+        const count = await this.getUnreadCount(userId);
+        realtimeService.publishUnreadCount(userId, count);
+    }
+
+    private async handleListingRejected(event: ListingRejectedEvent): Promise<void> {
+        const db = getDatabase();
+        const thread = await db.query.threads.findFirst({
+            where: (t, { eq }) => eq(t.id, event.listingId),
+        });
+        if (!thread) return;
+
+        const sub = await db.query.marketplaceSubmissions.findFirst({
+            where: (s, { eq }) => eq(s.id, event.submissionId),
+        });
+
+        const userId = thread.authorId;
+        const type: NotificationType = "MARKETPLACE_EVENT";
+        const deliver = await this.shouldDeliver(userId, type);
+        if (!deliver) return;
+
+        const reasonText = sub?.rejectionReason ? ` Reason: ${sub.rejectionReason}` : "";
+        const [notif] = await db.insert(schema.notifications).values({
+            userId,
+            type,
+            title: "Listing Rejected ❌",
+            message: `Your listing for "${thread.title}" has been rejected.${reasonText}`,
+            entityId: event.listingId,
+            entityType: "THREAD",
+            actorId: event.actorId,
+        }).returning();
+
+        realtimeService.publishNotification(userId, notif as any);
+        const count = await this.getUnreadCount(userId);
+        realtimeService.publishUnreadCount(userId, count);
+    }
+
+    private async handleListingChangesRequested(event: ListingChangesRequestedEvent): Promise<void> {
+        const db = getDatabase();
+        const thread = await db.query.threads.findFirst({
+            where: (t, { eq }) => eq(t.id, event.listingId),
+        });
+        if (!thread) return;
+
+        const sub = await db.query.marketplaceSubmissions.findFirst({
+            where: (s, { eq }) => eq(s.id, event.submissionId),
+        });
+
+        const userId = thread.authorId;
+        const type: NotificationType = "MARKETPLACE_EVENT";
+        const deliver = await this.shouldDeliver(userId, type);
+        if (!deliver) return;
+
+        const notesText = sub?.notes ? ` Details: ${sub.notes}` : "";
+        const [notif] = await db.insert(schema.notifications).values({
+            userId,
+            type,
+            title: "Changes Requested ⚠️",
+            message: `Changes have been requested on your listing "${thread.title}".${notesText}`,
+            entityId: event.listingId,
+            entityType: "THREAD",
+            actorId: event.actorId,
+        }).returning();
+
+        realtimeService.publishNotification(userId, notif as any);
+        const count = await this.getUnreadCount(userId);
+        realtimeService.publishUnreadCount(userId, count);
+    }
+
+    private async handleSellerVerified(event: SellerVerifiedEvent): Promise<void> {
+        const db = getDatabase();
+        const userId = event.sellerId;
+        const type: NotificationType = "MARKETPLACE_EVENT";
+        const deliver = await this.shouldDeliver(userId, type);
+        if (!deliver) return;
+
+        const [notif] = await db.insert(schema.notifications).values({
+            userId,
+            type,
+            title: "Seller Verification Updated",
+            message: `Your seller verification status has been updated to: ${event.status}`,
+            entityId: event.sellerId,
+            entityType: "USER",
+            actorId: event.actorId,
+        }).returning();
+
+        realtimeService.publishNotification(userId, notif as any);
+        const count = await this.getUnreadCount(userId);
+        realtimeService.publishUnreadCount(userId, count);
+    }
+
+    private async handleListingReported(event: ListingReportedEvent): Promise<void> {
+        const db = getDatabase();
+        const thread = await db.query.threads.findFirst({
+            where: (t, { eq }) => eq(t.id, event.listingId),
+        });
+        if (!thread) return;
+
+        const mods = await db
+            .select({ id: schema.users.id })
+            .from(schema.users)
+            .innerJoin(schema.roles, eq(schema.users.roleId, schema.roles.id))
+            .where(
+                inArray(schema.roles.name, ["MODERATOR", "ADMIN", "SUPER_ADMIN"])
+            );
+
+        const type: NotificationType = "MARKETPLACE_EVENT";
+
+        for (const mod of mods) {
+            const deliver = await this.shouldDeliver(mod.id, type);
+            if (!deliver) continue;
+
+            const [notif] = await db.insert(schema.notifications).values({
+                userId: mod.id,
+                type,
+                title: "Listing Reported 🚨",
+                message: `The marketplace listing "${thread.title}" has been reported.`,
+                entityId: event.listingId,
+                entityType: "THREAD",
+                actorId: event.actorId,
+            }).returning();
+
+            realtimeService.publishNotification(mod.id, notif as any);
+            const count = await this.getUnreadCount(mod.id);
+            realtimeService.publishUnreadCount(mod.id, count);
+        }
     }
 }
 

@@ -8,6 +8,8 @@ export const searchIndexEntityType = [
   "BADGE",
   "TROPHY",
   "CONVERSATION_MESSAGE",
+  "MARKETPLACE_LISTING",
+  "MARKETPLACE_SELLER",
 ] as const;
 export type SearchIndexEntityType = (typeof searchIndexEntityType)[number];
 

@@ -21,6 +21,12 @@ import { attachments } from "./attachments";
 import { roles } from "./roles";
 import { searchHistories } from "./search-histories";
 import { searchQueries } from "./search-queries";
+import { marketplaceSubmissions } from "./marketplace-submissions";
+import { marketplaceReviews } from "./marketplace-reviews";
+import { sellerVerifications } from "./seller-verifications";
+import { marketplaceAuditLogs } from "./marketplace-audit-logs";
+import { marketplaceFlags } from "./marketplace-flags";
+import { featuredListings } from "./featured-listings";
 
 export const usersRelations = relations(users, ({ many, one }) => ({
   threads: many(threads),
@@ -37,6 +43,10 @@ export const usersRelations = relations(users, ({ many, one }) => ({
   }),
   searchHistory: many(searchHistories),
   searchQueries: many(searchQueries),
+  submissions: many(marketplaceSubmissions),
+  reviews: many(marketplaceReviews),
+  verifications: many(sellerVerifications),
+  flags: many(marketplaceFlags),
 }));
 
 export const rolesRelations = relations(roles, ({ many }) => ({
@@ -53,6 +63,16 @@ export const threadsRelations = relations(threads, ({ one, many }) => ({
   forum: one(forums, {
     fields: [threads.forumId],
     references: [forums.id],
+  }),
+  marketplaceSubmission: one(marketplaceSubmissions, {
+    fields: [threads.id],
+    references: [marketplaceSubmissions.listingId],
+  }),
+  marketplaceAuditLogs: many(marketplaceAuditLogs),
+  marketplaceFlags: many(marketplaceFlags),
+  featuredListing: one(featuredListings, {
+    fields: [threads.id],
+    references: [featuredListings.listingId],
   }),
 }));
 
@@ -203,6 +223,81 @@ export const searchHistoriesRelations = relations(searchHistories, ({ one }) => 
 export const searchQueriesRelations = relations(searchQueries, ({ one }) => ({
   user: one(users, {
     fields: [searchQueries.userId],
+    references: [users.id],
+  }),
+}));
+
+export const marketplaceSubmissionsRelations = relations(marketplaceSubmissions, ({ one, many }) => ({
+  listing: one(threads, {
+    fields: [marketplaceSubmissions.listingId],
+    references: [threads.id],
+  }),
+  seller: one(users, {
+    fields: [marketplaceSubmissions.sellerId],
+    references: [users.id],
+  }),
+  assignedModerator: one(users, {
+    fields: [marketplaceSubmissions.assignedModeratorId],
+    references: [users.id],
+  }),
+  reviews: many(marketplaceReviews),
+}));
+
+export const marketplaceReviewsRelations = relations(marketplaceReviews, ({ one }) => ({
+  submission: one(marketplaceSubmissions, {
+    fields: [marketplaceReviews.submissionId],
+    references: [marketplaceSubmissions.id],
+  }),
+  moderator: one(users, {
+    fields: [marketplaceReviews.moderatorId],
+    references: [users.id],
+  }),
+}));
+
+export const sellerVerificationsRelations = relations(sellerVerifications, ({ one }) => ({
+  seller: one(users, {
+    fields: [sellerVerifications.sellerId],
+    references: [users.id],
+  }),
+  verifiedByUser: one(users, {
+    fields: [sellerVerifications.verifiedBy],
+    references: [users.id],
+  }),
+}));
+
+export const marketplaceAuditLogsRelations = relations(marketplaceAuditLogs, ({ one }) => ({
+  listing: one(threads, {
+    fields: [marketplaceAuditLogs.listingId],
+    references: [threads.id],
+  }),
+  moderator: one(users, {
+    fields: [marketplaceAuditLogs.moderatorId],
+    references: [users.id],
+  }),
+}));
+
+export const marketplaceFlagsRelations = relations(marketplaceFlags, ({ one }) => ({
+  listing: one(threads, {
+    fields: [marketplaceFlags.listingId],
+    references: [threads.id],
+  }),
+  user: one(users, {
+    fields: [marketplaceFlags.userId],
+    references: [users.id],
+  }),
+  resolver: one(users, {
+    fields: [marketplaceFlags.resolvedBy],
+    references: [users.id],
+  }),
+}));
+
+export const featuredListingsRelations = relations(featuredListings, ({ one }) => ({
+  listing: one(threads, {
+    fields: [featuredListings.listingId],
+    references: [threads.id],
+  }),
+  promotedByUser: one(users, {
+    fields: [featuredListings.featuredBy],
     references: [users.id],
   }),
 }));

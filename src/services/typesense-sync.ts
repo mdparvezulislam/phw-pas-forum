@@ -15,6 +15,8 @@ export const COLLECTIONS = {
   BADGES: "badges",
   TROPHIES: "trophies",
   CONVERSATION_MESSAGES: "conversation_messages",
+  MARKETPLACE_LISTINGS: "marketplace_listings",
+  MARKETPLACE_SELLERS: "marketplace_sellers",
 } as const;
 
 export class TypesenseSyncService {
@@ -117,7 +119,61 @@ export class TypesenseSyncService {
         ],
         default_sorting_field: "createdAt",
       },
-    ];
+       {
+         name: COLLECTIONS.MARKETPLACE_LISTINGS,
+         fields: [
+           { name: "id", type: "string" },
+           { name: "title", type: "string" },
+           { name: "slug", type: "string" },
+           { name: "short_description", type: "string" },
+           { name: "seller_id", type: "string" },
+           { name: "seller_name", type: "string" },
+           { name: "category_id", type: "string" },
+           { name: "category_name", type: "string" },
+           { name: "listing_type", type: "string" },
+           { name: "status", type: "string" },
+           { name: "visibility", type: "string", facet: true },
+           { name: "base_price", type: "int32" },
+           { name: "delivery_days", type: "int32" },
+           { name: "revisions", type: "int32" },
+           { name: "views", type: "int32" },
+           { name: "favorites", type: "int32" },
+           { name: "sales", type: "int32" },
+           { name: "rating", type: "int32" },
+           { name: "review_count", type: "int32" },
+           { name: "featured", type: "bool", facet: true },
+           { name: "created_at", type: "int64" },
+         ],
+         default_sorting_field: "created_at",
+       },
+       {
+         name: COLLECTIONS.MARKETPLACE_SELLERS,
+         fields: [
+           { name: "id", type: "string" },
+           { name: "user_id", type: "string" },
+           { name: "username", type: "string" },
+           { name: "display_name", type: "string" },
+           { name: "bio", type: "string" },
+           { name: "avatar", type: "string" },
+           { name: "website", type: "string" },
+           { name: "telegram", type: "string" },
+           { name: "discord", type: "string" },
+           { name: "joined_marketplace_at", type: "int64" },
+           { name: "verification_status", type: "string", facet: true },
+           { name: "total_sales", type: "int32" },
+           { name: "total_reviews", type: "int32" },
+           { name: "average_rating", type: "int32" },
+           { name: "trust_score", type: "int32" },
+           { name: "response_rate", type: "int32" },
+           { name: "response_time", type: "int32" },
+           { name: "completion_rate", type: "int32" },
+           { name: "is_verified_seller", type: "bool" },
+           { name: "is_top_seller", type: "bool" },
+           { name: "created_at", type: "int64" },
+         ],
+         default_sorting_field: "created_at",
+       }
+     ];
 
     for (const schemaDef of collections) {
       await typesenseClient.createCollection(schemaDef as any);
@@ -125,6 +181,8 @@ export class TypesenseSyncService {
   }
 
   /**
+   * Queue an index job
+   */
   async queueIndexJob(
     entityType: SearchIndexEntityType,
     entityId: string,
@@ -264,6 +322,9 @@ export class TypesenseSyncService {
       case "BADGE": return COLLECTIONS.BADGES;
       case "TROPHY": return COLLECTIONS.TROPHIES;
       case "CONVERSATION_MESSAGE": return COLLECTIONS.CONVERSATION_MESSAGES;
+      case "MARKETPLACE_LISTING": return COLLECTIONS.MARKETPLACE_LISTINGS;
+      case "MARKETPLACE_SELLER": return COLLECTIONS.MARKETPLACE_SELLERS;
+      default: throw new Error(`Unknown entity type: ${type}`);
     }
   }
 
@@ -304,7 +365,7 @@ export class TypesenseSyncService {
           tags: true,
         } as any,
       }) as any;
-      if (!record || record.status === "DELETED" || record.status === "DRAFT") return null;
+      if (!record || record.status !== "PUBLISHED") return null;
 
       return {
         id: record.id,
@@ -343,7 +404,7 @@ export class TypesenseSyncService {
           },
         } as any,
       }) as any;
-      if (!record || record.status === "DELETED" || (record as any).thread?.status === "DELETED") return null;
+      if (!record || record.status !== "PUBLISHED" || (record as any).thread?.status !== "PUBLISHED") return null;
 
       return {
         id: record.id,
@@ -440,8 +501,75 @@ export class TypesenseSyncService {
         createdAt: record.createdAt.getTime(),
       };
     }
+     if (type === "MARKETPLACE_LISTING") {
+       const record = await db.query.marketplaceListings.findFirst({
+         where: eq(schema.marketplaceListings.id, id),
+         with: {
+           seller: true,
+           category: true,
+         },
+       }) as any;
+       if (!record) return null;
 
-    return null;
+       return {
+         id: record.id,
+         title: record.title,
+         slug: record.slug,
+         short_description: record.shortDescription,
+         seller_id: record.sellerId,
+         seller_name: record.seller?.displayName ?? "",
+         category_id: record.categoryId,
+         category_name: record.category?.name ?? "",
+         listing_type: record.listingType,
+         status: record.status,
+         visibility: record.visibility,
+         base_price: record.basePrice,
+         delivery_days: record.deliveryDays,
+         revisions: record.revisions,
+         views: record.views,
+         favorites: record.favorites,
+         sales: record.sales,
+         rating: Math.round((record.rating ?? 0) * 10),
+         review_count: record.reviewCount,
+         featured: record.featured,
+         created_at: record.createdAt.getTime(),
+       };
+     }
+     if (type === "MARKETPLACE_SELLER") {
+       const record = await db.query.sellerProfiles.findFirst({
+         where: eq(schema.sellerProfiles.id, id),
+         with: {
+           user: true,
+         },
+       }) as any;
+       if (!record) return null;
+
+       return {
+         id: record.id,
+         user_id: record.userId,
+         username: record.user?.username ?? "",
+         display_name: record.displayName ?? "",
+         bio: record.bio ?? "",
+         avatar: record.avatar ?? "",
+         website: record.website ?? "",
+         telegram: record.telegram ?? "",
+         discord: record.discord ?? "",
+         joined_marketplace_at: record.joinedMarketplaceAt.getTime(),
+         verification_status: record.verificationStatus,
+         total_sales: record.totalSales,
+         total_reviews: record.totalReviews,
+         average_rating: Math.round((record.averageRating ?? 0) * 10),
+         trust_score: record.trustScore,
+         response_rate: record.responseRate,
+         response_time: record.responseTime,
+         completion_rate: record.completionRate,
+         is_verified_seller: record.isVerifiedSeller,
+         is_top_seller: record.isTopSeller,
+         created_at: record.createdAt.getTime(),
+       };
+     }
+
+     return null;
   }
 }
 

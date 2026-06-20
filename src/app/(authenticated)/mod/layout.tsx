@@ -41,6 +41,18 @@ export default async function ModLayout({
             >
               Reports
             </Link>
+            <Link
+              href="/mod/marketplace/queue"
+              className="border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+              Marketplace Queue
+            </Link>
+            <Link
+              href="/mod/marketplace"
+              className="border-b-2 border-transparent px-1 pb-3 text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+              Seller Verifications
+            </Link>
           </div>
           {children}
         </div>
