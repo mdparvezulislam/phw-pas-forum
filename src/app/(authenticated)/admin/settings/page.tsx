@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { requirePermission, requireRole } from "@/modules/auth/guards";
-import { Permission, RoleName } from "@/types/rbac";
 import { adminSettingsService } from "@/services/admin-settings";
 
 export const metadata: Metadata = {
@@ -8,8 +6,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminSettingsPage() {
-  await requireRole(RoleName.ADMIN);
-  await requirePermission(Permission.ADMIN_SETTINGS);
 
   const settings = await adminSettingsService.getAllSettings();
   const featureFlags = await adminSettingsService.getFeatureFlags();

@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { requirePermission, requireRole } from "@/modules/auth/guards";
-import { Permission, RoleName } from "@/types/rbac";
 import { Shield, AlertTriangle, Ban, Lock } from "lucide-react";
 import { StatsCard } from "@/components/admin/stats-card";
 
@@ -9,8 +7,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminSecurityPage() {
-  await requireRole(RoleName.ADMIN);
-  await requirePermission(Permission.ADMIN_SETTINGS);
 
   return (
     <div className="space-y-6">

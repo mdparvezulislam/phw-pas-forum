@@ -1,34 +1,35 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { getBuyerOrdersAction } from "@/actions";
-import type { Order, MarketplaceListing, User } from "@/db/schema";
-import { OrderCard } from "./order-card";
 import { OrderStatusBadge } from "./order-status-badge";
-
-interface OrderWithRelations extends Order {
-  listing: MarketplaceListing;
-  seller: User;
-}
+import { formatCurrency } from "@/lib/utils";
+import { Package, ShoppingBag, Clock, CheckCircle2, AlertTriangle } from "lucide-react";
+import { MarketplaceEmptyState } from "@/components/marketplace";
 
 export function OrderDashboard({ userId }: { userId: string }) {
-  const [orders, setOrders] = useState<OrderWithRelations[]>([]);
-  const [activeTab, setActiveTab] = useState<string>("");
+  const [orders, setOrders] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState("");
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
   const tabs = [
-    { label: "All", value: "" },
-    { label: "Active", value: "IN_PROGRESS" },
-    { label: "Delivered", value: "DELIVERED" },
-    { label: "Completed", value: "COMPLETED" },
-    { label: "Disputed", value: "DISPUTED" },
+    { label: "All", value: "", icon: Package },
+    { label: "Active", value: "IN_PROGRESS", icon: Clock },
+    { label: "Delivered", value: "DELIVERED", icon: ShoppingBag },
+    { label: "Completed", value: "COMPLETED", icon: CheckCircle2 },
+    { label: "Disputed", value: "DISPUTED", icon: AlertTriangle },
   ];
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
-    const result = await getBuyerOrdersAction({ status: activeTab || undefined, page, limit: 20 });
+    const result = await getBuyerOrdersAction({
+      status: activeTab || undefined,
+      page,
+      limit: 20,
+    });
     if (result.success && result.data) {
       setOrders(result.data.orders);
       setTotalPages(result.data.totalPages);
@@ -42,62 +43,93 @@ export function OrderDashboard({ userId }: { userId: string }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      {/* Header */}
+      <div>
         <h1 className="text-2xl font-bold">My Orders</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Track and manage your marketplace orders
+        </p>
       </div>
 
-      <div className="flex gap-2 border-b pb-2">
-        {tabs.map((tab) => (
-          <button
-            key={tab.value}
-            onClick={() => {
-              setActiveTab(tab.value);
-              setPage(1);
-            }}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-              activeTab === tab.value
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-muted"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+      {/* Tabs */}
+      <div className="flex flex-wrap gap-2">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          return (
+            <button
+              key={tab.value}
+              onClick={() => {
+                setActiveTab(tab.value);
+                setPage(1);
+              }}
+              className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                activeTab === tab.value
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:bg-accent hover:text-foreground"
+              }`}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
+      {/* Orders */}
       {loading ? (
-        <div className="flex items-center justify-center py-12">
+        <div className="flex items-center justify-center py-16">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
         </div>
       ) : orders.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-          <p className="text-lg">No orders found</p>
-          <p className="text-sm">Browse the marketplace to place your first order</p>
-        </div>
+        <MarketplaceEmptyState type="no-orders" />
       ) : (
-        <div className="space-y-4">
-          {orders.map((order) => (
-            <OrderCard key={order.id} order={order} role="buyer" />
+        <div className="space-y-3">
+          {orders.map((order: any) => (
+            <Link
+              key={order.id}
+              href={`/orders/${order.id}`}
+              className="group flex items-center gap-4 rounded-xl border bg-card p-4 transition-all hover:border-primary/20 hover:shadow-md hover:shadow-primary/5"
+            >
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-sm font-bold text-primary">
+                {(order.listing?.title ?? "O")[0]?.toUpperCase()}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold group-hover:text-primary transition-colors">
+                  {order.listing?.title ?? "Order"}
+                </p>
+                <p className="mt-0.5 text-xs text-muted-foreground">
+                  #{order.orderNumber} &middot; Seller:{" "}
+                  {order.seller?.displayName ?? order.seller?.username ?? "Unknown"}
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-bold">
+                  {formatCurrency(order.amount)}
+                </span>
+                <OrderStatusBadge status={order.status} />
+              </div>
+            </Link>
           ))}
         </div>
       )}
 
+      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-2 py-4">
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="rounded-lg px-3 py-1 text-sm disabled:opacity-50"
+            className="rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
           >
             Previous
           </button>
-          <span className="text-sm text-muted-foreground">
+          <span className="px-3 text-sm text-muted-foreground">
             Page {page} of {totalPages}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="rounded-lg px-3 py-1 text-sm disabled:opacity-50"
+            className="rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors hover:bg-accent disabled:opacity-50"
           >
             Next
           </button>

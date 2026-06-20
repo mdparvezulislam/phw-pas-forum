@@ -1,17 +1,14 @@
 import { asc } from "drizzle-orm";
 import type { Metadata } from "next";
 import { getDatabase, schema } from "@/db";
-import { requireRole } from "@/modules/auth/guards";
 import { ForumDeleteButton } from "@/modules/forum/components/forum-delete-button";
 import { ForumForm } from "@/modules/forum/components/forum-form";
-import { RoleName } from "@/types/rbac";
 
 export const metadata: Metadata = {
   title: "Manage Forums",
 };
 
 export default async function AdminForumsPage() {
-  await requireRole(RoleName.ADMIN);
 
   const db = getDatabase();
   const forums = await db.query.forums.findMany({

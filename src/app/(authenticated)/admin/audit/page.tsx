@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { requirePermission, requireRole } from "@/modules/auth/guards";
-import { Permission, RoleName } from "@/types/rbac";
 import { formatDateRelative } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -8,8 +6,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminAuditPage() {
-  await requireRole(RoleName.ADMIN);
-  await requirePermission(Permission.ADMIN_MANAGE_AUDIT);
 
   const { getDatabase, schema } = await import("@/db");
   const { desc } = await import("drizzle-orm");

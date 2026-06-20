@@ -1,17 +1,14 @@
 import { asc } from "drizzle-orm";
 import type { Metadata } from "next";
 import { getDatabase, schema } from "@/db";
-import { requireRole } from "@/modules/auth/guards";
 import { CategoryDeleteButton } from "@/modules/forum/components/category-delete-button";
 import { CategoryForm } from "@/modules/forum/components/category-form";
-import { RoleName } from "@/types/rbac";
 
 export const metadata: Metadata = {
   title: "Manage Categories",
 };
 
 export default async function AdminCategoriesPage() {
-  await requireRole(RoleName.ADMIN);
 
   const db = getDatabase();
   const categories = await db.query.categories.findMany({

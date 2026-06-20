@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
 import { adminModerationService } from "@/services/admin-moderation";
 import { formatDateRelative } from "@/lib/utils";
 
@@ -9,7 +7,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminModerationPage() {
-  await requireRole(RoleName.ADMIN);
 
   const queue = await adminModerationService.getUnifiedModerationQueue();
   const stats = await adminModerationService.getModerationStats();

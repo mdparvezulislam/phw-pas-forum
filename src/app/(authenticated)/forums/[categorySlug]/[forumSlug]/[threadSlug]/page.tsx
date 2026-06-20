@@ -3,14 +3,10 @@ import { notFound } from "next/navigation";
 import { hasPermission } from "@/config/rbac";
 import { auth } from "@/lib/auth";
 import { ContentRenderer } from "@/modules/editor/components";
-import { ForumSidebar } from "@/modules/forum/components";
+import { ThreadSidebar } from "@/components/forum";
 import { PostCard, PostPagination, ReplyForm } from "@/modules/post/components";
-import {
-  ThreadActions,
-  ThreadAuthorCard,
-  ThreadBreadcrumbs,
-  ThreadHeader,
-} from "@/modules/thread/components";
+import { ThreadActions } from "@/modules/thread/components";
+import { ThreadHeader } from "@/components/forum";
 import {
   getCategoryBySlug,
   getForumBySlugAndCategory,
@@ -93,85 +89,77 @@ export default async function ThreadPage(props: ThreadPageProps) {
   const baseUrl = `/forums/${params.categorySlug}/${params.forumSlug}/${params.threadSlug}`;
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
-      <div className="space-y-6">
-        <ThreadBreadcrumbs
-          items={[
-            { label: "Forums", href: "/forums" },
-            { label: category.title, href: `/forums/${category.slug}` },
-            {
-              label: forum.title,
-              href: `/forums/${category.slug}/${forum.slug}`,
-            },
-            { label: thread.title },
-          ]}
-        />
+    <div className="pt-4">
+      {/* Thread Header (new design with breadcrumbs + meta + actions) */}
+      <ThreadHeader
+        thread={thread}
+        categorySlug={category.slug}
+        categoryTitle={category.title}
+        forumSlug={forum.slug}
+        forumTitle={forum.title}
+      />
 
-        <ThreadHeader
-          thread={thread}
-          categorySlug={category.slug}
-          forumSlug={forum.slug}
-          isOwner={isOwner}
-        />
-
+      {/* Thread Actions */}
+      <div className="mt-4">
         <ThreadActions
           thread={thread}
           categorySlug={category.slug}
           forumSlug={forum.slug}
         />
+      </div>
 
-        <div className="rounded-lg border bg-card p-6">
-          <ContentRenderer content={thread.contentJson ?? thread.content} />
-        </div>
+      {/* Thread Content */}
+      <div className="mt-4 overflow-hidden rounded-xl border bg-card p-5 sm:p-6">
+        <ContentRenderer content={thread.contentJson ?? thread.content} />
+      </div>
+
+      {/* Replies */}
+      <div className="mt-6 space-y-4">
+        <h2 className="flex items-center gap-2 text-lg font-semibold">
+          Replies
+          <span className="rounded-full bg-muted px-2.5 py-0.5 text-sm font-medium text-muted-foreground">
+            {thread.replyCount}
+          </span>
+        </h2>
 
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">
-              Replies ({thread.replyCount})
-            </h2>
-          </div>
-
-          <div className="space-y-4">
-            {postResult.items.map((post) => (
-              <PostCard
-                key={post.id}
-                post={post}
-                isOwner={session?.user?.id === post.authorId}
-                isModerator={isModerator}
-                baseUrl={baseUrl}
-              />
-            ))}
-          </div>
-
-          {postResult.items.length === 0 && (
-            <div className="rounded-lg border bg-muted/30 p-8 text-center">
-              <p className="text-muted-foreground">
-                No replies yet. Be the first to reply!
-              </p>
-            </div>
-          )}
-
-          <PostPagination
-            currentPage={postResult.page}
-            totalPages={postResult.totalPages}
-            baseUrl={baseUrl}
-            postNumber={page === 1 ? 1 : (page - 1) * perPage + 1}
-          />
+          {postResult.items.map((post) => (
+            <PostCard
+              key={post.id}
+              post={post}
+              isOwner={session?.user?.id === post.authorId}
+              isModerator={isModerator}
+              baseUrl={baseUrl}
+            />
+          ))}
         </div>
 
-        {session && (
+        {postResult.items.length === 0 && (
+          <div className="rounded-xl border bg-card p-12 text-center">
+            <p className="text-muted-foreground">
+              No replies yet. Be the first to reply!
+            </p>
+          </div>
+        )}
+
+        <PostPagination
+          currentPage={postResult.page}
+          totalPages={postResult.totalPages}
+          baseUrl={baseUrl}
+          postNumber={page === 1 ? 1 : (page - 1) * perPage + 1}
+        />
+      </div>
+
+      {/* Reply Form */}
+      {session && (
+        <div className="mt-6">
           <ReplyForm
             threadId={thread.id}
             isLocked={thread.isLocked}
             nextPostNumber={nextPostNumber}
           />
-        )}
-      </div>
-
-      <aside className="hidden space-y-4 lg:block">
-        <ThreadAuthorCard thread={thread} />
-        <ForumSidebar />
-      </aside>
+        </div>
+      )}
     </div>
   );
 }

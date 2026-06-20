@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { getDatabase } from "@/db";
-import { requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
 import { AdminThreadRow } from "./thread-row";
 
 export const metadata: Metadata = {
@@ -9,7 +7,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminThreadsPage() {
-  await requireRole(RoleName.MODERATOR);
 
   const db = getDatabase();
   const threads = (await db.query.threads.findMany({

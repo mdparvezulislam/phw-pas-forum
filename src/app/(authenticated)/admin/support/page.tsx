@@ -1,14 +1,10 @@
 import type { Metadata } from "next";
-import { requirePermission, requireRole } from "@/modules/auth/guards";
-import { Permission, RoleName } from "@/types/rbac";
 
 export const metadata: Metadata = {
   title: "Support Center",
 };
 
 export default async function AdminSupportPage() {
-  await requireRole(RoleName.ADMIN);
-  await requirePermission(Permission.STAFF_ACCESS);
 
   return (
     <div className="space-y-6">

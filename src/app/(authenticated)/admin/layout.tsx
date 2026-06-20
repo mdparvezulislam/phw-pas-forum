@@ -2,8 +2,6 @@ import { redirect } from "next/navigation";
 import { Header, Footer } from "@/components/design-system";
 import { AdminSidebar } from "@/components/admin/sidebar";
 import { auth } from "@/lib/auth";
-import { requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
 
 export default async function AdminLayout({
   children,
@@ -12,10 +10,6 @@ export default async function AdminLayout({
 }) {
   const session = await auth();
   if (!session?.user) redirect("/auth/login");
-
-  await requireRole(RoleName.ADMIN).catch(() => {
-    redirect("/");
-  });
 
   return (
     <div className="relative flex min-h-screen flex-col">

@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
 import { adminMetricsService } from "@/services/admin-metrics";
 import { StatsCard } from "@/components/admin/stats-card";
 import { Users, DollarSign, ShoppingCart, Shield, TrendingUp, Activity } from "lucide-react";
@@ -10,7 +8,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminDashboardPage() {
-  await requireRole(RoleName.ADMIN);
 
   const overview = await adminMetricsService.getPlatformOverview();
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { cancelSubscriptionAction } from "../actions/premium";
+import { cancelSubscriptionAction } from "@/modules/premium/actions/premium";
 import { Button } from "@/components/ui/button";
 import { ShieldCheck, Calendar, RefreshCw, XCircle, AlertCircle, AlertTriangle } from "lucide-react";
 import { cn } from "@/lib/utils";

@@ -1,7 +1,5 @@
 import React from "react";
 import { getDatabase } from "@/db";
-import { requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
 import AdminMembershipClient from "./AdminMembershipClient";
 import { Metadata } from "next";
 
@@ -11,8 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminMembershipsPage() {
-  // Ensure the user has admin role
-  await requireRole(RoleName.ADMIN);
 
   const db = getDatabase();
 

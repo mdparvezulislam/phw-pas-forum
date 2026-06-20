@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { requirePermission, requireRole } from "@/modules/auth/guards";
-import { Permission, RoleName } from "@/types/rbac";
 import { adminStaffService } from "@/services/admin-staff";
 
 export const metadata: Metadata = {
@@ -8,8 +6,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminStaffPage() {
-  await requireRole(RoleName.ADMIN);
-  await requirePermission(Permission.STAFF_ACCESS);
 
   const staff = await adminStaffService.getStaffMembers();
 

@@ -11,7 +11,7 @@ const envSchema = z.object({
   AUTH_SECRET: z.string().min(32),
   AUTH_URL: z.string().url().optional(),
 
-  REDIS_URL: z.string().url(),
+  REDIS_URL: z.string().url().optional(),
   REDIS_PREFIX: z.string().default("bhw:"),
 
   R2_ENDPOINT: z.string().url(),

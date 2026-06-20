@@ -47,6 +47,15 @@ export function generateId(): string {
   return crypto.randomUUID();
 }
 
+export function formatCurrency(amountInCents: number): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(amountInCents / 100);
+}
+
 export function absoluteUrl(path: string): string {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   return `${baseUrl}${path.startsWith("/") ? path : `/${path}`}`;

@@ -1,12 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
 import { Button, Input, Label } from "@/components/ui";
 import { login } from "@/modules/auth/actions";
 
 export function LoginForm() {
+  const router = useRouter();
   const [state, formAction, pending] = useActionState(login, undefined);
+
+  useEffect(() => {
+    if (state?.success) {
+      router.push("/");
+    }
+  }, [state, router]);
 
   return (
     <form action={formAction} className="space-y-4">

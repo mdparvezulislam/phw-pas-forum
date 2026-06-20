@@ -1,6 +1,5 @@
 "use server";
 
-import { AuthError } from "next-auth";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
 import { signIn } from "@/lib/auth";
 import { userRepository } from "@/repositories";
@@ -31,28 +30,22 @@ export async function login(
     };
   }
 
-  try {
-    await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+  const result = await signIn("credentials", {
+    email,
+    password,
+    redirect: false,
+  });
 
-    const user = await userRepository.findByEmail(email);
-    if (user) {
-      await userRepository.updateLastLogin(user.id);
-      await auditService.log(user.id, AUDIT_ACTIONS.LOGIN);
-      await rateLimiter.reset("LOGIN", `${ip}:${email}`);
-    }
-
-    return { success: true };
-  } catch (error) {
-    if (error instanceof AuthError) {
-      if (error.type === "CredentialsSignin") {
-        return { error: "Invalid email or password" };
-      }
-      return { error: "Authentication failed" };
-    }
-    throw error;
+  if (result?.error) {
+    return { error: "Invalid email or password" };
   }
+
+  const user = await userRepository.findByEmail(email);
+  if (user) {
+    await userRepository.updateLastLogin(user.id);
+    await auditService.log(user.id, AUDIT_ACTIONS.LOGIN);
+    await rateLimiter.reset("LOGIN", `${ip}:${email}`);
+  }
+
+  return { success: true };
 }

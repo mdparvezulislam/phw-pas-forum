@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { CategoryCard } from "@/modules/forum/components";
-import { ForumSidebar } from "@/modules/forum/components/forum-sidebar";
-import { ForumStats } from "@/modules/forum/components/forum-stats";
-import { MobileForumMenu } from "@/modules/forum/components/mobile-forum-menu";
+import { CategoryCard } from "@/components/forum";
+import { ForumStats } from "@/components/forum";
+import { ActivityFeed } from "@/components/forum";
+import { EmptyForumState } from "@/components/forum";
 import { getCategoriesWithForums, getStats } from "@/services/forum-stats";
 
 export const metadata: Metadata = {
@@ -18,45 +18,55 @@ export default async function ForumsHomePage() {
   const categories = await getCategoriesWithForums();
   const stats = await getStats();
 
+  const activityItems = categories.slice(0, 5).flatMap((cat) =>
+    cat.forums.slice(0, 1).map((f) => ({
+      type: "thread" as const,
+      title: f.title,
+      author: "Community",
+      timestamp: f.lastActivityAt ?? new Date(),
+      slug: f.slug,
+      categorySlug: cat.slug,
+      forumSlug: f.slug,
+    })),
+  );
+
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Forums</h1>
-          <p className="mt-1 text-muted-foreground">
-            Browse our community categories and forums
+    <div className="pt-4">
+      {/* Hero Banner */}
+      <div className="overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/5 via-card to-premium/5">
+        <div className="px-6 py-8 sm:px-8">
+          <h1 className="text-2xl font-bold sm:text-3xl">Community Forums</h1>
+          <p className="mt-2 max-w-xl text-muted-foreground">
+            Join discussions, share knowledge, and connect with thousands of professionals.
           </p>
         </div>
+      </div>
 
+      {/* Stats */}
+      <div className="mt-6">
         <ForumStats
           totalForums={stats.totalForums}
           totalCategories={stats.totalCategories}
           totalMembers={stats.totalMembers}
         />
-
-        <div className="lg:hidden">
-          <MobileForumMenu />
-        </div>
-
-        <div className="space-y-4">
-          {categories.map((category) => (
-            <CategoryCard key={category.id} category={category} />
-          ))}
-        </div>
-
-        {categories.length === 0 && (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
-            <h3 className="text-lg font-semibold">No forums yet</h3>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Forums are being set up. Check back later.
-            </p>
-          </div>
-        )}
       </div>
 
-      <aside className="hidden lg:block">
-        <ForumSidebar />
-      </aside>
+      {/* Categories + Activity */}
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="space-y-4">
+          {categories.length > 0 ? (
+            categories.map((category) => (
+              <CategoryCard key={category.id} category={category} />
+            ))
+          ) : (
+            <EmptyForumState />
+          )}
+        </div>
+
+        <div className="hidden lg:block">
+          <ActivityFeed items={activityItems} />
+        </div>
+      </div>
     </div>
   );
 }

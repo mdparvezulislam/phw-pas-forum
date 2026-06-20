@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import { getDatabase, schema } from "@/db";
-import { requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
 import { createBadge } from "@/modules/reputation/actions";
 
 export const metadata: Metadata = {
@@ -9,7 +7,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminBadgesPage() {
-  await requireRole(RoleName.ADMIN);
 
   const db = getDatabase();
   const allBadges = await db.query.badges.findMany({

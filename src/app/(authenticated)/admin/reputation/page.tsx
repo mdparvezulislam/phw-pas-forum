@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
 import { desc } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
-import { requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
 
 export const metadata: Metadata = {
   title: "Manage Reputation",
 };
 
 export default async function AdminReputationPage() {
-  await requireRole(RoleName.ADMIN);
 
   const db = getDatabase();
 
