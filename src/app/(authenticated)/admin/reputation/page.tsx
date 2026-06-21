@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
 import { desc } from "drizzle-orm";
+import type { Metadata } from "next";
 import { getDatabase, schema } from "@/db";
 
 export const metadata: Metadata = {
@@ -7,7 +7,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminReputationPage() {
-
   const db = getDatabase();
 
   const repEntries = await db.query.userReputation.findMany({
@@ -16,24 +15,33 @@ export default async function AdminReputationPage() {
   });
 
   const userIds = repEntries.map((r) => r.userId);
-  const users = userIds.length > 0
-    ? await db.query.users.findMany({
-        where: (u, { inArray }) => inArray(u.id, userIds),
-        columns: { id: true, username: true, displayName: true },
-      })
-    : [];
+  const users =
+    userIds.length > 0
+      ? await db.query.users.findMany({
+          where: (u, { inArray }) => inArray(u.id, userIds),
+          columns: { id: true, username: true, displayName: true },
+        })
+      : [];
   const userMap = new Map(users.map((u) => [u.id, u]));
 
   const topUsers = repEntries.map((r) => ({
     ...r,
-    user: userMap.get(r.userId) ?? { id: r.userId, username: null, displayName: null },
+    user: userMap.get(r.userId) ?? {
+      id: r.userId,
+      username: null,
+      displayName: null,
+    },
   }));
 
   return (
     <div className="space-y-8">
       <div className="rounded-lg border p-4">
         <h2 className="mb-4 font-semibold">Award Reputation</h2>
-        <form action="/admin/reputation/award" method="POST" className="space-y-3">
+        <form
+          action="/admin/reputation/award"
+          method="POST"
+          className="space-y-3"
+        >
           <div>
             <label htmlFor="userId" className="mb-1 block text-sm font-medium">
               User ID

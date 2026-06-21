@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     template: `%s | ${getAppName()}`,
   },
   description: "A premium community forum platform",
+  manifest: "/manifest.json",
   metadataBase: new URL(getSiteUrl()),
   openGraph: {
     type: "website",

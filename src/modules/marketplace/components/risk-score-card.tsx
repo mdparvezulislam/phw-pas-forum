@@ -32,7 +32,9 @@ export function RiskScoreCard({ score }: { score: number }) {
           <ShieldAlert className="w-4 h-4 text-muted-foreground" />
           <span className="font-semibold text-sm">Automated Risk Score</span>
         </div>
-        <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${level.color}`}>
+        <span
+          className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${level.color}`}
+        >
           {level.label}
         </span>
       </div>

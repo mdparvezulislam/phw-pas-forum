@@ -1,13 +1,13 @@
-import Link from "next/link";
 import {
+  ArrowUpRight,
   Bell,
+  Edit3,
   MessageSquare,
   Settings,
-  Edit3,
   ShoppingBag,
   TrendingUp,
-  ArrowUpRight,
 } from "lucide-react";
+import Link from "next/link";
 import { cn, formatDateRelative } from "@/lib/utils";
 import { LevelBadge } from "@/modules/reputation/components";
 
@@ -47,10 +47,16 @@ export function DashboardHero({
   unreadMessages,
   className,
 }: DashboardHeroProps) {
-  const name = profile?.displayName ?? user.displayName ?? user.username ?? "User";
+  const name =
+    profile?.displayName ?? user.displayName ?? user.username ?? "User";
 
   return (
-    <div className={cn("overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/5 via-card to-premium/5", className)}>
+    <div
+      className={cn(
+        "overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/5 via-card to-premium/5",
+        className,
+      )}
+    >
       <div className="p-5 sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
@@ -122,10 +128,22 @@ export function DashboardHero({
 
         {/* Stats preview */}
         <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <StatPreview label="Threads" value={stats.threadCount} link="/profile" />
+          <StatPreview
+            label="Threads"
+            value={stats.threadCount}
+            link="/profile"
+          />
           <StatPreview label="Posts" value={stats.postCount} link="/profile" />
-          <StatPreview label="Badges" value={stats.badgeCount} link="/achievements" />
-          <StatPreview label="Trophies" value={stats.trophyCount} link="/achievements" />
+          <StatPreview
+            label="Badges"
+            value={stats.badgeCount}
+            link="/achievements"
+          />
+          <StatPreview
+            label="Trophies"
+            value={stats.trophyCount}
+            link="/achievements"
+          />
         </div>
       </div>
     </div>

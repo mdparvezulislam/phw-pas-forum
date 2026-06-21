@@ -1,10 +1,10 @@
 "use client";
 
-import { RiskScoreCard } from "./risk-score-card";
+import { Calendar, DollarSign, FileText, Globe, Tag, User } from "lucide-react";
+import { ApprovalPanel } from "./approval-panel";
 import { ComplianceCard } from "./compliance-card";
 import { IModBotReport } from "./imodbot-report";
-import { ApprovalPanel } from "./approval-panel";
-import { User, Tag, DollarSign, Calendar, FileText, Globe } from "lucide-react";
+import { RiskScoreCard } from "./risk-score-card";
 
 interface MarketplaceReviewCardProps {
   submission: {
@@ -38,7 +38,10 @@ interface MarketplaceReviewCardProps {
   onActionSuccess?: () => void;
 }
 
-export function MarketplaceReviewCard({ submission, onActionSuccess }: MarketplaceReviewCardProps) {
+export function MarketplaceReviewCard({
+  submission,
+  onActionSuccess,
+}: MarketplaceReviewCardProps) {
   const latestReview = submission.reviews?.[0] || {
     wordCount: 0,
     mediaCount: 0,
@@ -49,7 +52,10 @@ export function MarketplaceReviewCard({ submission, onActionSuccess }: Marketpla
     complianceScore: 0,
   };
 
-  const sellerName = submission.thread.author.displayName ?? submission.thread.author.username ?? "Unknown";
+  const sellerName =
+    submission.thread.author.displayName ??
+    submission.thread.author.username ??
+    "Unknown";
 
   return (
     <div className="border rounded-3xl bg-card/10 hover:bg-card/20 backdrop-blur shadow-md hover:shadow-lg transition-all duration-300 p-6 md:p-8 space-y-8 border-muted/20">
@@ -85,8 +91,12 @@ export function MarketplaceReviewCard({ submission, onActionSuccess }: Marketpla
       {/* Pricing / Payment specifics */}
       {submission.paymentDetails && (
         <div className="bg-secondary/20 border rounded-2xl p-4 text-xs space-y-1">
-          <h4 className="font-semibold text-muted-foreground">Payment Details Provided:</h4>
-          <p className="font-mono text-foreground break-all">{submission.paymentDetails}</p>
+          <h4 className="font-semibold text-muted-foreground">
+            Payment Details Provided:
+          </h4>
+          <p className="font-mono text-foreground break-all">
+            {submission.paymentDetails}
+          </p>
         </div>
       )}
 
@@ -99,28 +109,36 @@ export function MarketplaceReviewCard({ submission, onActionSuccess }: Marketpla
       {/* Detailed statistics metrics grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 bg-secondary/10 border rounded-2xl p-5 text-center">
         <div>
-          <span className="text-muted-foreground text-xs block mb-1">Words</span>
+          <span className="text-muted-foreground text-xs block mb-1">
+            Words
+          </span>
           <strong className="text-base font-bold flex items-center justify-center gap-1">
             <FileText className="w-4 h-4 text-sky-400" />
             {latestReview.wordCount}
           </strong>
         </div>
         <div>
-          <span className="text-muted-foreground text-xs block mb-1">Media Assets</span>
+          <span className="text-muted-foreground text-xs block mb-1">
+            Media Assets
+          </span>
           <strong className="text-base font-bold flex items-center justify-center gap-1">
             <Tag className="w-4 h-4 text-indigo-400" />
             {latestReview.mediaCount}
           </strong>
         </div>
         <div>
-          <span className="text-muted-foreground text-xs block mb-1">Links Count</span>
+          <span className="text-muted-foreground text-xs block mb-1">
+            Links Count
+          </span>
           <strong className="text-base font-bold flex items-center justify-center gap-1">
             <Globe className="w-4 h-4 text-teal-400" />
             {latestReview.linkCount}
           </strong>
         </div>
         <div>
-          <span className="text-muted-foreground text-xs block mb-1">External URLs</span>
+          <span className="text-muted-foreground text-xs block mb-1">
+            External URLs
+          </span>
           <strong className="text-base font-bold flex items-center justify-center gap-1 text-amber-400">
             {latestReview.externalUrlCount}
           </strong>

@@ -1,5 +1,5 @@
+import { FolderOpen, MessageSquare, Plus, Search } from "lucide-react";
 import Link from "next/link";
-import { MessageSquare, Search, FolderOpen, Plus } from "lucide-react";
 
 export function EmptyForumState() {
   return (
@@ -9,7 +9,8 @@ export function EmptyForumState() {
       </div>
       <h3 className="mt-4 text-lg font-semibold">No Forums Yet</h3>
       <p className="mt-1.5 max-w-sm text-sm text-muted-foreground">
-        This category doesn&apos;t have any forums yet. Be the first to create one!
+        This category doesn&apos;t have any forums yet. Be the first to create
+        one!
       </p>
       <Link
         href="/admin/forums"

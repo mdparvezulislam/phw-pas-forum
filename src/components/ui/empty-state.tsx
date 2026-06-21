@@ -1,25 +1,25 @@
+import {
+  AlertCircle,
+  Bell,
+  Download,
+  FileText,
+  FolderOpen,
+  Inbox,
+  Lock,
+  Mail,
+  MessageSquare,
+  Search,
+  Shield,
+  ShoppingCart,
+  Star,
+  TrendingUp,
+  Upload,
+  Users,
+} from "lucide-react";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import {
-  MessageSquare,
-  Search,
-  Bell,
-  Mail,
-  ShoppingCart,
-  FileText,
-  Users,
-  FolderOpen,
-  Shield,
-  TrendingUp,
-  Star,
-  AlertCircle,
-  Inbox,
-  Upload,
-  Download,
-  Lock,
-} from "lucide-react";
-import Link from "next/link";
 
 /* ============================================
    EMPTY STATE COMPONENTS
@@ -53,22 +53,34 @@ export function EmptyState({
   className,
 }: EmptyStateProps) {
   return (
-    <div className={cn("flex flex-col items-center justify-center py-16 px-4 text-center", className)}>
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center py-16 px-4 text-center",
+        className,
+      )}
+    >
       {icon && (
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-muted/50 text-muted-foreground mb-6">
           {icon}
         </div>
       )}
       <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
-      <p className="text-sm text-muted-foreground max-w-sm mb-6">{description}</p>
+      <p className="text-sm text-muted-foreground max-w-sm mb-6">
+        {description}
+      </p>
       <div className="flex items-center gap-3">
         {action?.href && (
           <Link href={action.href}>
-            <Button variant={action.variant ?? "default"}>{action.label}</Button>
+            <Button variant={action.variant ?? "default"}>
+              {action.label}
+            </Button>
           </Link>
         )}
         {action?.onClick && (
-          <Button variant={action.variant ?? "default"} onClick={action.onClick}>
+          <Button
+            variant={action.variant ?? "default"}
+            onClick={action.onClick}
+          >
             {action.label}
           </Button>
         )}

@@ -8,7 +8,12 @@ interface AuthLayoutProps {
   className?: string;
 }
 
-export function AuthLayout({ children, title, subtitle, className }: AuthLayoutProps) {
+export function AuthLayout({
+  children,
+  title,
+  subtitle,
+  className,
+}: AuthLayoutProps) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12 sm:px-6">
       {/* Background gradient */}

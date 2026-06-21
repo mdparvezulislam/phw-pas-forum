@@ -1,4 +1,11 @@
-import { boolean, index, jsonb, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  index,
+  jsonb,
+  pgTable,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { conversations } from "./conversations";
 import { users } from "./users";
 
@@ -25,7 +32,7 @@ export const conversationMessages = pgTable(
     index("message_conversation_idx").on(table.conversationId),
     index("message_sender_idx").on(table.senderId),
     index("message_created_at_idx").on(table.createdAt),
-  ]
+  ],
 );
 
 export type ConversationMessage = typeof conversationMessages.$inferSelect;

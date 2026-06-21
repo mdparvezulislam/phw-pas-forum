@@ -1,5 +1,5 @@
+import { ChevronRight, MessageSquare } from "lucide-react";
 import Link from "next/link";
-import { MessageSquare, ChevronRight } from "lucide-react";
 
 interface ForumData {
   id: string;
@@ -55,7 +55,8 @@ export function CategoryCard({ category }: CategoryCardProps) {
         </div>
         <div className="hidden text-right text-xs text-muted-foreground sm:block">
           <p className="font-medium text-foreground">
-            {category.forums.length} forum{category.forums.length !== 1 ? "s" : ""}
+            {category.forums.length} forum
+            {category.forums.length !== 1 ? "s" : ""}
           </p>
         </div>
       </div>

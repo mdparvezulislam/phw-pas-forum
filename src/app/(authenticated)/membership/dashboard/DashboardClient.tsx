@@ -1,11 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
-import { cancelSubscriptionAction } from "@/modules/premium/actions/premium";
-import { Button } from "@/components/ui/button";
-import { ShieldCheck, Calendar, RefreshCw, XCircle, AlertCircle, AlertTriangle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import {
+  AlertCircle,
+  AlertTriangle,
+  Calendar,
+  RefreshCw,
+  ShieldCheck,
+  XCircle,
+} from "lucide-react";
 import Link from "next/link";
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { cancelSubscriptionAction } from "@/modules/premium/actions/premium";
 
 interface Subscription {
   id: string;
@@ -34,13 +41,21 @@ interface DashboardClientProps {
   subscription: Subscription | null;
 }
 
-export default function DashboardClient({ membership, subscription }: DashboardClientProps) {
+export default function DashboardClient({
+  membership,
+  subscription,
+}: DashboardClientProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleCancel = async () => {
     if (!subscription) return;
-    if (!confirm("Are you sure you want to cancel your active subscription renewal? You will retain access until the end of your billing cycle.")) return;
+    if (
+      !confirm(
+        "Are you sure you want to cancel your active subscription renewal? You will retain access until the end of your billing cycle.",
+      )
+    )
+      return;
 
     setLoading(true);
     setError(null);
@@ -67,7 +82,9 @@ export default function DashboardClient({ membership, subscription }: DashboardC
   return (
     <div className="max-w-4xl mx-auto py-8 space-y-10">
       <div>
-        <h1 className="text-3xl font-extrabold text-white">Membership Dashboard</h1>
+        <h1 className="text-3xl font-extrabold text-white">
+          Membership Dashboard
+        </h1>
         <p className="text-sm text-zinc-400 mt-1">
           Manage your premium plan status, renewal options, and active benefits.
         </p>
@@ -86,9 +103,12 @@ export default function DashboardClient({ membership, subscription }: DashboardC
             <XCircle className="h-6 w-6" />
           </div>
           <div className="space-y-1">
-            <h2 className="text-lg font-bold text-white">No Active Membership</h2>
+            <h2 className="text-lg font-bold text-white">
+              No Active Membership
+            </h2>
             <p className="text-sm text-zinc-400">
-              Upgrade your account to access premium case studies, private forums, resources, and custom badges.
+              Upgrade your account to access premium case studies, private
+              forums, resources, and custom badges.
             </p>
           </div>
           <Link href="/membership" passHref>
@@ -119,8 +139,8 @@ export default function DashboardClient({ membership, subscription }: DashboardC
                   membership.status === "ACTIVE"
                     ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                     : membership.status === "CANCELLED"
-                    ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
-                    : "bg-zinc-800 text-zinc-400 border-zinc-700"
+                      ? "bg-amber-500/10 text-amber-400 border-amber-500/20"
+                      : "bg-zinc-800 text-zinc-400 border-zinc-700",
                 )}
               >
                 {membership.status}
@@ -157,23 +177,29 @@ export default function DashboardClient({ membership, subscription }: DashboardC
               <div className="text-xs text-zinc-500">
                 {subscription ? (
                   <>
-                    Billed via <span className="font-semibold text-zinc-300">{subscription.billingCycle}</span> cycle
+                    Billed via{" "}
+                    <span className="font-semibold text-zinc-300">
+                      {subscription.billingCycle}
+                    </span>{" "}
+                    cycle
                   </>
                 ) : (
                   "Lifetime Purchase (No recurring bills)"
                 )}
               </div>
 
-              {subscription && membership.status === "ACTIVE" && membership.autoRenew && (
-                <Button
-                  onClick={handleCancel}
-                  disabled={loading}
-                  variant="outline"
-                  className="border-red-500/30 text-red-400 hover:bg-red-500/10 text-xs font-semibold h-8"
-                >
-                  {loading ? "Canceling..." : "Cancel Auto-Renew"}
-                </Button>
-              )}
+              {subscription &&
+                membership.status === "ACTIVE" &&
+                membership.autoRenew && (
+                  <Button
+                    onClick={handleCancel}
+                    disabled={loading}
+                    variant="outline"
+                    className="border-red-500/30 text-red-400 hover:bg-red-500/10 text-xs font-semibold h-8"
+                  >
+                    {loading ? "Canceling..." : "Cancel Auto-Renew"}
+                  </Button>
+                )}
             </div>
           </div>
 
@@ -186,21 +212,27 @@ export default function DashboardClient({ membership, subscription }: DashboardC
               <li className="text-xs text-zinc-400 flex items-start gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
                 <div>
-                  <div className="font-semibold text-zinc-200">VIP Gated Forums</div>
+                  <div className="font-semibold text-zinc-200">
+                    VIP Gated Forums
+                  </div>
                   <div>Full write/read access enabled.</div>
                 </div>
               </li>
               <li className="text-xs text-zinc-400 flex items-start gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
                 <div>
-                  <div className="font-semibold text-zinc-200">Elevated PM Limits</div>
+                  <div className="font-semibold text-zinc-200">
+                    Elevated PM Limits
+                  </div>
                   <div>Upgraded direct messaging capacity active.</div>
                 </div>
               </li>
               <li className="text-xs text-zinc-400 flex items-start gap-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-indigo-500 mt-1.5 shrink-0" />
                 <div>
-                  <div className="font-semibold text-zinc-200">Download Privileges</div>
+                  <div className="font-semibold text-zinc-200">
+                    Download Privileges
+                  </div>
                   <div>Premium guides and resources center unlocked.</div>
                 </div>
               </li>

@@ -1,35 +1,35 @@
 "use client";
 
-import { useCallback, useState } from "react";
 import type { Editor } from "@tiptap/react";
 import {
+  AlignCenter,
+  AlignLeft,
+  AlignRight,
   Bold,
-  Italic,
-  Underline,
-  Strikethrough,
+  ChevronDown,
   Code,
+  CodeSquare,
   Heading1,
   Heading2,
   Heading3,
   Heading4,
-  List,
-  ListOrdered,
-  ListChecks,
-  Quote,
-  CodeSquare,
-  Minus,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Link,
   Image,
+  Italic,
+  Link,
+  List,
+  ListChecks,
+  ListOrdered,
+  Minus,
   Paperclip,
-  Table,
-  Undo2,
+  Quote,
   Redo2,
-  ChevronDown,
+  Strikethrough,
+  Table,
+  Underline,
+  Undo2,
   X,
 } from "lucide-react";
+import { useCallback, useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface EditorToolbarProps {
@@ -387,27 +387,21 @@ export function EditorToolbar({
 
         <div className="flex items-center gap-0.5">
           <ToolbarButton
-            onClick={() =>
-              editor.chain().focus().setTextAlign("left").run()
-            }
+            onClick={() => editor.chain().focus().setTextAlign("left").run()}
             isActive={editor.isActive({ textAlign: "left" })}
             title="Align Left"
           >
             <AlignLeft className="h-4 w-4" />
           </ToolbarButton>
           <ToolbarButton
-            onClick={() =>
-              editor.chain().focus().setTextAlign("center").run()
-            }
+            onClick={() => editor.chain().focus().setTextAlign("center").run()}
             isActive={editor.isActive({ textAlign: "center" })}
             title="Align Center"
           >
             <AlignCenter className="h-4 w-4" />
           </ToolbarButton>
           <ToolbarButton
-            onClick={() =>
-              editor.chain().focus().setTextAlign("right").run()
-            }
+            onClick={() => editor.chain().focus().setTextAlign("right").run()}
             isActive={editor.isActive({ textAlign: "right" })}
             title="Align Right"
           >
@@ -503,10 +497,7 @@ export function EditorToolbar({
           </ToolbarButton>
         )}
         {onAttachmentUpload && (
-          <ToolbarButton
-            onClick={handleAttachmentUpload}
-            title="Attach File"
-          >
+          <ToolbarButton onClick={handleAttachmentUpload} title="Attach File">
             <Paperclip className="h-4 w-4" />
           </ToolbarButton>
         )}

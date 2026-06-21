@@ -1,5 +1,5 @@
+import { ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
-import { Star, ArrowRight } from "lucide-react";
 
 const listings = [
   {

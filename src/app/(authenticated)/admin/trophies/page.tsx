@@ -7,7 +7,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminTrophiesPage() {
-
   const db = getDatabase();
   const allTrophies = await db.query.trophies.findMany({
     orderBy: (t, { asc }) => [asc(t.conditionType), asc(t.conditionValue)],
@@ -17,7 +16,14 @@ export default async function AdminTrophiesPage() {
     <div className="space-y-8">
       <div className="rounded-lg border p-4">
         <h2 className="mb-4 font-semibold">Create Trophy</h2>
-        <form action={createTrophy.bind(null, undefined) as unknown as (formData: FormData) => void} className="space-y-3">
+        <form
+          action={
+            createTrophy.bind(null, undefined) as unknown as (
+              formData: FormData,
+            ) => void
+          }
+          className="space-y-3"
+        >
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label htmlFor="title" className="mb-1 block text-sm font-medium">
@@ -43,7 +49,10 @@ export default async function AdminTrophiesPage() {
             </div>
           </div>
           <div>
-            <label htmlFor="description" className="mb-1 block text-sm font-medium">
+            <label
+              htmlFor="description"
+              className="mb-1 block text-sm font-medium"
+            >
               Description
             </label>
             <textarea
@@ -56,7 +65,10 @@ export default async function AdminTrophiesPage() {
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             <div>
-              <label htmlFor="conditionType" className="mb-1 block text-sm font-medium">
+              <label
+                htmlFor="conditionType"
+                className="mb-1 block text-sm font-medium"
+              >
                 Condition Type
               </label>
               <select
@@ -73,7 +85,10 @@ export default async function AdminTrophiesPage() {
               </select>
             </div>
             <div>
-              <label htmlFor="conditionValue" className="mb-1 block text-sm font-medium">
+              <label
+                htmlFor="conditionValue"
+                className="mb-1 block text-sm font-medium"
+              >
                 Condition Value
               </label>
               <input
@@ -86,7 +101,10 @@ export default async function AdminTrophiesPage() {
               />
             </div>
             <div>
-              <label htmlFor="reputationReward" className="mb-1 block text-sm font-medium">
+              <label
+                htmlFor="reputationReward"
+                className="mb-1 block text-sm font-medium"
+              >
                 Rep Reward
               </label>
               <input

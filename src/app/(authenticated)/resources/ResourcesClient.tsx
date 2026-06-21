@@ -1,9 +1,9 @@
 "use client";
 
+import { AlertCircle, Filter, Search, Sparkles } from "lucide-react";
 import React, { useState } from "react";
-import { PremiumResourceCard } from "@/modules/premium/components";
-import { Search, Sparkles, Filter, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PremiumResourceCard } from "@/modules/premium/components";
 
 interface Attachment {
   fileName: string;
@@ -50,7 +50,8 @@ export default function ResourcesClient({
         resource.description.toLowerCase().includes(search.toLowerCase()));
 
     const matchesFilter =
-      filterPlan === "ALL" || resource.requiredPlan.toUpperCase() === filterPlan;
+      filterPlan === "ALL" ||
+      resource.requiredPlan.toUpperCase() === filterPlan;
 
     return matchesSearch && matchesFilter;
   });
@@ -61,10 +62,12 @@ export default function ResourcesClient({
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-zinc-900 pb-6">
         <div>
           <h1 className="text-3xl font-extrabold text-white flex items-center gap-2">
-            <Sparkles className="h-7 w-7 text-indigo-400 animate-pulse" /> Resource Center
+            <Sparkles className="h-7 w-7 text-indigo-400 animate-pulse" />{" "}
+            Resource Center
           </h1>
           <p className="text-sm text-zinc-400 mt-1">
-            Download exclusive guides, scripts, templates, and marketplace insight tools.
+            Download exclusive guides, scripts, templates, and marketplace
+            insight tools.
           </p>
         </div>
       </div>
@@ -103,7 +106,9 @@ export default function ResourcesClient({
         <div className="rounded-xl border border-zinc-900 bg-zinc-950/40 p-12 text-center text-zinc-500">
           <AlertCircle className="h-8 w-8 mx-auto text-zinc-600 mb-3" />
           <p className="text-sm font-semibold">No premium resources found</p>
-          <p className="text-xs text-zinc-600 mt-1">Try modifying your filters or search term.</p>
+          <p className="text-xs text-zinc-600 mt-1">
+            Try modifying your filters or search term.
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -1,12 +1,12 @@
 "use server";
 
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { adminStaffService } from "@/services/admin-staff";
-import { auditService } from "@/services/audit";
+import { getDatabase, schema } from "@/db";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
 import { auth } from "@/lib/auth";
-import { getDatabase, schema } from "@/db";
-import { eq } from "drizzle-orm";
+import { adminStaffService } from "@/services/admin-staff";
+import { auditService } from "@/services/audit";
 
 export async function updateUserRoleAction(userId: string, roleId: string) {
   const session = await auth();

@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
 import { canModerate } from "@/config/rbac";
+import { auth } from "@/lib/auth";
 import { announcementService } from "@/services/announcement";
 
 export default async function AdminAnnouncementsPage() {

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { conversationService } from "@/services/conversation";
 import { ConversationSidebar } from "@/modules/conversations/components";
+import { conversationService } from "@/services/conversation";
 
 export default async function ConversationsLayout({
   children,

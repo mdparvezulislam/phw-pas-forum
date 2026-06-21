@@ -1,7 +1,7 @@
 "use client";
 
+import { Check, Crown, Gem, Zap } from "lucide-react";
 import { useState } from "react";
-import { Check, Crown, Zap, Gem } from "lucide-react";
 import { cn, formatCurrency } from "@/lib/utils";
 
 interface Package {
@@ -73,8 +73,7 @@ export function PricingPackages({
       </h3>
       <div className="space-y-3">
         {packages.map((pkg) => {
-          const tier =
-            tierConfig[pkg.name.toLowerCase()] ?? tierConfig.basic;
+          const tier = tierConfig[pkg.name.toLowerCase()] ?? tierConfig.basic;
           const Icon = tier.icon;
           const isSelected = selected === pkg.id;
 
@@ -115,7 +114,8 @@ export function PricingPackages({
               <div className="mt-3 flex flex-wrap gap-3 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <Check className="h-3 w-3 text-emerald-500" />
-                  {pkg.deliveryDays} day{pkg.deliveryDays !== 1 ? "s" : ""} delivery
+                  {pkg.deliveryDays} day{pkg.deliveryDays !== 1 ? "s" : ""}{" "}
+                  delivery
                 </span>
                 <span className="flex items-center gap-1">
                   <Check className="h-3 w-3 text-emerald-500" />

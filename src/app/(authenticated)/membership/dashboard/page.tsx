@@ -1,12 +1,13 @@
+import type { Metadata } from "next";
 import React from "react";
 import { getDatabase } from "@/db";
 import { requireAuth } from "@/modules/auth/guards";
 import DashboardClient from "./DashboardClient";
-import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Membership Dashboard",
-  description: "View and manage your active membership status and subscription renewals.",
+  description:
+    "View and manage your active membership status and subscription renewals.",
 };
 
 export default async function MembershipDashboardPage() {
@@ -27,10 +28,7 @@ export default async function MembershipDashboardPage() {
   if (activeMembership) {
     const sub = await db.query.subscriptions.findFirst({
       where: (s, { and, eq }) =>
-        and(
-          eq(s.membershipId, activeMembership.id),
-          eq(s.status, "active")
-        ),
+        and(eq(s.membershipId, activeMembership.id), eq(s.status, "active")),
     });
     if (sub) {
       activeSub = {
@@ -62,7 +60,10 @@ export default async function MembershipDashboardPage() {
 
   return (
     <div className="mx-auto max-w-7xl">
-      <DashboardClient membership={cleanedMembership} subscription={activeSub} />
+      <DashboardClient
+        membership={cleanedMembership}
+        subscription={activeSub}
+      />
     </div>
   );
 }

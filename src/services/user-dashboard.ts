@@ -1,8 +1,8 @@
-import { eq, desc, and, count, sql } from "drizzle-orm";
+import { and, count, desc, eq, sql } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
+import { conversationService } from "@/services/conversation";
 import { notificationService } from "@/services/notification";
 import { reputationEngine } from "@/services/reputation-engine";
-import { conversationService } from "@/services/conversation";
 
 export async function getDashboardData(userId: string) {
   const db = getDatabase();
@@ -59,9 +59,12 @@ export async function getDashboardData(userId: string) {
       .limit(3),
   ]);
 
-  const conversationResult = await conversationService.getConversations(userId, {
-    limit: 5,
-  });
+  const conversationResult = await conversationService.getConversations(
+    userId,
+    {
+      limit: 5,
+    },
+  );
 
   const [{ threadCount }] = await db
     .select({ threadCount: count() })
@@ -85,7 +88,9 @@ export async function getDashboardData(userId: string) {
       ...b.badge,
       earnedAt: b.earnedAt,
     })),
-    unreadMessages: (conversationResult as any).items?.filter((c: any) => c.unreadCount > 0).length ?? 0,
+    unreadMessages:
+      (conversationResult as any).items?.filter((c: any) => c.unreadCount > 0)
+        .length ?? 0,
     stats: {
       threadCount,
       postCount,
@@ -162,10 +167,16 @@ export async function getBookmarkedThreads(userId: string) {
       },
     })
     .from(schema.threadBookmarks)
-    .innerJoin(schema.threads, eq(schema.threadBookmarks.threadId, schema.threads.id))
+    .innerJoin(
+      schema.threads,
+      eq(schema.threadBookmarks.threadId, schema.threads.id),
+    )
     .innerJoin(schema.users, eq(schema.threads.authorId, schema.users.id))
     .innerJoin(schema.forums, eq(schema.threads.forumId, schema.forums.id))
-    .innerJoin(schema.categories, eq(schema.forums.categoryId, schema.categories.id))
+    .innerJoin(
+      schema.categories,
+      eq(schema.forums.categoryId, schema.categories.id),
+    )
     .where(eq(schema.threadBookmarks.userId, userId))
     .orderBy(desc(schema.threadBookmarks.createdAt));
 }
@@ -196,10 +207,16 @@ export async function getWatchedThreads(userId: string) {
       },
     })
     .from(schema.threadWatches)
-    .innerJoin(schema.threads, eq(schema.threadWatches.threadId, schema.threads.id))
+    .innerJoin(
+      schema.threads,
+      eq(schema.threadWatches.threadId, schema.threads.id),
+    )
     .innerJoin(schema.users, eq(schema.threads.authorId, schema.users.id))
     .innerJoin(schema.forums, eq(schema.threads.forumId, schema.forums.id))
-    .innerJoin(schema.categories, eq(schema.forums.categoryId, schema.categories.id))
+    .innerJoin(
+      schema.categories,
+      eq(schema.forums.categoryId, schema.categories.id),
+    )
     .where(eq(schema.threadWatches.userId, userId))
     .orderBy(desc(schema.threadWatches.createdAt));
 }
@@ -219,7 +236,10 @@ export async function getUserReputationHistory(userId: string) {
       },
     })
     .from(schema.reputationTransactions)
-    .leftJoin(schema.users, eq(schema.reputationTransactions.sourceUserId, schema.users.id))
+    .leftJoin(
+      schema.users,
+      eq(schema.reputationTransactions.sourceUserId, schema.users.id),
+    )
     .where(eq(schema.reputationTransactions.userId, userId))
     .orderBy(desc(schema.reputationTransactions.createdAt))
     .limit(100);

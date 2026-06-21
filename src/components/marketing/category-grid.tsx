@@ -1,28 +1,73 @@
-import Link from "next/link";
 import {
-  Search,
-  TrendingUp,
+  BarChart3,
   Bot,
-  Code,
   Briefcase,
+  Code,
   Film,
   Music,
-  BarChart3,
-  Users,
   Rocket,
+  Search,
+  TrendingUp,
+  Users,
 } from "lucide-react";
+import Link from "next/link";
 
 const categories = [
-  { name: "SEO", icon: Search, count: "2,340 discussions", href: "/forums/seo" },
-  { name: "Marketing", icon: TrendingUp, count: "4,120 discussions", href: "/forums/marketing" },
+  {
+    name: "SEO",
+    icon: Search,
+    count: "2,340 discussions",
+    href: "/forums/seo",
+  },
+  {
+    name: "Marketing",
+    icon: TrendingUp,
+    count: "4,120 discussions",
+    href: "/forums/marketing",
+  },
   { name: "AI", icon: Bot, count: "3,890 discussions", href: "/forums/ai" },
-  { name: "Programming", icon: Code, count: "5,670 discussions", href: "/forums/programming" },
-  { name: "Business", icon: Briefcase, count: "3,210 discussions", href: "/forums/business" },
-  { name: "YouTube", icon: Film, count: "2,980 discussions", href: "/forums/youtube" },
-  { name: "TikTok", icon: Music, count: "1,870 discussions", href: "/forums/tiktok" },
-  { name: "Growth", icon: BarChart3, count: "2,450 discussions", href: "/forums/growth" },
-  { name: "Freelancing", icon: Users, count: "1,560 discussions", href: "/forums/freelancing" },
-  { name: "Startups", icon: Rocket, count: "2,100 discussions", href: "/forums/startups" },
+  {
+    name: "Programming",
+    icon: Code,
+    count: "5,670 discussions",
+    href: "/forums/programming",
+  },
+  {
+    name: "Business",
+    icon: Briefcase,
+    count: "3,210 discussions",
+    href: "/forums/business",
+  },
+  {
+    name: "YouTube",
+    icon: Film,
+    count: "2,980 discussions",
+    href: "/forums/youtube",
+  },
+  {
+    name: "TikTok",
+    icon: Music,
+    count: "1,870 discussions",
+    href: "/forums/tiktok",
+  },
+  {
+    name: "Growth",
+    icon: BarChart3,
+    count: "2,450 discussions",
+    href: "/forums/growth",
+  },
+  {
+    name: "Freelancing",
+    icon: Users,
+    count: "1,560 discussions",
+    href: "/forums/freelancing",
+  },
+  {
+    name: "Startups",
+    icon: Rocket,
+    count: "2,100 discussions",
+    href: "/forums/startups",
+  },
 ];
 
 export function CategoryGrid() {
@@ -30,7 +75,9 @@ export function CategoryGrid() {
     <section className="border-t border-border py-20">
       <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl">Explore Communities</h2>
+          <h2 className="text-3xl font-bold sm:text-4xl">
+            Explore Communities
+          </h2>
           <p className="mt-3 text-muted-foreground">
             Join discussions in your favorite topics
           </p>

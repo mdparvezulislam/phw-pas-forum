@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getAllOrdersAction, refundOrderAction } from "@/actions";
-import { OrderStatusBadge } from "./order-status-badge";
+import type { MarketplaceListing, User } from "@/db/schema";
 import type { Order } from "@/db/schema/orders";
-import type { User, MarketplaceListing } from "@/db/schema";
+import { OrderStatusBadge } from "./order-status-badge";
 
 interface OrderWithRelations extends Order {
   buyer: User;
@@ -21,7 +21,11 @@ export function AdminOrderManagement() {
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
-    const result = await getAllOrdersAction({ status: filterStatus || undefined, page, limit: 20 });
+    const result = await getAllOrdersAction({
+      status: filterStatus || undefined,
+      page,
+      limit: 20,
+    });
     if (result.success && result.data) {
       setOrders(result.data.orders);
       setTotalPages(result.data.totalPages);
@@ -98,10 +102,14 @@ export function AdminOrderManagement() {
                     </p>
                   </td>
                   <td className="px-4 py-3">
-                    {order.buyer?.displayName ?? order.buyer?.username ?? "Unknown"}
+                    {order.buyer?.displayName ??
+                      order.buyer?.username ??
+                      "Unknown"}
                   </td>
                   <td className="px-4 py-3">
-                    {order.seller?.displayName ?? order.seller?.username ?? "Unknown"}
+                    {order.seller?.displayName ??
+                      order.seller?.username ??
+                      "Unknown"}
                   </td>
                   <td className="px-4 py-3 font-medium">
                     ${(order.amount / 100).toFixed(2)}

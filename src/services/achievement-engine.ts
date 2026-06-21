@@ -80,12 +80,17 @@ export class AchievementEngine {
       else if (badge.slug === "10-threads") shouldAward = threadCount >= 10;
       else if (badge.slug === "first-like") shouldAward = reactionCount >= 1;
       else if (badge.slug === "100-likes") shouldAward = reactionCount >= 100;
-      else if (badge.slug === "helpful-contributor") shouldAward = rep.helpfulCount >= 10;
-      else if (badge.slug === "elite-contributor") shouldAward = rep.helpfulCount >= 50;
+      else if (badge.slug === "helpful-contributor")
+        shouldAward = rep.helpfulCount >= 10;
+      else if (badge.slug === "elite-contributor")
+        shouldAward = rep.helpfulCount >= 50;
       else if (badge.slug === "veteran") shouldAward = joinDurationDays >= 365;
-      else if (badge.slug === "community-legend") shouldAward = rep.reputationPoints >= 10000;
-      else if (badge.slug === "rising-star") shouldAward = rep.reputationPoints >= 100;
-      else if (badge.slug === "established") shouldAward = rep.reputationPoints >= 500;
+      else if (badge.slug === "community-legend")
+        shouldAward = rep.reputationPoints >= 10000;
+      else if (badge.slug === "rising-star")
+        shouldAward = rep.reputationPoints >= 100;
+      else if (badge.slug === "established")
+        shouldAward = rep.reputationPoints >= 500;
 
       if (shouldAward) {
         await db.insert(schema.userBadges).values({

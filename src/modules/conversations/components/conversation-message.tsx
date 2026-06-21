@@ -1,10 +1,20 @@
 "use client";
 
+import {
+  Check,
+  FileIcon,
+  MoreHorizontal,
+  Pencil,
+  Trash,
+  X,
+} from "lucide-react";
 import { useState, useTransition } from "react";
-import { editMessageAction, deleteMessageAction } from "../actions/conversations";
-import { ContentRenderer } from "@/modules/editor/components/content-renderer";
 import { Button } from "@/components/ui";
-import { MoreHorizontal, Pencil, Trash, X, Check, FileIcon } from "lucide-react";
+import { ContentRenderer } from "@/modules/editor/components/content-renderer";
+import {
+  deleteMessageAction,
+  editMessageAction,
+} from "../actions/conversations";
 
 interface Attachment {
   id: string;
@@ -44,7 +54,10 @@ interface ConversationMessageProps {
   currentUserId: string;
 }
 
-export function ConversationMessage({ message, currentUserId }: ConversationMessageProps) {
+export function ConversationMessage({
+  message,
+  currentUserId,
+}: ConversationMessageProps) {
   const isOwn = message.senderId === currentUserId;
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState("");
@@ -61,7 +74,10 @@ export function ConversationMessage({ message, currentUserId }: ConversationMess
   };
 
   const handleSaveEdit = () => {
-    if (!editValue.trim() || editValue === message.contentJson?.content?.[0]?.content?.[0]?.text) {
+    if (
+      !editValue.trim() ||
+      editValue === message.contentJson?.content?.[0]?.content?.[0]?.text
+    ) {
       setIsEditing(false);
       return;
     }
@@ -105,26 +121,39 @@ export function ConversationMessage({ message, currentUserId }: ConversationMess
   };
 
   // Filter out sender's own read receipts for rendering receipts list
-  const otherReadReceipts = message.readReceipts.filter((r) => r.userId !== message.senderId);
+  const otherReadReceipts = message.readReceipts.filter(
+    (r) => r.userId !== message.senderId,
+  );
 
   return (
-    <div className={`flex w-full gap-3 ${isOwn ? "flex-row-reverse" : "flex-row"}`}>
+    <div
+      className={`flex w-full gap-3 ${isOwn ? "flex-row-reverse" : "flex-row"}`}
+    >
       {/* Avatar */}
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xs">
-        {(message.sender.displayName || message.sender.username || "?").charAt(0).toUpperCase()}
+        {(message.sender.displayName || message.sender.username || "?")
+          .charAt(0)
+          .toUpperCase()}
       </div>
 
       {/* Bubble Container */}
-      <div className={`flex max-w-[70%] flex-col space-y-1 ${isOwn ? "items-end" : "items-start"}`}>
+      <div
+        className={`flex max-w-[70%] flex-col space-y-1 ${isOwn ? "items-end" : "items-start"}`}
+      >
         {/* Meta */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <span className="font-semibold text-foreground">
             {message.sender.displayName || message.sender.username}
           </span>
           <span>
-            {new Date(message.createdAt).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
+            {new Date(message.createdAt).toLocaleTimeString(undefined, {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
           </span>
-          {message.isEdited && <span className="text-[10px] italic">(edited)</span>}
+          {message.isEdited && (
+            <span className="text-[10px] italic">(edited)</span>
+          )}
         </div>
 
         {/* Bubble */}
@@ -167,8 +196,8 @@ export function ConversationMessage({ message, currentUserId }: ConversationMess
               message.isDeleted
                 ? "bg-muted text-muted-foreground italic border border-dashed border-muted-foreground/30"
                 : isOwn
-                ? "bg-primary text-primary-foreground"
-                : "bg-muted text-foreground"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-foreground"
             }`}
           >
             {isEditing ? (
@@ -180,10 +209,21 @@ export function ConversationMessage({ message, currentUserId }: ConversationMess
                   className="rounded border bg-background text-foreground px-2 py-1 text-sm focus:outline-none"
                   autoFocus
                 />
-                <Button variant="ghost" size="icon" className="h-7 w-7 text-primary-foreground" onClick={handleSaveEdit} disabled={isPending}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 text-primary-foreground"
+                  onClick={handleSaveEdit}
+                  disabled={isPending}
+                >
                   <Check className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => setIsEditing(false)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-7 w-7 text-destructive"
+                  onClick={() => setIsEditing(false)}
+                >
                   <X className="h-4 w-4" />
                 </Button>
               </div>
@@ -207,7 +247,9 @@ export function ConversationMessage({ message, currentUserId }: ConversationMess
                 <FileIcon className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <div className="min-w-0 flex-1">
                   <p className="font-medium truncate">{att.originalName}</p>
-                  <p className="text-[10px] text-muted-foreground">{formatSize(att.fileSize)}</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {formatSize(att.fileSize)}
+                  </p>
                 </div>
               </a>
             ))}

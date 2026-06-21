@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { UserDropdown } from "@/components/auth";
 import { Button } from "@/components/ui";
 import { useAuth } from "@/hooks";
-import { UserDropdown } from "@/components/auth";
 import { GlobalSearch } from "./global-search";
 
 export function Header() {

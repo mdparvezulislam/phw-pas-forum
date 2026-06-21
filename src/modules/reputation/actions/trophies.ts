@@ -4,14 +4,13 @@ import { eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getDatabase, schema } from "@/db";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
-import { requireAuth } from "@/modules/auth/guards";
-import { requireRole } from "@/modules/auth/guards";
+import { requireAuth, requireRole } from "@/modules/auth/guards";
 import { auditService } from "@/services/audit";
 import { RoleName } from "@/types/rbac";
 import {
+  adminTrophyAssignSchema,
   createTrophySchema,
   updateTrophySchema,
-  adminTrophyAssignSchema,
 } from "@/validations/reputation";
 
 export async function createTrophy(
@@ -57,10 +56,9 @@ export async function updateTrophy(
     title: formData.get("title") || undefined,
     description: formData.get("description") || undefined,
     icon: formData.get("icon") || undefined,
-    reputationReward:
-      formData.get("reputationReward")
-        ? Number(formData.get("reputationReward"))
-        : undefined,
+    reputationReward: formData.get("reputationReward")
+      ? Number(formData.get("reputationReward"))
+      : undefined,
     conditionType: formData.get("conditionType") || undefined,
     conditionValue: formData.get("conditionValue")
       ? Number(formData.get("conditionValue"))
@@ -96,7 +94,10 @@ export async function assignTrophy(
 
   const existing = await db.query.userTrophies.findFirst({
     where: (ut, { and: andFn, eq: eqFn }) =>
-      andFn(eqFn(ut.userId, parsed.data.userId), eqFn(ut.trophyId, parsed.data.trophyId)),
+      andFn(
+        eqFn(ut.userId, parsed.data.userId),
+        eqFn(ut.trophyId, parsed.data.trophyId),
+      ),
   });
   if (existing) return { error: "User already has this trophy" };
 
@@ -136,7 +137,9 @@ export async function revokeTrophy(
   });
   if (!userTrophy) return { error: "Trophy not found" };
 
-  await db.delete(schema.userTrophies).where(eq(schema.userTrophies.id, userTrophyId));
+  await db
+    .delete(schema.userTrophies)
+    .where(eq(schema.userTrophies.id, userTrophyId));
 
   await db
     .update(schema.userReputation)

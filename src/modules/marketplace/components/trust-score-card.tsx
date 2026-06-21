@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { trustEngine } from "@/services/trust-engine";
+import { getSellerTrustProfileAction } from "@/actions";
 
 export function TrustScoreCard({ sellerId }: { sellerId: string }) {
   const [trustProfile, setTrustProfile] = useState<any>(null);
@@ -10,12 +10,10 @@ export function TrustScoreCard({ sellerId }: { sellerId: string }) {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const { getDatabase, schema } = await import("@/db");
-        const db = getDatabase();
-        const profile = await db.query.sellerTrustProfiles.findFirst({
-          where: (t: any, { eq }: any) => eq(t.sellerId, sellerId),
-        });
-        setTrustProfile(profile);
+        const result = await getSellerTrustProfileAction(sellerId);
+        if (result.success && result.data) {
+          setTrustProfile(result.data);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -45,10 +43,14 @@ export function TrustScoreCard({ sellerId }: { sellerId: string }) {
 
   return (
     <div className="rounded-lg border bg-card p-6">
-      <h3 className="mb-2 text-sm font-medium text-muted-foreground">Seller Trust Score</h3>
+      <h3 className="mb-2 text-sm font-medium text-muted-foreground">
+        Seller Trust Score
+      </h3>
       <div className="mb-2 flex items-baseline gap-2">
         <span className="text-3xl font-bold">{score}</span>
-        <span className={`text-sm font-medium ${level.color}`}>{level.label}</span>
+        <span className={`text-sm font-medium ${level.color}`}>
+          {level.label}
+        </span>
       </div>
       <div className="mb-4 h-2 w-full overflow-hidden rounded-full bg-muted">
         <div
@@ -59,23 +61,33 @@ export function TrustScoreCard({ sellerId }: { sellerId: string }) {
       <div className="space-y-1 text-xs text-muted-foreground">
         <div className="flex justify-between">
           <span>Positive</span>
-          <span className="font-medium text-green-600">+{trustProfile?.positiveFeedback ?? 0}</span>
+          <span className="font-medium text-green-600">
+            +{trustProfile?.positiveFeedback ?? 0}
+          </span>
         </div>
         <div className="flex justify-between">
           <span>Neutral</span>
-          <span className="font-medium text-yellow-600">{trustProfile?.neutralFeedback ?? 0}</span>
+          <span className="font-medium text-yellow-600">
+            {trustProfile?.neutralFeedback ?? 0}
+          </span>
         </div>
         <div className="flex justify-between">
           <span>Negative</span>
-          <span className="font-medium text-red-600">{trustProfile?.negativeFeedback ?? 0}</span>
+          <span className="font-medium text-red-600">
+            {trustProfile?.negativeFeedback ?? 0}
+          </span>
         </div>
         <div className="flex justify-between">
           <span>Completed Orders</span>
-          <span className="font-medium">{trustProfile?.completedOrders ?? 0}</span>
+          <span className="font-medium">
+            {trustProfile?.completedOrders ?? 0}
+          </span>
         </div>
         <div className="flex justify-between">
           <span>Disputes</span>
-          <span className="font-medium">{trustProfile?.disputedOrders ?? 0}</span>
+          <span className="font-medium">
+            {trustProfile?.disputedOrders ?? 0}
+          </span>
         </div>
       </div>
     </div>

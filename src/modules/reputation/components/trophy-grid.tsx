@@ -46,9 +46,7 @@ export function TrophyGrid({ trophies, compact }: TrophyGridProps) {
             {trophy.icon}
           </span>
           <div className="min-w-0">
-            <div className="text-sm font-medium truncate">
-              {trophy.title}
-            </div>
+            <div className="text-sm font-medium truncate">{trophy.title}</div>
             {!compact && trophy.description && (
               <div className="mt-0.5 text-xs text-muted-foreground">
                 {trophy.description}

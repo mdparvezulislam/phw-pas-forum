@@ -1,17 +1,17 @@
-import Link from "next/link";
 import {
-  Pin,
-  Lock,
-  Star,
-  Eye,
-  MessageSquare,
-  Clock,
-  ChevronRight,
-  BookmarkPlus,
   Bell,
-  Share2,
+  BookmarkPlus,
+  ChevronRight,
+  Clock,
+  Eye,
   Flag,
+  Lock,
+  MessageSquare,
+  Pin,
+  Share2,
+  Star,
 } from "lucide-react";
+import Link from "next/link";
 import { formatDateRelative } from "@/lib/utils";
 
 interface ThreadHeaderProps {
@@ -47,25 +47,42 @@ export function ThreadHeader({
   forumSlug,
   forumTitle,
 }: ThreadHeaderProps) {
-  const authorName = thread.author.displayName ?? thread.author.username ?? "Unknown";
+  const authorName =
+    thread.author.displayName ?? thread.author.username ?? "Unknown";
 
   return (
     <div className="overflow-hidden rounded-xl border bg-card">
       <div className="p-5 sm:p-6">
         {/* Breadcrumbs */}
         <div className="mb-3 flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Link href="/forums" className="hover:text-foreground">Forums</Link>
+          <Link href="/forums" className="hover:text-foreground">
+            Forums
+          </Link>
           <ChevronRight className="h-3 w-3" />
-          <Link href={`/forums/${categorySlug}`} className="hover:text-foreground">{categoryTitle}</Link>
+          <Link
+            href={`/forums/${categorySlug}`}
+            className="hover:text-foreground"
+          >
+            {categoryTitle}
+          </Link>
           <ChevronRight className="h-3 w-3" />
-          <Link href={`/forums/${categorySlug}/${forumSlug}`} className="hover:text-foreground">{forumTitle}</Link>
+          <Link
+            href={`/forums/${categorySlug}/${forumSlug}`}
+            className="hover:text-foreground"
+          >
+            {forumTitle}
+          </Link>
         </div>
 
         {/* Title */}
         <div className="flex flex-wrap items-center gap-2">
           {thread.isPinned && <Pin className="h-4 w-4 shrink-0 text-primary" />}
-          {thread.isLocked && <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />}
-          {thread.isFeatured && <Star className="h-4 w-4 shrink-0 text-amber-500" />}
+          {thread.isLocked && (
+            <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
+          )}
+          {thread.isFeatured && (
+            <Star className="h-4 w-4 shrink-0 text-amber-500" />
+          )}
           {thread.isSolved && (
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
               ✓ Solved
@@ -91,7 +108,8 @@ export function ThreadHeader({
         {/* Meta */}
         <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
-            Started by <span className="font-medium text-foreground">{authorName}</span>
+            Started by{" "}
+            <span className="font-medium text-foreground">{authorName}</span>
           </span>
           <span className="flex items-center gap-1">
             <Clock className="h-3 w-3" />

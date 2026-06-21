@@ -25,7 +25,9 @@ export function ComplianceCard({ score }: { score: number }) {
           <ShieldCheck className="w-4 h-4 text-muted-foreground" />
           <span className="font-semibold text-sm">iModBot Compliance</span>
         </div>
-        <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${level.color}`}>
+        <span
+          className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${level.color}`}
+        >
           {level.label}
         </span>
       </div>

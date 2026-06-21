@@ -10,7 +10,8 @@ export const sellerVerificationAppStatus = [
   "SUSPENDED",
 ] as const;
 
-export type SellerVerificationAppStatus = (typeof sellerVerificationAppStatus)[number];
+export type SellerVerificationAppStatus =
+  (typeof sellerVerificationAppStatus)[number];
 
 export const sellerVerifications = pgTable("seller_verification", {
   id: text("id")

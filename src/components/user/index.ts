@@ -1,13 +1,13 @@
-export { ProfileHeader } from "./profile-header";
-export { DashboardHero } from "./dashboard-hero";
-export { ActivityTimeline } from "./activity-timeline";
-export { StatsGrid } from "./stats-grid";
 export { AchievementGallery, TrophyGallery } from "./achievement-gallery";
+export { ActivityTimeline } from "./activity-timeline";
+export { DashboardHero } from "./dashboard-hero";
 export { UserEmptyState } from "./empty-states";
+export { ProfileHeader } from "./profile-header";
 export {
-  DashboardSkeleton,
-  ProfileSkeleton,
-  NotificationSkeleton,
-  MessageSkeleton,
   AchievementSkeleton,
+  DashboardSkeleton,
+  MessageSkeleton,
+  NotificationSkeleton,
+  ProfileSkeleton,
 } from "./skeletons";
+export { StatsGrid } from "./stats-grid";

@@ -48,7 +48,11 @@ export const FILE_LIMITS = {
     "video/mp4",
   ],
   IMAGE_ALLOWED_TYPES: ["image/jpeg", "image/png", "image/webp", "image/gif"],
-  DOCUMENT_ALLOWED_TYPES: ["application/pdf", "application/zip", "application/x-rar-compressed"],
+  DOCUMENT_ALLOWED_TYPES: [
+    "application/pdf",
+    "application/zip",
+    "application/x-rar-compressed",
+  ],
   VIDEO_ALLOWED_TYPES: ["video/mp4"],
   IMAGE_MAX_SIZE: 5 * 1024 * 1024,
   VIDEO_MAX_SIZE: 50 * 1024 * 1024,

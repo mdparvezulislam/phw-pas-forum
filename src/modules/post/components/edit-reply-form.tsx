@@ -1,12 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useActionState } from "react";
-import { updatePost } from "@/modules/post/actions";
-import type { PostWithAuthor } from "@/modules/post/types";
+import type { JSONContent } from "@tiptap/core";
+import {
+  useActionState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { RichTextEditor } from "@/modules/editor/components";
 import { generatePlainText } from "@/modules/editor/utils/content";
-import type { JSONContent } from "@tiptap/core";
+import { updatePost } from "@/modules/post/actions";
+import type { PostWithAuthor } from "@/modules/post/types";
 
 interface EditReplyFormProps {
   post: PostWithAuthor;

@@ -1,6 +1,6 @@
+import { ArrowRight, Check, Crown } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Check, Crown, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Premium Membership",
@@ -11,13 +11,19 @@ const plans = [
     name: "Member",
     price: "Free",
     description: "Access to community forums and basic marketplace features.",
-    features: ["Forum access", "Basic marketplace access", "Standard PM limits", "Community support"],
+    features: [
+      "Forum access",
+      "Basic marketplace access",
+      "Standard PM limits",
+      "Community support",
+    ],
   },
   {
     name: "VIP",
     price: "$19",
     period: "/mo",
-    description: "Everything in Member, plus premium forums, resources, and boosts.",
+    description:
+      "Everything in Member, plus premium forums, resources, and boosts.",
     popular: true,
     features: [
       "All Member features",
@@ -33,7 +39,8 @@ const plans = [
     name: "VIP+",
     price: "$39",
     period: "/mo",
-    description: "Everything in VIP, plus enhanced boosts and exclusive access.",
+    description:
+      "Everything in VIP, plus enhanced boosts and exclusive access.",
     features: [
       "All VIP features",
       "Enhanced listing boosts",
@@ -48,7 +55,8 @@ const plans = [
     name: "Elite",
     price: "$79",
     period: "/mo",
-    description: "Maximum platform access with premium perks and priority treatment.",
+    description:
+      "Maximum platform access with premium perks and priority treatment.",
     features: [
       "All VIP+ features",
       "Maximum listing boosts",
@@ -70,9 +78,12 @@ export default function PremiumPage() {
             <Crown className="h-3 w-3" />
             Premium Membership
           </div>
-          <h1 className="text-4xl font-bold sm:text-5xl">Unlock Your Potential</h1>
+          <h1 className="text-4xl font-bold sm:text-5xl">
+            Unlock Your Potential
+          </h1>
           <p className="mt-4 text-lg text-muted-foreground">
-            Choose the plan that fits your needs and take your experience to the next level.
+            Choose the plan that fits your needs and take your experience to the
+            next level.
           </p>
         </div>
 
@@ -95,10 +106,14 @@ export default function PremiumPage() {
               <div className="mt-3">
                 <span className="text-3xl font-bold">{plan.price}</span>
                 {plan.period && (
-                  <span className="text-sm text-muted-foreground">{plan.period}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {plan.period}
+                  </span>
                 )}
               </div>
-              <p className="mt-2 text-xs text-muted-foreground">{plan.description}</p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                {plan.description}
+              </p>
               <ul className="mt-6 space-y-2.5">
                 {plan.features.map((f) => (
                   <li key={f} className="flex items-start gap-2 text-xs">
@@ -108,7 +123,11 @@ export default function PremiumPage() {
                 ))}
               </ul>
               <Link
-                href={plan.price === "Free" ? "/auth/register" : "/auth/register?plan=" + plan.name.toLowerCase()}
+                href={
+                  plan.price === "Free"
+                    ? "/auth/register"
+                    : "/auth/register?plan=" + plan.name.toLowerCase()
+                }
                 className={`mt-6 flex items-center justify-center gap-1.5 rounded-full px-4 py-2.5 text-center text-sm font-semibold transition-all ${
                   plan.popular
                     ? "bg-premium text-premium-foreground shadow-lg shadow-premium/20 hover:bg-premium/90"

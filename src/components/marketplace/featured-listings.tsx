@@ -1,4 +1,4 @@
-import { Crown, ArrowRight } from "lucide-react";
+import { ArrowRight, Crown } from "lucide-react";
 import Link from "next/link";
 import { ListingCard } from "./listing-card";
 

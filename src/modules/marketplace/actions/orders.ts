@@ -453,3 +453,18 @@ export async function getAllOrdersAction(
     return { success: false, error: error.message || String(error) };
   }
 }
+
+export async function getSellerTrustProfileAction(
+  sellerId: string,
+): Promise<{ success: boolean; data?: any; error?: string }> {
+  try {
+    const { getDatabase, schema } = await import("@/db");
+    const db = getDatabase();
+    const profile = await db.query.sellerTrustProfiles.findFirst({
+      where: (t, { eq }) => eq(t.sellerId, sellerId),
+    });
+    return { success: true, data: profile };
+  } catch (error: any) {
+    return { success: false, error: error.message || String(error) };
+  }
+}

@@ -1,11 +1,11 @@
 "use server";
 
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { getDatabase, schema } from "@/db";
+import { realtimeService } from "@/lib/realtime";
 import { requireAuth } from "@/modules/auth/guards";
 import { conversationService } from "@/services/conversation";
-import { realtimeService } from "@/lib/realtime";
-import { getDatabase, schema } from "@/db";
-import { eq, and } from "drizzle-orm";
 
 export interface ActionResponse<T = void> {
   success: boolean;
@@ -29,14 +29,17 @@ export async function createConversationAction(params: {
     return { success: true, data: result };
   } catch (error: any) {
     console.error("[createConversationAction] failed:", error);
-    return { success: false, error: error.message || "Failed to create conversation" };
+    return {
+      success: false,
+      error: error.message || "Failed to create conversation",
+    };
   }
 }
 
 export async function sendMessageAction(
   conversationId: string,
   contentJson: any,
-  attachmentIds?: string[]
+  attachmentIds?: string[],
 ): Promise<ActionResponse<any>> {
   try {
     const user = await requireAuth();
@@ -56,7 +59,7 @@ export async function sendMessageAction(
 
 export async function editMessageAction(
   messageId: string,
-  contentJson: any
+  contentJson: any,
 ): Promise<ActionResponse> {
   try {
     const user = await requireAuth();
@@ -69,7 +72,7 @@ export async function editMessageAction(
 }
 
 export async function deleteMessageAction(
-  messageId: string
+  messageId: string,
 ): Promise<ActionResponse> {
   try {
     const user = await requireAuth();
@@ -77,13 +80,16 @@ export async function deleteMessageAction(
     return { success: true };
   } catch (error: any) {
     console.error("[deleteMessageAction] failed:", error);
-    return { success: false, error: error.message || "Failed to delete message" };
+    return {
+      success: false,
+      error: error.message || "Failed to delete message",
+    };
   }
 }
 
 export async function addParticipantAction(
   conversationId: string,
-  userId: string
+  userId: string,
 ): Promise<ActionResponse> {
   try {
     const actor = await requireAuth();
@@ -92,12 +98,15 @@ export async function addParticipantAction(
     return { success: true };
   } catch (error: any) {
     console.error("[addParticipantAction] failed:", error);
-    return { success: false, error: error.message || "Failed to add participant" };
+    return {
+      success: false,
+      error: error.message || "Failed to add participant",
+    };
   }
 }
 
 export async function leaveConversationAction(
-  conversationId: string
+  conversationId: string,
 ): Promise<ActionResponse> {
   try {
     const user = await requireAuth();
@@ -106,43 +115,60 @@ export async function leaveConversationAction(
     return { success: true };
   } catch (error: any) {
     console.error("[leaveConversationAction] failed:", error);
-    return { success: false, error: error.message || "Failed to leave conversation" };
+    return {
+      success: false,
+      error: error.message || "Failed to leave conversation",
+    };
   }
 }
 
 export async function archiveConversationAction(
   conversationId: string,
-  isArchived: boolean
+  isArchived: boolean,
 ): Promise<ActionResponse> {
   try {
     const user = await requireAuth();
-    await conversationService.archiveConversation(conversationId, user.id, isArchived);
+    await conversationService.archiveConversation(
+      conversationId,
+      user.id,
+      isArchived,
+    );
     revalidatePath("/conversations");
     return { success: true };
   } catch (error: any) {
     console.error("[archiveConversationAction] failed:", error);
-    return { success: false, error: error.message || "Failed to archive conversation" };
+    return {
+      success: false,
+      error: error.message || "Failed to archive conversation",
+    };
   }
 }
 
 export async function muteConversationAction(
   conversationId: string,
-  isMuted: boolean
+  isMuted: boolean,
 ): Promise<ActionResponse> {
   try {
     const user = await requireAuth();
-    await conversationService.muteConversation(conversationId, user.id, isMuted);
+    await conversationService.muteConversation(
+      conversationId,
+      user.id,
+      isMuted,
+    );
     revalidatePath(`/conversations/${conversationId}`);
     return { success: true };
   } catch (error: any) {
     console.error("[muteConversationAction] failed:", error);
-    return { success: false, error: error.message || "Failed to mute conversation" };
+    return {
+      success: false,
+      error: error.message || "Failed to mute conversation",
+    };
   }
 }
 
 export async function markAsReadAction(
   conversationId: string,
-  messageId: string
+  messageId: string,
 ): Promise<ActionResponse> {
   try {
     const user = await requireAuth();
@@ -150,25 +176,28 @@ export async function markAsReadAction(
     return { success: true };
   } catch (error: any) {
     console.error("[markAsReadAction] failed:", error);
-    return { success: false, error: error.message || "Failed to mark message as read" };
+    return {
+      success: false,
+      error: error.message || "Failed to mark message as read",
+    };
   }
 }
 
 export async function sendTypingAction(
   conversationId: string,
-  isTyping: boolean
+  isTyping: boolean,
 ): Promise<ActionResponse> {
   try {
     const user = await requireAuth();
-    
+
     // Security check: Verify user is active participant
     const db = getDatabase();
     const participant = await db.query.conversationParticipants.findFirst({
       where: and(
         eq(schema.conversationParticipants.conversationId, conversationId),
         eq(schema.conversationParticipants.userId, user.id),
-        eq(schema.conversationParticipants.isLeft, false)
-      )
+        eq(schema.conversationParticipants.isLeft, false),
+      ),
     });
 
     if (!participant) {
@@ -187,28 +216,33 @@ export async function sendTypingAction(
 
     return { success: true };
   } catch (error: any) {
-    return { success: false, error: error.message || "Failed to send typing status" };
+    return {
+      success: false,
+      error: error.message || "Failed to send typing status",
+    };
   }
 }
 
-export async function searchUsersAction(query: string): Promise<ActionResponse<any[]>> {
+export async function searchUsersAction(
+  query: string,
+): Promise<ActionResponse<any[]>> {
   try {
     await requireAuth();
     if (!query || query.length < 2) return { success: true, data: [] };
-    
+
     const { searchService } = await import("@/services/search");
     const results = await searchService.executeSearch(query, {
       contentType: "users",
       perPage: 10,
     });
-    
+
     const users = results.hits.map((h: any) => ({
       id: h.document.id,
       username: h.document.username,
       displayName: h.document.displayName,
       image: null,
     }));
-    
+
     return { success: true, data: users };
   } catch (error: any) {
     return { success: false, error: error.message };

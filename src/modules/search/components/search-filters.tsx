@@ -1,13 +1,27 @@
 "use client";
 
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { Input, Label } from "@/components/ui";
 
 export interface SearchFilterState {
-  contentType: "all" | "threads" | "posts" | "users" | "forums" | "badges" | "trophies";
+  contentType:
+    | "all"
+    | "threads"
+    | "posts"
+    | "users"
+    | "forums"
+    | "badges"
+    | "trophies";
   author: string;
   minReputation: string;
-  sortBy: "relevance" | "newest" | "oldest" | "most_viewed" | "most_replies" | "reputation";
+  sortBy:
+    | "relevance"
+    | "newest"
+    | "oldest"
+    | "most_viewed"
+    | "most_replies"
+    | "reputation";
   startDate: string;
   endDate: string;
   tagsString: string;
@@ -19,7 +33,11 @@ interface SearchFiltersProps {
   onApply: () => void;
 }
 
-export function SearchFilters({ filters, onChange, onApply }: SearchFiltersProps) {
+export function SearchFilters({
+  filters,
+  onChange,
+  onApply,
+}: SearchFiltersProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -37,7 +55,9 @@ export function SearchFilters({ filters, onChange, onApply }: SearchFiltersProps
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-lg">⚙️</span>
-          <h3 className="font-semibold text-foreground">Advanced Search Options</h3>
+          <h3 className="font-semibold text-foreground">
+            Advanced Search Options
+          </h3>
         </div>
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -124,7 +144,8 @@ export function SearchFilters({ filters, onChange, onApply }: SearchFiltersProps
           )}
 
           {/* Tags */}
-          {(filters.contentType === "all" || filters.contentType === "threads") && (
+          {(filters.contentType === "all" ||
+            filters.contentType === "threads") && (
             <div className="space-y-1.5">
               <Label htmlFor="tagsString">Tags</Label>
               <Input

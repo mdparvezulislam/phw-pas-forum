@@ -18,7 +18,9 @@ export const userBans = pgTable(
     isPermanent: boolean("is_permanent").default(false).notNull(),
     expiresAt: timestamp("expires_at", { mode: "date" }),
     isActive: boolean("is_active").default(true).notNull(),
-    liftedBy: text("lifted_by").references(() => users.id, { onDelete: "set null" }),
+    liftedBy: text("lifted_by").references(() => users.id, {
+      onDelete: "set null",
+    }),
     liftedAt: timestamp("lifted_at", { mode: "date" }),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date" })

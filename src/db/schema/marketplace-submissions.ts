@@ -10,7 +10,8 @@ export const marketplaceSubmissionStatus = [
   "ESC_CHANGE_REQUEST",
 ] as const;
 
-export type MarketplaceSubmissionStatus = (typeof marketplaceSubmissionStatus)[number];
+export type MarketplaceSubmissionStatus =
+  (typeof marketplaceSubmissionStatus)[number];
 
 export const marketplaceSubmissions = pgTable("marketplace_submission", {
   id: text("id")
@@ -28,14 +29,20 @@ export const marketplaceSubmissions = pgTable("marketplace_submission", {
     .notNull(),
   price: integer("price").default(0).notNull(), // stored in cents
   paymentDetails: text("payment_details"),
-  assignedModeratorId: text("assigned_moderator_id").references(() => users.id, {
-    onDelete: "set null",
-  }),
-  submittedAt: timestamp("submitted_at", { mode: "date" }).defaultNow().notNull(),
+  assignedModeratorId: text("assigned_moderator_id").references(
+    () => users.id,
+    {
+      onDelete: "set null",
+    },
+  ),
+  submittedAt: timestamp("submitted_at", { mode: "date" })
+    .defaultNow()
+    .notNull(),
   reviewedAt: timestamp("reviewed_at", { mode: "date" }),
   rejectionReason: text("rejection_reason"),
   notes: text("notes"),
 });
 
 export type MarketplaceSubmission = typeof marketplaceSubmissions.$inferSelect;
-export type NewMarketplaceSubmission = typeof marketplaceSubmissions.$inferInsert;
+export type NewMarketplaceSubmission =
+  typeof marketplaceSubmissions.$inferInsert;

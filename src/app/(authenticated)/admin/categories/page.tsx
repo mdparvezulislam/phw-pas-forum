@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminCategoriesPage() {
-
   const db = getDatabase();
   const categories = await db.query.categories.findMany({
     orderBy: (categories, { asc }) => [asc(categories.position)],

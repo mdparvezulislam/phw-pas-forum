@@ -4,10 +4,15 @@ import { and, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getDatabase, schema } from "@/db";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
+import {
+  createEventId,
+  emitEvent,
+  type ReactionCreatedEvent,
+  type ReactionRemovedEvent,
+} from "@/lib/event-bus";
 import { requireAuth } from "@/modules/auth/guards";
-import { emitEvent, createEventId, type ReactionCreatedEvent, type ReactionRemovedEvent } from "@/lib/event-bus";
-import { auditService } from "@/services/audit";
 import { achievementEngine } from "@/services/achievement-engine";
+import { auditService } from "@/services/audit";
 import {
   getReputationPointsForReaction,
   reputationEngine,
@@ -46,7 +51,11 @@ export async function toggleReaction(
 
   const existing = await db.query.reactions.findFirst({
     where: (r, { and: andFn, eq: eqFn }) =>
-      andFn(eqFn(r.userId, user.id), eqFn(r.targetId, targetId), eqFn(r.targetType, targetType)),
+      andFn(
+        eqFn(r.userId, user.id),
+        eqFn(r.targetId, targetId),
+        eqFn(r.targetType, targetType),
+      ),
   });
 
   if (existing) {

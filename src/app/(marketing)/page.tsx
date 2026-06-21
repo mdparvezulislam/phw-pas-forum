@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import {
-  HeroSection,
   CategoryGrid,
+  CTASection,
+  FAQSection,
   FeatureGrid,
-  Testimonials,
+  HeroSection,
   MarketplaceShowcase,
   PremiumSection,
-  FAQSection,
-  CTASection,
+  Testimonials,
 } from "@/components/marketing";
 
 export const metadata: Metadata = {

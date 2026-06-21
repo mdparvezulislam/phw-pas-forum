@@ -1,7 +1,7 @@
 "use client";
 
+import { Check, HelpCircle, Minus } from "lucide-react";
 import React from "react";
-import { Check, Minus, HelpCircle } from "lucide-react";
 
 interface FeatureRow {
   name: string;
@@ -111,26 +111,53 @@ export function PricingTable() {
       <table className="w-full border-collapse text-left">
         <thead>
           <tr className="border-b border-zinc-800 bg-zinc-900/60">
-            <th className="p-5 text-sm font-semibold text-zinc-400">Benefit Description</th>
-            <th className="p-5 text-center text-sm font-semibold text-zinc-400">Member</th>
-            <th className="p-5 text-center text-sm font-semibold text-indigo-400">VIP</th>
-            <th className="p-5 text-center text-sm font-semibold text-violet-400">VIP+</th>
-            <th className="p-5 text-center text-sm font-semibold text-amber-400">Elite</th>
-            <th className="p-5 text-center text-sm font-semibold text-emerald-400">Lifetime</th>
+            <th className="p-5 text-sm font-semibold text-zinc-400">
+              Benefit Description
+            </th>
+            <th className="p-5 text-center text-sm font-semibold text-zinc-400">
+              Member
+            </th>
+            <th className="p-5 text-center text-sm font-semibold text-indigo-400">
+              VIP
+            </th>
+            <th className="p-5 text-center text-sm font-semibold text-violet-400">
+              VIP+
+            </th>
+            <th className="p-5 text-center text-sm font-semibold text-amber-400">
+              Elite
+            </th>
+            <th className="p-5 text-center text-sm font-semibold text-emerald-400">
+              Lifetime
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-zinc-800/60">
           {COMPARISON_ROWS.map((row, idx) => (
-            <tr key={idx} className="hover:bg-zinc-900/20 transition-colors duration-150">
+            <tr
+              key={idx}
+              className="hover:bg-zinc-900/20 transition-colors duration-150"
+            >
               <td className="p-5">
-                <div className="font-semibold text-zinc-200 text-sm">{row.name}</div>
-                <div className="text-xs text-zinc-500 mt-0.5">{row.description}</div>
+                <div className="font-semibold text-zinc-200 text-sm">
+                  {row.name}
+                </div>
+                <div className="text-xs text-zinc-500 mt-0.5">
+                  {row.description}
+                </div>
               </td>
               <td className="p-5 text-center">{renderCell(row.member)}</td>
-              <td className="p-5 text-center bg-indigo-500/5">{renderCell(row.vip)}</td>
-              <td className="p-5 text-center bg-violet-500/5">{renderCell(row.vipplus)}</td>
-              <td className="p-5 text-center bg-amber-500/5">{renderCell(row.elite)}</td>
-              <td className="p-5 text-center bg-emerald-500/5">{renderCell(row.lifetime)}</td>
+              <td className="p-5 text-center bg-indigo-500/5">
+                {renderCell(row.vip)}
+              </td>
+              <td className="p-5 text-center bg-violet-500/5">
+                {renderCell(row.vipplus)}
+              </td>
+              <td className="p-5 text-center bg-amber-500/5">
+                {renderCell(row.elite)}
+              </td>
+              <td className="p-5 text-center bg-emerald-500/5">
+                {renderCell(row.lifetime)}
+              </td>
             </tr>
           ))}
         </tbody>

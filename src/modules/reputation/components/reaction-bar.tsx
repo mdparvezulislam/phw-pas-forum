@@ -2,7 +2,10 @@
 
 import { useActionState, useState } from "react";
 import { cn } from "@/lib/utils";
-import { toggleReaction, type ReactionState } from "@/modules/reputation/actions";
+import {
+  type ReactionState,
+  toggleReaction,
+} from "@/modules/reputation/actions";
 
 const REACTION_ICONS: Record<string, string> = {
   LIKE: "👍",
@@ -69,7 +72,9 @@ export function ReactionBar({
               )}
               title={REACTION_LABELS[r.type]}
             >
-              <span className="text-sm leading-none">{REACTION_ICONS[r.type]}</span>
+              <span className="text-sm leading-none">
+                {REACTION_ICONS[r.type]}
+              </span>
               {r.count > 0 && <span>{r.count}</span>}
             </button>
           </form>
@@ -104,11 +109,7 @@ export function ReactionBar({
                   );
                   return (
                     <form action={action} key={type}>
-                      <input
-                        type="hidden"
-                        name="targetId"
-                        value={targetId}
-                      />
+                      <input type="hidden" name="targetId" value={targetId} />
                       <input
                         type="hidden"
                         name="targetType"

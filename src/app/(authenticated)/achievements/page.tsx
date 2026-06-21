@@ -1,9 +1,13 @@
+import { desc, eq } from "drizzle-orm";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import {
+  AchievementGallery,
+  TrophyGallery,
+  UserEmptyState,
+} from "@/components/user";
 import { getDatabase, schema } from "@/db";
-import { eq, desc } from "drizzle-orm";
-import { AchievementGallery, TrophyGallery, UserEmptyState } from "@/components/user";
+import { auth } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "Achievements",
@@ -28,8 +32,14 @@ export default async function AchievementsPage() {
     }),
   ]);
 
-  const badges = userBadgeRows.map((ub: any) => ({ ...ub.badge, earnedAt: ub.earnedAt }));
-  const trophies = userTrophyRows.map((ut: any) => ({ ...ut.trophy, earnedAt: ut.earnedAt }));
+  const badges = userBadgeRows.map((ub: any) => ({
+    ...ub.badge,
+    earnedAt: ub.earnedAt,
+  }));
+  const trophies = userTrophyRows.map((ut: any) => ({
+    ...ut.trophy,
+    earnedAt: ut.earnedAt,
+  }));
 
   // Get all available badges/trophies for locked state display
   const allBadges = await db.select().from(schema.badges);
@@ -52,7 +62,9 @@ export default async function AchievementsPage() {
         <AchievementGallery
           badges={badges.length > 0 ? badges : allBadges}
           earnedBadgeIds={earnedBadgeIds}
-          title={badges.length > 0 ? `Earned Badges (${badges.length})` : "Badges"}
+          title={
+            badges.length > 0 ? `Earned Badges (${badges.length})` : "Badges"
+          }
           emptyMessage="No badges earned yet. Participate in the community to earn badges!"
         />
       </section>
@@ -78,7 +90,11 @@ export default async function AchievementsPage() {
         <TrophyGallery
           trophies={trophies.length > 0 ? trophies : allTrophies}
           earnedTrophyIds={earnedTrophyIds}
-          title={trophies.length > 0 ? `Earned Trophies (${trophies.length})` : "Trophies"}
+          title={
+            trophies.length > 0
+              ? `Earned Trophies (${trophies.length})`
+              : "Trophies"
+          }
           emptyMessage="No trophies earned yet. Complete challenges to earn trophies!"
         />
       </section>

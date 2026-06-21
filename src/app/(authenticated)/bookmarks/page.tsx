@@ -1,11 +1,11 @@
+import { Bookmark, ChevronRight, Eye, MessageSquare } from "lucide-react";
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { auth } from "@/lib/auth";
-import { getBookmarkedThreads } from "@/services/user-dashboard";
+import { redirect } from "next/navigation";
 import { UserEmptyState } from "@/components/user";
-import { Bookmark, MessageSquare, Eye, ChevronRight } from "lucide-react";
+import { auth } from "@/lib/auth";
 import { formatDateRelative } from "@/lib/utils";
+import { getBookmarkedThreads } from "@/services/user-dashboard";
 
 export const metadata: Metadata = {
   title: "Bookmarks",

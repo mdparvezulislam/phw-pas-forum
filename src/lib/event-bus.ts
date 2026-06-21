@@ -371,7 +371,9 @@ export function createEventId(): string {
   return crypto.randomUUID();
 }
 
-export function getNotificationTypeFromEvent(event: AppEvent): NotificationType | null {
+export function getNotificationTypeFromEvent(
+  event: AppEvent,
+): NotificationType | null {
   switch (event.type) {
     case "POST_CREATED":
       if (event.mentionedUserIds.length > 0) return "THREAD_MENTION";

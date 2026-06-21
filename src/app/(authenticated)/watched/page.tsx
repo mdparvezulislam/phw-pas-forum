@@ -1,11 +1,11 @@
+import { Activity, ChevronRight, Eye, MessageSquare, User } from "lucide-react";
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import { auth } from "@/lib/auth";
-import { getWatchedThreads } from "@/services/user-dashboard";
+import { redirect } from "next/navigation";
 import { UserEmptyState } from "@/components/user";
-import { Eye, MessageSquare, Activity, ChevronRight, User } from "lucide-react";
+import { auth } from "@/lib/auth";
 import { formatDateRelative } from "@/lib/utils";
+import { getWatchedThreads } from "@/services/user-dashboard";
 
 export const metadata: Metadata = {
   title: "Watched Threads",
@@ -55,7 +55,9 @@ export default async function WatchedPage() {
                 </span>
                 <span className="flex items-center gap-1">
                   <Activity className="h-3 w-3" />
-                  {wt.lastActivityAt ? formatDateRelative(wt.lastActivityAt) : "N/A"}
+                  {wt.lastActivityAt
+                    ? formatDateRelative(wt.lastActivityAt)
+                    : "N/A"}
                 </span>
               </div>
               <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />

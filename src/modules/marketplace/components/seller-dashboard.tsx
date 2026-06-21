@@ -1,23 +1,23 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
-import { getSellerDashboardAction } from "@/actions";
-import { OrderStatusBadge } from "./order-status-badge";
-import { TrustScoreCard } from "./trust-score-card";
-import { TrustBadge, SellerLevel } from "@/components/marketplace";
 import {
-  DollarSign,
-  ShoppingBag,
-  TrendingUp,
-  Clock,
-  Star,
-  Package,
-  Eye,
   ArrowUpRight,
   BarChart3,
+  Clock,
+  DollarSign,
+  Eye,
+  Package,
+  ShoppingBag,
+  Star,
+  TrendingUp,
 } from "lucide-react";
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { getSellerDashboardAction } from "@/actions";
+import { SellerLevel, TrustBadge } from "@/components/marketplace";
 import { formatCurrency } from "@/lib/utils";
+import { OrderStatusBadge } from "./order-status-badge";
+import { TrustScoreCard } from "./trust-score-card";
 
 export function SellerDashboard({ userId }: { userId: string }) {
   const [data, setData] = useState<any>(null);
@@ -49,12 +49,15 @@ export function SellerDashboard({ userId }: { userId: string }) {
       <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
         <BarChart3 className="mb-4 h-12 w-12 text-muted-foreground/30" />
         <p className="text-lg font-medium">Dashboard unavailable</p>
-        <p className="mt-1 text-sm">Set up your seller profile to get started.</p>
+        <p className="mt-1 text-sm">
+          Set up your seller profile to get started.
+        </p>
       </div>
     );
   }
 
-  const { stats, recentOrders, activeOrders, deliveredOrders, pendingOrders } = data;
+  const { stats, recentOrders, activeOrders, deliveredOrders, pendingOrders } =
+    data;
 
   return (
     <div className="space-y-6">
@@ -182,9 +185,9 @@ export function SellerDashboard({ userId }: { userId: string }) {
                 </span>
                 <span className="font-medium">
                   {stats?.averageRating
-                    ? (Number(stats.averageRating) > 100
-                        ? (Number(stats.averageRating) / 100).toFixed(1)
-                        : Number(stats.averageRating).toFixed(1))
+                    ? Number(stats.averageRating) > 100
+                      ? (Number(stats.averageRating) / 100).toFixed(1)
+                      : Number(stats.averageRating).toFixed(1)
                     : "N/A"}
                 </span>
               </div>
@@ -246,7 +249,9 @@ function StatCard({
   return (
     <div className="rounded-xl border bg-card p-4">
       <div className="flex items-center gap-2">
-        <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${bg}`}>
+        <div
+          className={`flex h-8 w-8 items-center justify-center rounded-lg ${bg}`}
+        >
           <Icon className={`h-4 w-4 ${color}`} />
         </div>
         <span className="text-xs text-muted-foreground">{label}</span>

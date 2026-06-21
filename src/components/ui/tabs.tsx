@@ -21,7 +21,13 @@ interface TabsProps {
   className?: string;
 }
 
-function Tabs({ defaultValue, value, onValueChange, children, className }: TabsProps) {
+function Tabs({
+  defaultValue,
+  value,
+  onValueChange,
+  children,
+  className,
+}: TabsProps) {
   const [activeTab, setActiveTab] = React.useState(value ?? defaultValue);
 
   const handleTabChange = React.useCallback(
@@ -31,13 +37,15 @@ function Tabs({ defaultValue, value, onValueChange, children, className }: TabsP
       }
       onValueChange?.(tab);
     },
-    [value, onValueChange]
+    [value, onValueChange],
   );
 
   const currentTab = value ?? activeTab;
 
   return (
-    <TabsContext.Provider value={{ activeTab: currentTab, setActiveTab: handleTabChange }}>
+    <TabsContext.Provider
+      value={{ activeTab: currentTab, setActiveTab: handleTabChange }}
+    >
       <div className={cn("w-full", className)}>{children}</div>
     </TabsContext.Provider>
   );
@@ -59,14 +67,15 @@ function TabsList({ className, ...props }: TabsListProps) {
       role="tablist"
       className={cn(
         "inline-flex h-10 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground",
-        className
+        className,
       )}
       {...props}
     />
   );
 }
 
-interface TabsTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface TabsTriggerProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   value: string;
 }
 
@@ -86,7 +95,7 @@ function TabsTrigger({ className, value, ...props }: TabsTriggerProps) {
         activeTab === value
           ? "bg-background text-foreground shadow-sm"
           : "text-muted-foreground hover:text-foreground",
-        className
+        className,
       )}
       onClick={() => setActiveTab(value)}
       {...props}
@@ -109,7 +118,7 @@ function TabsContent({ className, value, ...props }: TabsContentProps) {
       data-state={activeTab === value ? "active" : "inactive"}
       className={cn(
         "mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-        className
+        className,
       )}
       {...props}
     />

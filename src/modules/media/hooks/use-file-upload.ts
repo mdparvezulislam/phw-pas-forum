@@ -1,7 +1,10 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { getSignedUploadUrl, saveAttachment } from "@/modules/media/actions/upload";
+import {
+  getSignedUploadUrl,
+  saveAttachment,
+} from "@/modules/media/actions/upload";
 import type { UploadProgress, UploadResult } from "@/modules/media/types";
 import {
   ALLOWED_MIME_TYPES,
@@ -149,7 +152,13 @@ export function useFileUpload(options: UseFileUploadOptions = {}) {
         abortRef.current = null;
       }
     },
-    [maxFileSize, allowedTypes, onUploadComplete, onUploadProgress, onUploadError],
+    [
+      maxFileSize,
+      allowedTypes,
+      onUploadComplete,
+      onUploadProgress,
+      onUploadError,
+    ],
   );
 
   const cancel = useCallback(() => {

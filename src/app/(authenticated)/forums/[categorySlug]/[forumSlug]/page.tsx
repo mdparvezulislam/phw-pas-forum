@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { EmptyThreadState, ForumFilters, ThreadCard } from "@/components/forum";
 import { auth } from "@/lib/auth";
-import {
-  ForumFilters,
-  EmptyThreadState,
-  ThreadCard,
-} from "@/components/forum";
 import { SubForumList } from "@/modules/forum/components/subforum-list";
 import { ThreadPagination } from "@/modules/thread/components";
 import {
@@ -64,7 +60,12 @@ export default async function ForumPage(props: ForumPageProps) {
 
   const [pinnedThreads, threadResult] = await Promise.all([
     getPinnedThreads(forum.id),
-    getThreads({ forumId: forum.id, page, perPage: 20, sort: sort as "latest" }),
+    getThreads({
+      forumId: forum.id,
+      page,
+      perPage: 20,
+      sort: sort as "latest",
+    }),
   ]);
 
   return (

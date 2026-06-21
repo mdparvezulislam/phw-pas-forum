@@ -1,5 +1,10 @@
-export { toggleReaction } from "./reactions";
-export type { ReactionState } from "./reactions";
-export { createBadge, updateBadge, assignBadge, revokeBadge } from "./badges";
-export { createTrophy, updateTrophy, assignTrophy, revokeTrophy } from "./trophies";
 export { awardReputation } from "./admin";
+export { assignBadge, createBadge, revokeBadge, updateBadge } from "./badges";
+export type { ReactionState } from "./reactions";
+export { toggleReaction } from "./reactions";
+export {
+  assignTrophy,
+  createTrophy,
+  revokeTrophy,
+  updateTrophy,
+} from "./trophies";

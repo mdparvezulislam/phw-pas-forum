@@ -1,10 +1,4 @@
-import {
-  index,
-  integer,
-  pgTable,
-  text,
-  timestamp,
-} from "drizzle-orm/pg-core";
+import { index, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { marketplaceListings } from "./marketplace-listings";
 
 export const listingFaq = pgTable(
@@ -25,9 +19,7 @@ export const listingFaq = pgTable(
       .notNull()
       .$onUpdate(() => new Date()),
   },
-  (table) => [
-    index("listing_faq_listing_id_idx").on(table.listingId),
-  ],
+  (table) => [index("listing_faq_listing_id_idx").on(table.listingId)],
 );
 
 export type ListingFaq = typeof listingFaq.$inferSelect;

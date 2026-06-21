@@ -1,24 +1,12 @@
 import { cn } from "@/lib/utils";
 
 function Skeleton({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn(
-        "animate-pulse rounded-lg bg-muted",
-        className,
-      )}
-    />
-  );
+  return <div className={cn("animate-pulse rounded-lg bg-muted", className)} />;
 }
 
 export function ListingCardSkeleton({ className }: { className?: string }) {
   return (
-    <div
-      className={cn(
-        "overflow-hidden rounded-xl border bg-card",
-        className,
-      )}
-    >
+    <div className={cn("overflow-hidden rounded-xl border bg-card", className)}>
       <Skeleton className="aspect-[16/9] rounded-none" />
       <div className="space-y-3 p-4">
         <Skeleton className="h-3 w-16" />
@@ -62,10 +50,7 @@ export function ListingGridSkeleton({
 export function SellerCardSkeleton({ className }: { className?: string }) {
   return (
     <div
-      className={cn(
-        "overflow-hidden rounded-xl border bg-card p-5",
-        className,
-      )}
+      className={cn("overflow-hidden rounded-xl border bg-card p-5", className)}
     >
       <div className="flex items-center gap-3">
         <Skeleton className="h-12 w-12 rounded-full" />
@@ -85,12 +70,7 @@ export function SellerCardSkeleton({ className }: { className?: string }) {
 
 export function ReviewCardSkeleton({ className }: { className?: string }) {
   return (
-    <div
-      className={cn(
-        "rounded-xl border bg-card p-4",
-        className,
-      )}
-    >
+    <div className={cn("rounded-xl border bg-card p-4", className)}>
       <div className="flex items-center gap-3">
         <Skeleton className="h-9 w-9 rounded-full" />
         <div className="space-y-1.5">

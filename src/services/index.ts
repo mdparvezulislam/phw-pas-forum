@@ -1,3 +1,5 @@
+export { conversationService } from "./conversation";
+export { notificationService } from "./notification";
 export {
   getNextPostNumber,
   getOpenReports,
@@ -15,5 +17,3 @@ export {
   getThreadWithUserState,
   incrementThreadView,
 } from "./thread";
-export { notificationService } from "./notification";
-export { conversationService } from "./conversation";

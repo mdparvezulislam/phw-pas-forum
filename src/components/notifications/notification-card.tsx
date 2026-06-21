@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { formatDateRelative } from "@/lib/utils";
 import { Button } from "@/components/ui";
+import { formatDateRelative } from "@/lib/utils";
 
 interface Notification {
   id: string;
@@ -83,7 +83,9 @@ export function NotificationCard({
           <Link href={getLink()} className="block">
             <h4
               className={`font-medium ${
-                !notification.isRead ? "text-foreground" : "text-muted-foreground"
+                !notification.isRead
+                  ? "text-foreground"
+                  : "text-muted-foreground"
               }`}
             >
               {notification.title}

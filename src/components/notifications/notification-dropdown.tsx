@@ -99,7 +99,9 @@ export function NotificationDropdown({
                   }}
                 >
                   <div className="flex items-start gap-3">
-                    <span className="text-xl">{getIcon(notification.type)}</span>
+                    <span className="text-xl">
+                      {getIcon(notification.type)}
+                    </span>
                     <div className="flex-1 min-w-0">
                       <p
                         className={`text-sm ${

@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useActionState, useCallback } from "react";
-import { createThread } from "@/modules/thread/actions";
 import { RichTextEditor } from "@/modules/editor/components";
 import { useEditorForm } from "@/modules/editor/hooks/use-editor-form";
+import { createThread } from "@/modules/thread/actions";
 
 interface CreateThreadFormProps {
   forumId: string;
@@ -54,7 +54,10 @@ export function CreateThreadForm({ forumId }: CreateThreadFormProps) {
         />
       </div>
       <div>
-        <label htmlFor="thread-content" className="mb-1 block text-sm font-medium">
+        <label
+          htmlFor="thread-content"
+          className="mb-1 block text-sm font-medium"
+        >
           Content
         </label>
         <RichTextEditor

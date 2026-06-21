@@ -1,4 +1,4 @@
-import { eq, desc, asc, sql, and, like, gte, count } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, like, sql } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
 
 export async function getMarketplaceHomepageData() {
@@ -34,11 +34,7 @@ export async function getMarketplaceHomepageData() {
     db
       .select({ count: count() })
       .from(schema.sellerProfiles)
-      .where(
-        and(
-          eq(schema.sellerProfiles.isVerifiedSeller, true),
-        ),
-      )
+      .where(and(eq(schema.sellerProfiles.isVerifiedSeller, true)))
       .then((r) => r[0]?.count ?? 0),
 
     db
@@ -97,7 +93,10 @@ export async function getMarketplaceHomepageData() {
       )
       .innerJoin(
         schema.marketplaceCategories,
-        eq(schema.marketplaceListings.categoryId, schema.marketplaceCategories.id),
+        eq(
+          schema.marketplaceListings.categoryId,
+          schema.marketplaceCategories.id,
+        ),
       )
       .where(
         and(
@@ -143,7 +142,10 @@ export async function getMarketplaceHomepageData() {
       )
       .innerJoin(
         schema.marketplaceCategories,
-        eq(schema.marketplaceListings.categoryId, schema.marketplaceCategories.id),
+        eq(
+          schema.marketplaceListings.categoryId,
+          schema.marketplaceCategories.id,
+        ),
       )
       .where(
         and(
@@ -189,7 +191,10 @@ export async function getMarketplaceHomepageData() {
       )
       .innerJoin(
         schema.marketplaceCategories,
-        eq(schema.marketplaceListings.categoryId, schema.marketplaceCategories.id),
+        eq(
+          schema.marketplaceListings.categoryId,
+          schema.marketplaceCategories.id,
+        ),
       )
       .where(eq(schema.marketplaceListings.status, "ACTIVE"))
       .orderBy(desc(schema.marketplaceListings.createdAt))
@@ -260,9 +265,7 @@ export async function getMarketplaceListings(params: {
   }
 
   if (search) {
-    conditions.push(
-      like(schema.marketplaceListings.title, `%${search}%`),
-    );
+    conditions.push(like(schema.marketplaceListings.title, `%${search}%`));
   }
 
   const where = and(...conditions);
@@ -328,7 +331,10 @@ export async function getMarketplaceListings(params: {
     )
     .innerJoin(
       schema.marketplaceCategories,
-      eq(schema.marketplaceListings.categoryId, schema.marketplaceCategories.id),
+      eq(
+        schema.marketplaceListings.categoryId,
+        schema.marketplaceCategories.id,
+      ),
     )
     .where(where)
     .orderBy(orderClause)
@@ -396,13 +402,13 @@ export async function getListingBySlug(slug: string) {
       schema.sellerProfiles,
       eq(schema.marketplaceListings.sellerId, schema.sellerProfiles.id),
     )
-    .innerJoin(
-      schema.users,
-      eq(schema.sellerProfiles.userId, schema.users.id),
-    )
+    .innerJoin(schema.users, eq(schema.sellerProfiles.userId, schema.users.id))
     .innerJoin(
       schema.marketplaceCategories,
-      eq(schema.marketplaceListings.categoryId, schema.marketplaceCategories.id),
+      eq(
+        schema.marketplaceListings.categoryId,
+        schema.marketplaceCategories.id,
+      ),
     )
     .where(
       and(
@@ -439,10 +445,7 @@ export async function getListingBySlug(slug: string) {
         },
       })
       .from(schema.buyerReviews)
-      .innerJoin(
-        schema.users,
-        eq(schema.buyerReviews.buyerId, schema.users.id),
-      )
+      .innerJoin(schema.users, eq(schema.buyerReviews.buyerId, schema.users.id))
       .where(eq(schema.buyerReviews.listingId, listing.id))
       .orderBy(desc(schema.buyerReviews.createdAt))
       .limit(10),
@@ -487,10 +490,7 @@ export async function getSellerByUsername(username: string) {
       isTopSeller: schema.sellerProfiles.isTopSeller,
     })
     .from(schema.sellerProfiles)
-    .innerJoin(
-      schema.users,
-      eq(schema.sellerProfiles.userId, schema.users.id),
-    )
+    .innerJoin(schema.users, eq(schema.sellerProfiles.userId, schema.users.id))
     .where(eq(schema.users.username, username))
     .limit(1);
 
@@ -531,7 +531,10 @@ export async function getSellerByUsername(username: string) {
     )
     .innerJoin(
       schema.marketplaceCategories,
-      eq(schema.marketplaceListings.categoryId, schema.marketplaceCategories.id),
+      eq(
+        schema.marketplaceListings.categoryId,
+        schema.marketplaceCategories.id,
+      ),
     )
     .where(
       and(
@@ -555,10 +558,7 @@ export async function getSellerByUsername(username: string) {
       },
     })
     .from(schema.buyerReviews)
-    .innerJoin(
-      schema.users,
-      eq(schema.buyerReviews.buyerId, schema.users.id),
-    )
+    .innerJoin(schema.users, eq(schema.buyerReviews.buyerId, schema.users.id))
     .where(eq(schema.buyerReviews.sellerId, seller.userId))
     .orderBy(desc(schema.buyerReviews.createdAt))
     .limit(10);

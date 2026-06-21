@@ -13,10 +13,7 @@ interface SkeletonProps {
 export function Skeleton({ className }: SkeletonProps) {
   return (
     <div
-      className={cn(
-        "relative overflow-hidden rounded-md bg-muted",
-        className
-      )}
+      className={cn("relative overflow-hidden rounded-md bg-muted", className)}
     >
       <div className="absolute inset-0 animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-muted-foreground/8 to-transparent" />
     </div>
@@ -24,16 +21,16 @@ export function Skeleton({ className }: SkeletonProps) {
 }
 
 // ── Text Skeleton ──
-export function TextSkeleton({ className, lines = 1 }: SkeletonProps & { lines?: number }) {
+export function TextSkeleton({
+  className,
+  lines = 1,
+}: SkeletonProps & { lines?: number }) {
   return (
     <div className={cn("space-y-2", className)}>
       {Array.from({ length: lines }).map((_, i) => (
         <Skeleton
           key={i}
-          className={cn(
-            "h-4",
-            i === lines - 1 ? "w-3/4" : "w-full"
-          )}
+          className={cn("h-4", i === lines - 1 ? "w-3/4" : "w-full")}
         />
       ))}
     </div>
@@ -41,7 +38,10 @@ export function TextSkeleton({ className, lines = 1 }: SkeletonProps & { lines?:
 }
 
 // ── Avatar Skeleton ──
-export function AvatarSkeleton({ className, size = "md" }: SkeletonProps & { size?: "sm" | "md" | "lg" | "xl" }) {
+export function AvatarSkeleton({
+  className,
+  size = "md",
+}: SkeletonProps & { size?: "sm" | "md" | "lg" | "xl" }) {
   const sizeClasses = {
     sm: "h-8 w-8",
     md: "h-10 w-10",
@@ -172,7 +172,11 @@ export function ListingCardSkeleton({ className }: SkeletonProps) {
 }
 
 // ── Table Skeleton ──
-export function TableSkeleton({ rows = 5, columns = 4, className }: SkeletonProps & { rows?: number; columns?: number }) {
+export function TableSkeleton({
+  rows = 5,
+  columns = 4,
+  className,
+}: SkeletonProps & { rows?: number; columns?: number }) {
   return (
     <div className={cn("rounded-xl border bg-card overflow-hidden", className)}>
       <div className="border-b bg-muted/50 px-4 py-3">
@@ -271,16 +275,21 @@ export function NotificationSkeleton({ className }: SkeletonProps) {
 }
 
 // ── Message Skeleton ──
-export function MessageSkeleton({ className, isOwn = false }: SkeletonProps & { isOwn?: boolean }) {
+export function MessageSkeleton({
+  className,
+  isOwn = false,
+}: SkeletonProps & { isOwn?: boolean }) {
   return (
     <div className={cn("flex gap-3", isOwn && "flex-row-reverse", className)}>
       <AvatarSkeleton size="sm" />
       <div className={cn("space-y-1 max-w-[70%]", isOwn && "items-end")}>
         <Skeleton className={cn("h-3 w-16", isOwn && "ml-auto")} />
-        <div className={cn(
-          "rounded-2xl p-3 space-y-1",
-          isOwn ? "bg-primary/10 rounded-tr-sm" : "bg-muted rounded-tl-sm"
-        )}>
+        <div
+          className={cn(
+            "rounded-2xl p-3 space-y-1",
+            isOwn ? "bg-primary/10 rounded-tr-sm" : "bg-muted rounded-tl-sm",
+          )}
+        >
           <Skeleton className="h-3 w-full" />
           <Skeleton className="h-3 w-4/5" />
         </div>

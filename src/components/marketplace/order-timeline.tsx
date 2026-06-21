@@ -1,11 +1,11 @@
 import {
+  AlertCircle,
   CheckCircle2,
   Clock,
-  Package,
-  Truck,
   MessageSquare,
-  AlertCircle,
+  Package,
   RotateCcw,
+  Truck,
   XCircle,
 } from "lucide-react";
 import { cn, formatDateRelative } from "@/lib/utils";
@@ -90,8 +90,7 @@ export function OrderTimeline({
   return (
     <div className={cn("space-y-0", className)}>
       {events.map((event, i) => {
-        const config =
-          statusConfig[event.status] ?? statusConfig.PENDING;
+        const config = statusConfig[event.status] ?? statusConfig.PENDING;
         const Icon = config.icon;
         const isLast = i === events.length - 1;
         const isCurrent = event.status === currentStatus;
@@ -109,9 +108,7 @@ export function OrderTimeline({
               >
                 <Icon className={cn("h-4 w-4", config.color)} />
               </div>
-              {!isLast && (
-                <div className="w-px flex-1 bg-border" />
-              )}
+              {!isLast && <div className="w-px flex-1 bg-border" />}
             </div>
 
             {/* Content */}

@@ -1,6 +1,6 @@
 import { index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { conversationMessages } from "./conversation-messages";
 import { attachments } from "./attachments";
+import { conversationMessages } from "./conversation-messages";
 
 export const conversationAttachments = pgTable(
   "conversation_attachment",
@@ -19,8 +19,10 @@ export const conversationAttachments = pgTable(
   (table) => [
     index("conv_att_message_idx").on(table.messageId),
     index("conv_att_attachment_idx").on(table.attachmentId),
-  ]
+  ],
 );
 
-export type ConversationAttachment = typeof conversationAttachments.$inferSelect;
-export type NewConversationAttachment = typeof conversationAttachments.$inferInsert;
+export type ConversationAttachment =
+  typeof conversationAttachments.$inferSelect;
+export type NewConversationAttachment =
+  typeof conversationAttachments.$inferInsert;

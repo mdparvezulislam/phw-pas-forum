@@ -1,7 +1,15 @@
-import { Download, Eye, FileText, Film, Image as ImageIcon, Archive, X } from "lucide-react";
+import {
+  Archive,
+  Download,
+  Eye,
+  FileText,
+  Film,
+  Image as ImageIcon,
+  X,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
-import { formatFileSize, getMimeTypeCategory } from "@/validations/media";
 import type { MediaItem } from "@/modules/media/types";
+import { formatFileSize, getMimeTypeCategory } from "@/validations/media";
 
 interface AttachmentCardProps {
   attachment: MediaItem;
@@ -40,7 +48,9 @@ export function AttachmentCard({
       )}
 
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium">{attachment.originalName}</p>
+        <p className="truncate text-sm font-medium">
+          {attachment.originalName}
+        </p>
         <p className="text-xs text-muted-foreground">
           {formatFileSize(attachment.fileSize)}
           {attachment.width && attachment.height

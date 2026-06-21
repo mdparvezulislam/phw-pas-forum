@@ -36,7 +36,7 @@ export const listingMedia = pgTable(
     index("listing_media_type_idx").on(table.type),
     uniqueIndex("listing_media_listing_attachment_unique").on(
       table.listingId,
-      table.attachmentId
+      table.attachmentId,
     ),
   ],
 );

@@ -1,5 +1,5 @@
-import { ListingCard } from "./listing-card";
 import { cn } from "@/lib/utils";
+import { ListingCard } from "./listing-card";
 
 interface ListingGridProps {
   listings: any[];

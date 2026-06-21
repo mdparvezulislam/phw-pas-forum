@@ -1,8 +1,19 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { getAllDisputesAction, getDisputeByIdAction, resolveDisputeAction, sendDisputeMessageAction } from "@/actions";
-import type { Dispute, Order, User, MarketplaceListing, DisputeMessage } from "@/db/schema";
+import {
+  getAllDisputesAction,
+  getDisputeByIdAction,
+  resolveDisputeAction,
+  sendDisputeMessageAction,
+} from "@/actions";
+import type {
+  Dispute,
+  DisputeMessage,
+  MarketplaceListing,
+  Order,
+  User,
+} from "@/db/schema";
 
 interface DisputeWithRelations extends Dispute {
   order: Order & { listing: MarketplaceListing };
@@ -13,7 +24,8 @@ interface DisputeWithRelations extends Dispute {
 
 export function AdminDisputeManagement() {
   const [disputes, setDisputes] = useState<DisputeWithRelations[]>([]);
-  const [selectedDispute, setSelectedDispute] = useState<DisputeWithRelations | null>(null);
+  const [selectedDispute, setSelectedDispute] =
+    useState<DisputeWithRelations | null>(null);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -21,7 +33,11 @@ export function AdminDisputeManagement() {
 
   const fetchDisputes = useCallback(async () => {
     setLoading(true);
-    const result = await getAllDisputesAction({ status: filterStatus || undefined, page, limit: 20 });
+    const result = await getAllDisputesAction({
+      status: filterStatus || undefined,
+      page,
+      limit: 20,
+    });
     if (result.success && result.data) {
       setDisputes(result.data.disputes);
       setTotalPages(result.data.totalPages);
@@ -44,7 +60,11 @@ export function AdminDisputeManagement() {
     if (!selectedDispute) return;
     const resolution = prompt("Resolution details:");
     if (!resolution) return;
-    await resolveDisputeAction({ disputeId: selectedDispute.id, resolution, action });
+    await resolveDisputeAction({
+      disputeId: selectedDispute.id,
+      resolution,
+      action,
+    });
     setSelectedDispute(null);
     await fetchDisputes();
   };
@@ -82,7 +102,9 @@ export function AdminDisputeManagement() {
                   key={dispute.id}
                   onClick={() => handleSelectDispute(dispute.id)}
                   className={`w-full rounded-lg border p-3 text-left transition-colors hover:bg-muted ${
-                    selectedDispute?.id === dispute.id ? "border-primary bg-muted" : ""
+                    selectedDispute?.id === dispute.id
+                      ? "border-primary bg-muted"
+                      : ""
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -204,7 +226,9 @@ function DisputeDetailPanel({
 
         <div className="mb-4 rounded-lg bg-muted p-4">
           <p className="text-sm font-medium">Description</p>
-          <p className="mt-1 text-sm text-muted-foreground">{dispute.description}</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {dispute.description}
+          </p>
         </div>
 
         <div className="mb-4 grid grid-cols-2 gap-4 text-sm">
@@ -267,7 +291,9 @@ function DisputeDetailPanel({
               >
                 <div className="mb-1 flex items-center gap-2">
                   <span className="text-xs font-medium">
-                    {msg.sender?.displayName ?? msg.sender?.username ?? "Unknown"}
+                    {msg.sender?.displayName ??
+                      msg.sender?.username ??
+                      "Unknown"}
                   </span>
                   {(msg as any).isModNote ? (
                     <span className="rounded bg-yellow-200 px-1.5 py-0.5 text-[10px] font-medium text-yellow-800 dark:bg-yellow-800 dark:text-yellow-200">
@@ -301,7 +327,8 @@ function DisputeDetailPanel({
                 </button>
               </div>
               <p className="mt-1 text-xs text-muted-foreground">
-                Messages are visible to both parties. Check &quot;Mod Note&quot; for internal notes.
+                Messages are visible to both parties. Check &quot;Mod Note&quot;
+                for internal notes.
               </p>
             </div>
           )}

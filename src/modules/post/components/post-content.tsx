@@ -1,5 +1,5 @@
-import type { PostWithAuthor } from "@/modules/post/types";
 import { ContentRenderer } from "@/modules/editor/components";
+import type { PostWithAuthor } from "@/modules/post/types";
 
 interface PostContentProps {
   post: PostWithAuthor;

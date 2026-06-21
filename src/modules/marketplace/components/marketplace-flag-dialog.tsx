@@ -1,16 +1,18 @@
 "use client";
 
+import { AlertCircle, Flag, Loader2 } from "lucide-react";
 import { useState } from "react";
-import { reportListingAction } from "../actions/moderation";
-import { Flag, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui";
 import type { MarketplaceFlagReason } from "@/db/schema/marketplace-flags";
+import { reportListingAction } from "../actions/moderation";
 
 interface MarketplaceFlagDialogProps {
   listingId: string;
 }
 
-export function MarketplaceFlagDialog({ listingId }: MarketplaceFlagDialogProps) {
+export function MarketplaceFlagDialog({
+  listingId,
+}: MarketplaceFlagDialogProps) {
   const [open, setOpen] = useState(false);
   const [reason, setReason] = useState<MarketplaceFlagReason>("SPAM");
   const [notes, setNotes] = useState("");
@@ -80,7 +82,9 @@ export function MarketplaceFlagDialog({ listingId }: MarketplaceFlagDialogProps)
               </label>
               <select
                 value={reason}
-                onChange={(e) => setReason(e.target.value as MarketplaceFlagReason)}
+                onChange={(e) =>
+                  setReason(e.target.value as MarketplaceFlagReason)
+                }
                 className="w-full text-xs p-3 border rounded-xl bg-background focus:outline-none focus:ring-1 focus:ring-rose-500"
               >
                 <option value="SPAM">Spam Content</option>

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { desc } from "drizzle-orm";
+import { Users } from "lucide-react";
 import { getDatabase, schema } from "@/db";
-import { UserRow } from "./user-row";
+import { PageHeader, KpiCard } from "@/components/admin";
+import { UsersTable, type AdminUserItem } from "./users-table";
 
-export const metadata: Metadata = {
-  title: "Manage Users",
-};
+export const metadata: Metadata = { title: "Manage Users" };
 
 export default async function AdminUsersPage() {
   const db = getDatabase();
@@ -21,45 +21,50 @@ export default async function AdminUsersPage() {
     }),
   ]);
 
+  const items: AdminUserItem[] = users.map((u) => ({
+    id: u.id,
+    username: u.username,
+    displayName: u.displayName,
+    email: u.email,
+    image: u.image,
+    isBanned: u.isBanned,
+    createdAt: u.createdAt.toISOString(),
+    role: u.role ? { id: u.role.id, name: u.role.name } : null,
+  }));
+
+  const bannedCount = items.filter((u) => u.isBanned).length;
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Manage Users</h1>
-        <p className="text-sm text-muted-foreground">
-          {users.length} users &middot; {roles.length} roles
-        </p>
+      <PageHeader
+        title="Users"
+        description="Manage members, roles and access across the platform."
+      />
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <KpiCard
+          title="Total Users"
+          value={items.length.toLocaleString()}
+          icon={Users}
+          accent="primary"
+          description="Most recent 100 shown"
+        />
+        <KpiCard
+          title="Roles"
+          value={roles.length.toLocaleString()}
+          accent="info"
+        />
+        <KpiCard
+          title="Banned"
+          value={bannedCount.toLocaleString()}
+          accent={bannedCount > 0 ? "danger" : "default"}
+        />
       </div>
 
-      <div className="rounded-lg border">
-        <div className="border-b px-4 py-3">
-          <h2 className="font-semibold">Users</h2>
-        </div>
-        {users.length === 0 ? (
-          <div className="flex min-h-[200px] items-center justify-center">
-            <p className="text-sm text-muted-foreground">No users found</p>
-          </div>
-        ) : (
-          <div className="divide-y">
-            {users.map((user) => (
-              <UserRow
-                key={user.id}
-                user={{
-                  id: user.id,
-                  username: user.username,
-                  displayName: user.displayName,
-                  email: user.email,
-                  isBanned: user.isBanned,
-                  createdAt: user.createdAt,
-                  role: user.role
-                    ? { id: user.role.id, name: user.role.name }
-                    : null,
-                }}
-                roles={roles.map((r) => ({ id: r.id, name: r.name }))}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      <UsersTable
+        users={items}
+        roles={roles.map((r) => ({ id: r.id, name: r.name }))}
+      />
     </div>
   );
 }

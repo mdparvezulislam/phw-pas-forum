@@ -1,7 +1,7 @@
+import type { Metadata } from "next";
 import React from "react";
 import { getDatabase } from "@/db";
 import AdminMembershipClient from "./AdminMembershipClient";
-import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Admin Membership Settings",
@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminMembershipsPage() {
-
   const db = getDatabase();
 
   // 1. Fetch plans

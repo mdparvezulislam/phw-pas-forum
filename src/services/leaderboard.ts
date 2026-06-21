@@ -32,9 +32,7 @@ export class LeaderboardService {
       .from(txTable)
       .where(conditions.length > 0 ? and(...conditions) : undefined)
       .groupBy(txTable.userId)
-      .orderBy(
-        desc(sql`cast(sum(${txTable.points}) as integer)`),
-      )
+      .orderBy(desc(sql`cast(sum(${txTable.points}) as integer)`))
       .limit(limit)
       .offset(offset);
 
@@ -67,9 +65,7 @@ export class LeaderboardService {
     const db = getDatabase();
     const since = this.getSinceDate(timeframe);
 
-    const conditions = [
-      sql`${schema.posts.status} = 'PUBLISHED'`,
-    ];
+    const conditions = [sql`${schema.posts.status} = 'PUBLISHED'`];
     if (since) conditions.push(gte(schema.posts.createdAt, since));
 
     const results = await db

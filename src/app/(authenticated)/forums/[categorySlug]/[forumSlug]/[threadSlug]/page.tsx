@@ -1,20 +1,17 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { ThreadHeader, ThreadSidebar } from "@/components/forum";
 import { hasPermission } from "@/config/rbac";
 import { auth } from "@/lib/auth";
 import { ContentRenderer } from "@/modules/editor/components";
-import { ThreadSidebar } from "@/components/forum";
 import { PostCard, PostPagination, ReplyForm } from "@/modules/post/components";
 import { ThreadActions } from "@/modules/thread/components";
-import { ThreadHeader } from "@/components/forum";
+import { AIThreadSummary } from "@/modules/ai/components/AIThreadSummary";
 import {
   getCategoryBySlug,
   getForumBySlugAndCategory,
 } from "@/services/forum-stats";
-import {
-  getNextPostNumber,
-  getPostsWithReputation,
-} from "@/services/post";
+import { getNextPostNumber, getPostsWithReputation } from "@/services/post";
 import { getThreadWithUserState, incrementThreadView } from "@/services/thread";
 import { Permission } from "@/types/rbac";
 
@@ -107,6 +104,9 @@ export default async function ThreadPage(props: ThreadPageProps) {
           forumSlug={forum.slug}
         />
       </div>
+
+      {/* AI Digest Summary */}
+      <AIThreadSummary threadId={thread.id} replyCount={thread.replyCount} />
 
       {/* Thread Content */}
       <div className="mt-4 overflow-hidden rounded-xl border bg-card p-5 sm:p-6">

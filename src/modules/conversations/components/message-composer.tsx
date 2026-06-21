@@ -1,13 +1,16 @@
 "use client";
 
-import { useState, useRef, useTransition, useEffect } from "react";
-import { sendMessageAction, sendTypingAction } from "../actions/conversations";
-import { getSignedUploadUrl, saveAttachment } from "@/modules/media/actions/upload";
+import type { JSONContent } from "@tiptap/core";
+import { FileIcon, Loader2, Paperclip, Send, X } from "lucide-react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { Button } from "@/components/ui";
 import { RichTextEditor } from "@/modules/editor/components";
 import { generatePlainText } from "@/modules/editor/utils/content";
-import { Button } from "@/components/ui";
-import { Paperclip, Send, X, FileIcon, Loader2 } from "lucide-react";
-import type { JSONContent } from "@tiptap/core";
+import {
+  getSignedUploadUrl,
+  saveAttachment,
+} from "@/modules/media/actions/upload";
+import { sendMessageAction, sendTypingAction } from "../actions/conversations";
 
 interface MessageComposerProps {
   conversationId: string;
@@ -69,7 +72,11 @@ export function MessageComposer({ conversationId }: MessageComposerProps) {
     try {
       for (const file of Array.from(files)) {
         // 1. Get presigned upload URL
-        const signedRes = await getSignedUploadUrl(file.name, file.type, file.size);
+        const signedRes = await getSignedUploadUrl(
+          file.name,
+          file.type,
+          file.size,
+        );
         if ("error" in signedRes) {
           alert(signedRes.error);
           continue;
@@ -134,7 +141,11 @@ export function MessageComposer({ conversationId }: MessageComposerProps) {
 
     startTransition(async () => {
       const attachmentIds = uploadedFiles.map((f) => f.id);
-      const res = await sendMessageAction(conversationId, editorContent, attachmentIds);
+      const res = await sendMessageAction(
+        conversationId,
+        editorContent,
+        attachmentIds,
+      );
 
       if (res.success) {
         // Reset state
@@ -156,7 +167,11 @@ export function MessageComposer({ conversationId }: MessageComposerProps) {
     const signedRes = await getSignedUploadUrl(file.name, file.type, file.size);
     if ("error" in signedRes) throw new Error(signedRes.error);
 
-    const putRes = await fetch(signedRes.uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
+    const putRes = await fetch(signedRes.uploadUrl, {
+      method: "PUT",
+      body: file,
+      headers: { "Content-Type": file.type },
+    });
     if (!putRes.ok) throw new Error("Upload failed");
 
     await saveAttachment({
@@ -181,7 +196,9 @@ export function MessageComposer({ conversationId }: MessageComposerProps) {
               className="flex items-center gap-2 rounded-lg border bg-muted/30 px-3 py-1.5 text-xs text-foreground"
             >
               <FileIcon className="h-4 w-4 text-muted-foreground" />
-              <span className="max-w-[120px] truncate font-medium">{file.originalName}</span>
+              <span className="max-w-[120px] truncate font-medium">
+                {file.originalName}
+              </span>
               <button
                 type="button"
                 onClick={() => handleRemoveFile(file.id)}
@@ -235,7 +252,11 @@ export function MessageComposer({ conversationId }: MessageComposerProps) {
           <Button
             size="icon"
             onClick={handleSend}
-            disabled={isUploading || isPending || (!editorContent && uploadedFiles.length === 0)}
+            disabled={
+              isUploading ||
+              isPending ||
+              (!editorContent && uploadedFiles.length === 0)
+            }
           >
             <Send className="h-4 w-4" />
           </Button>

@@ -1,6 +1,6 @@
 import { pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { users } from "./users";
 import { userMemberships } from "./user-memberships";
+import { users } from "./users";
 
 export const subscriptions = pgTable("subscription", {
   id: text("id")

@@ -19,11 +19,35 @@ function getPasswordStrength(password: string): {
   if (/[0-9]/.test(password)) score += 1;
   if (/[^a-zA-Z0-9]/.test(password)) score += 1;
 
-  if (score <= 1) return { score: 1, label: "Weak", color: "text-red-500", bg: "bg-red-500" };
-  if (score <= 2) return { score: 2, label: "Fair", color: "text-orange-500", bg: "bg-orange-500" };
-  if (score <= 3) return { score: 3, label: "Good", color: "text-yellow-500", bg: "bg-yellow-500" };
-  if (score <= 4) return { score: 4, label: "Strong", color: "text-emerald-500", bg: "bg-emerald-500" };
-  return { score: 5, label: "Very Strong", color: "text-emerald-600", bg: "bg-emerald-600" };
+  if (score <= 1)
+    return { score: 1, label: "Weak", color: "text-red-500", bg: "bg-red-500" };
+  if (score <= 2)
+    return {
+      score: 2,
+      label: "Fair",
+      color: "text-orange-500",
+      bg: "bg-orange-500",
+    };
+  if (score <= 3)
+    return {
+      score: 3,
+      label: "Good",
+      color: "text-yellow-500",
+      bg: "bg-yellow-500",
+    };
+  if (score <= 4)
+    return {
+      score: 4,
+      label: "Strong",
+      color: "text-emerald-500",
+      bg: "bg-emerald-500",
+    };
+  return {
+    score: 5,
+    label: "Very Strong",
+    color: "text-emerald-600",
+    bg: "bg-emerald-600",
+  };
 }
 
 interface PasswordStrengthProps {
@@ -31,7 +55,10 @@ interface PasswordStrengthProps {
   className?: string;
 }
 
-export function PasswordStrength({ password, className }: PasswordStrengthProps) {
+export function PasswordStrength({
+  password,
+  className,
+}: PasswordStrengthProps) {
   const strength = useMemo(() => getPasswordStrength(password), [password]);
 
   if (!password) return null;

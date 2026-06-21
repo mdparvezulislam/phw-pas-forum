@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-import { adminModerationService } from "@/services/admin-moderation";
 import { formatDateRelative } from "@/lib/utils";
+import { adminModerationService } from "@/services/admin-moderation";
 
 export const metadata: Metadata = {
   title: "Moderation Center",
 };
 
 export default async function AdminModerationPage() {
-
   const queue = await adminModerationService.getUnifiedModerationQueue();
   const stats = await adminModerationService.getModerationStats();
 
@@ -15,7 +14,9 @@ export default async function AdminModerationPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Moderation Center</h1>
-        <p className="text-sm text-muted-foreground">Review reports and moderate content</p>
+        <p className="text-sm text-muted-foreground">
+          Review reports and moderate content
+        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -37,16 +38,23 @@ export default async function AdminModerationPage() {
         <div className="border-b px-4 py-3">
           <h2 className="font-semibold">Moderation Queue</h2>
         </div>
-        {queue.reports.length === 0 && queue.pendingSubmissions.length === 0 && queue.pendingDisputes.length === 0 ? (
+        {queue.reports.length === 0 &&
+        queue.pendingSubmissions.length === 0 &&
+        queue.pendingDisputes.length === 0 ? (
           <div className="flex min-h-[200px] items-center justify-center">
             <p className="text-sm text-muted-foreground">No items in queue</p>
           </div>
         ) : (
           <div className="divide-y">
             {queue.reports.map((item: any) => (
-              <div key={item.id} className="flex items-center justify-between px-4 py-3">
+              <div
+                key={item.id}
+                className="flex items-center justify-between px-4 py-3"
+              >
                 <div className="flex-1">
-                  <p className="text-sm font-medium">{item.reason ?? "Report"}</p>
+                  <p className="text-sm font-medium">
+                    {item.reason ?? "Report"}
+                  </p>
                   <p className="text-xs text-muted-foreground">
                     {formatDateRelative(item.createdAt)} &middot; {item.status}
                   </p>
@@ -55,7 +63,10 @@ export default async function AdminModerationPage() {
               </div>
             ))}
             {queue.pendingSubmissions.map((item: any) => (
-              <div key={item.id} className="flex items-center justify-between px-4 py-3">
+              <div
+                key={item.id}
+                className="flex items-center justify-between px-4 py-3"
+              >
                 <div className="flex-1">
                   <p className="text-sm font-medium">New Listing Submission</p>
                   <p className="text-xs text-muted-foreground">
@@ -66,7 +77,10 @@ export default async function AdminModerationPage() {
               </div>
             ))}
             {queue.pendingDisputes.map((item: any) => (
-              <div key={item.id} className="flex items-center justify-between px-4 py-3">
+              <div
+                key={item.id}
+                className="flex items-center justify-between px-4 py-3"
+              >
                 <div className="flex-1">
                   <p className="text-sm font-medium">Open Dispute</p>
                   <p className="text-xs text-muted-foreground">

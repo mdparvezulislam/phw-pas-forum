@@ -24,8 +24,10 @@ export const conversationParticipants = pgTable(
     index("participant_conversation_idx").on(table.conversationId),
     index("participant_user_idx").on(table.userId),
     index("participant_user_archive_idx").on(table.userId, table.isArchived),
-  ]
+  ],
 );
 
-export type ConversationParticipant = typeof conversationParticipants.$inferSelect;
-export type NewConversationParticipant = typeof conversationParticipants.$inferInsert;
+export type ConversationParticipant =
+  typeof conversationParticipants.$inferSelect;
+export type NewConversationParticipant =
+  typeof conversationParticipants.$inferInsert;

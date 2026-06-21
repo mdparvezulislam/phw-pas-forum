@@ -30,8 +30,10 @@ function getFileIcon(fileType: string): string {
   if (fileType.startsWith("audio/")) return "\u{1F3B5}";
   if (fileType.includes("pdf")) return "\u{1F4C4}";
   if (fileType.includes("zip") || fileType.includes("rar")) return "\u{1F4E6}";
-  if (fileType.includes("word") || fileType.includes("document")) return "\u{1F4DD}";
-  if (fileType.includes("excel") || fileType.includes("spreadsheet")) return "\u{1F4CA}";
+  if (fileType.includes("word") || fileType.includes("document"))
+    return "\u{1F4DD}";
+  if (fileType.includes("excel") || fileType.includes("spreadsheet"))
+    return "\u{1F4CA}";
   if (fileType.includes("presentation")) return "\u{1F4D1}";
   return "\u{1F4CE}";
 }
@@ -54,18 +56,27 @@ export const Attachment = Node.create<AttachmentOptions>({
     return {
       id: {
         default: null,
-        parseHTML: (element: HTMLElement) => element.getAttribute("data-attachment-id"),
-        renderHTML: (attributes: Record<string, unknown>) => ({ "data-attachment-id": attributes.id }),
+        parseHTML: (element: HTMLElement) =>
+          element.getAttribute("data-attachment-id"),
+        renderHTML: (attributes: Record<string, unknown>) => ({
+          "data-attachment-id": attributes.id,
+        }),
       },
       fileName: {
         default: null,
-        parseHTML: (element: HTMLElement) => element.getAttribute("data-file-name"),
-        renderHTML: (attributes: Record<string, unknown>) => ({ "data-file-name": attributes.fileName }),
+        parseHTML: (element: HTMLElement) =>
+          element.getAttribute("data-file-name"),
+        renderHTML: (attributes: Record<string, unknown>) => ({
+          "data-file-name": attributes.fileName,
+        }),
       },
       fileType: {
         default: "application/octet-stream",
-        parseHTML: (element: HTMLElement) => element.getAttribute("data-file-type"),
-        renderHTML: (attributes: Record<string, unknown>) => ({ "data-file-type": attributes.fileType }),
+        parseHTML: (element: HTMLElement) =>
+          element.getAttribute("data-file-type"),
+        renderHTML: (attributes: Record<string, unknown>) => ({
+          "data-file-type": attributes.fileType,
+        }),
       },
       fileSize: {
         default: 0,
@@ -80,11 +91,14 @@ export const Attachment = Node.create<AttachmentOptions>({
       url: {
         default: null,
         parseHTML: (element: HTMLElement) => element.getAttribute("data-url"),
-        renderHTML: (attributes: Record<string, unknown>) => ({ "data-url": attributes.url }),
+        renderHTML: (attributes: Record<string, unknown>) => ({
+          "data-url": attributes.url,
+        }),
       },
       storageKey: {
         default: null,
-        parseHTML: (element: HTMLElement) => element.getAttribute("data-storage-key"),
+        parseHTML: (element: HTMLElement) =>
+          element.getAttribute("data-storage-key"),
         renderHTML: (attributes: Record<string, unknown>) => ({
           "data-storage-key": attributes.storageKey,
         }),

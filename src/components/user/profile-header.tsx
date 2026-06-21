@@ -1,15 +1,15 @@
-import Link from "next/link";
 import {
-  MapPin,
-  Globe,
   Calendar,
-  Mail,
-  MessageSquare,
-  UserPlus,
-  Shield,
   CheckCircle2,
   ExternalLink,
+  Globe,
+  Mail,
+  MapPin,
+  MessageSquare,
+  Shield,
+  UserPlus,
 } from "lucide-react";
+import Link from "next/link";
 import { cn, formatDate } from "@/lib/utils";
 import { LevelBadge } from "@/modules/reputation/components";
 
@@ -52,10 +52,13 @@ export function ProfileHeader({
   isOwnProfile,
   className,
 }: ProfileHeaderProps) {
-  const name = profile?.displayName ?? user.displayName ?? user.username ?? "Unknown";
+  const name =
+    profile?.displayName ?? user.displayName ?? user.username ?? "Unknown";
 
   return (
-    <div className={cn("overflow-hidden rounded-2xl border bg-card", className)}>
+    <div
+      className={cn("overflow-hidden rounded-2xl border bg-card", className)}
+    >
       {/* Cover */}
       <div className="relative h-40 bg-gradient-to-br from-primary/10 via-muted to-premium/10 sm:h-52">
         {profile?.coverUrl && (

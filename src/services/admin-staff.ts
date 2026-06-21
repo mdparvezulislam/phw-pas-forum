@@ -2,8 +2,8 @@ import "server-only";
 
 import { and, desc, eq, sql } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
-import { auditService } from "@/services/audit";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
+import { auditService } from "@/services/audit";
 
 export class AdminStaffService {
   async getStaffMembers() {
@@ -250,7 +250,11 @@ export class AdminStaffService {
     await auditService.log(params.moderatorId, AUDIT_ACTIONS.USER_WARNED, {
       resource: "user",
       resourceId: params.userId,
-      metadata: { warningId: warning.id, points: params.points, reason: params.reason },
+      metadata: {
+        warningId: warning.id,
+        points: params.points,
+        reason: params.reason,
+      },
     });
 
     return warning;

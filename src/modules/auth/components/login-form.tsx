@@ -1,11 +1,11 @@
 "use client";
 
+import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { login } from "@/modules/auth/actions";
-import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 
 export function LoginForm() {
   const router = useRouter();
@@ -24,7 +24,10 @@ export function LoginForm() {
     <form action={formAction} className="space-y-5">
       {/* Email / Username */}
       <div className="space-y-1.5">
-        <label htmlFor="email" className="text-xs font-medium text-muted-foreground">
+        <label
+          htmlFor="email"
+          className="text-xs font-medium text-muted-foreground"
+        >
           Email or Username
         </label>
         <div className="relative">
@@ -51,7 +54,10 @@ export function LoginForm() {
       {/* Password */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
-          <label htmlFor="password" className="text-xs font-medium text-muted-foreground">
+          <label
+            htmlFor="password"
+            className="text-xs font-medium text-muted-foreground"
+          >
             Password
           </label>
           <Link
@@ -84,7 +90,11 @@ export function LoginForm() {
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
             tabIndex={-1}
           >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
           </button>
         </div>
       </div>

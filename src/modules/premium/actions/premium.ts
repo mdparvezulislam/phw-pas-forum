@@ -1,12 +1,12 @@
 "use server";
 
+import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { requireAuth, requireRole } from "@/modules/auth/guards";
 import { getDatabase, schema } from "@/db";
-import { eq, and } from "drizzle-orm";
+import { requireAuth, requireRole } from "@/modules/auth/guards";
+import { auditService } from "@/services/audit";
 import { MockBillingProvider } from "@/services/billing-provider";
 import { membershipService } from "@/services/membership-service";
-import { auditService } from "@/services/audit";
 import { RoleName } from "@/types/rbac";
 
 export interface ActionResponse<T = void> {
@@ -20,16 +20,23 @@ export interface ActionResponse<T = void> {
  */
 export async function selectPlanAction(
   planId: string,
-  cycle: "MONTHLY" | "YEARLY" | "LIFETIME"
+  cycle: "MONTHLY" | "YEARLY" | "LIFETIME",
 ): Promise<ActionResponse<{ checkoutUrl: string }>> {
   try {
     const user = await requireAuth();
     const provider = new MockBillingProvider();
-    const session = await provider.createCheckoutSession(user.id, planId, cycle);
+    const session = await provider.createCheckoutSession(
+      user.id,
+      planId,
+      cycle,
+    );
     return { success: true, data: { checkoutUrl: session.checkoutUrl } };
   } catch (error: any) {
     console.error("[selectPlanAction] failed:", error);
-    return { success: false, error: error.message || "Failed to initiate plan checkout" };
+    return {
+      success: false,
+      error: error.message || "Failed to initiate plan checkout",
+    };
   }
 }
 
@@ -39,17 +46,27 @@ export async function selectPlanAction(
 export async function completeCheckoutAction(
   sessionId: string,
   planId: string,
-  cycle: "MONTHLY" | "YEARLY" | "LIFETIME"
+  cycle: "MONTHLY" | "YEARLY" | "LIFETIME",
 ): Promise<ActionResponse<{ userMembershipId: string }>> {
   try {
     const user = await requireAuth();
-    const result = await membershipService.activateMembership(user.id, planId, cycle);
+    const result = await membershipService.activateMembership(
+      user.id,
+      planId,
+      cycle,
+    );
     revalidatePath("/membership");
     revalidatePath("/membership/dashboard");
-    return { success: true, data: { userMembershipId: result.userMembershipId } };
+    return {
+      success: true,
+      data: { userMembershipId: result.userMembershipId },
+    };
   } catch (error: any) {
     console.error("[completeCheckoutAction] failed:", error);
-    return { success: false, error: error.message || "Failed to complete checkout" };
+    return {
+      success: false,
+      error: error.message || "Failed to complete checkout",
+    };
   }
 }
 
@@ -57,7 +74,7 @@ export async function completeCheckoutAction(
  * Cancels an active subscription.
  */
 export async function cancelSubscriptionAction(
-  subscriptionId: string
+  subscriptionId: string,
 ): Promise<ActionResponse> {
   try {
     const user = await requireAuth();
@@ -99,7 +116,10 @@ export async function cancelSubscriptionAction(
     return { success: true };
   } catch (error: any) {
     console.error("[cancelSubscriptionAction] failed:", error);
-    return { success: false, error: error.message || "Failed to cancel subscription" };
+    return {
+      success: false,
+      error: error.message || "Failed to cancel subscription",
+    };
   }
 }
 
@@ -108,8 +128,12 @@ export async function cancelSubscriptionAction(
  */
 export async function boostListingAction(
   listingId: string,
-  boostType: "FEATURED" | "TOP_POSITION" | "CATEGORY_SPOTLIGHT" | "HOMEPAGE_FEATURED",
-  days: number
+  boostType:
+    | "FEATURED"
+    | "TOP_POSITION"
+    | "CATEGORY_SPOTLIGHT"
+    | "HOMEPAGE_FEATURED",
+  days: number,
 ): Promise<ActionResponse<{ boostId: string }>> {
   try {
     const user = await requireAuth();
@@ -135,14 +159,17 @@ export async function boostListingAction(
       listingId,
       boostType,
       days,
-      user.id
+      user.id,
     );
 
     revalidatePath(`/marketplace/listings/${listing.slug}`);
     return { success: true, data: { boostId } };
   } catch (error: any) {
     console.error("[boostListingAction] failed:", error);
-    return { success: false, error: error.message || "Failed to boost listing" };
+    return {
+      success: false,
+      error: error.message || "Failed to boost listing",
+    };
   }
 }
 
@@ -183,7 +210,10 @@ export async function createPlanAction(params: {
     return { success: true, data: newPlan[0] };
   } catch (error: any) {
     console.error("[createPlanAction] failed:", error);
-    return { success: false, error: error.message || "Failed to create membership plan" };
+    return {
+      success: false,
+      error: error.message || "Failed to create membership plan",
+    };
   }
 }
 
@@ -213,7 +243,9 @@ export async function createResourceAction(params: {
           uploaderId: user.id,
           fileName: params.fileName,
           originalName: params.fileName,
-          mimeType: params.fileName.endsWith(".pdf") ? "application/pdf" : "application/zip",
+          mimeType: params.fileName.endsWith(".pdf")
+            ? "application/pdf"
+            : "application/zip",
           fileSize: params.fileSize || 1024 * 1024,
           storageKey: `resources/${params.fileName}`,
           url: params.url,
@@ -243,24 +275,34 @@ export async function createResourceAction(params: {
     return { success: true, data: newResource[0] };
   } catch (error: any) {
     console.error("[createResourceAction] failed:", error);
-    return { success: false, error: error.message || "Failed to create resource" };
+    return {
+      success: false,
+      error: error.message || "Failed to create resource",
+    };
   }
 }
 
 /**
  * Deletes a premium resource (Admin only).
  */
-export async function deleteResourceAction(id: string): Promise<ActionResponse> {
+export async function deleteResourceAction(
+  id: string,
+): Promise<ActionResponse> {
   try {
     await requireRole(RoleName.ADMIN);
     const db = getDatabase();
 
-    await db.delete(schema.premiumResources).where(eq(schema.premiumResources.id, id));
+    await db
+      .delete(schema.premiumResources)
+      .where(eq(schema.premiumResources.id, id));
 
     revalidatePath("/resources");
     return { success: true };
   } catch (error: any) {
     console.error("[deleteResourceAction] failed:", error);
-    return { success: false, error: error.message || "Failed to delete resource" };
+    return {
+      success: false,
+      error: error.message || "Failed to delete resource",
+    };
   }
 }

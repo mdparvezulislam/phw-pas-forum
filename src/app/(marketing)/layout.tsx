@@ -1,6 +1,8 @@
+import { Menu, Search, X } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Search, Menu, X } from "lucide-react";
+import { MobileShell } from "@/components/mobile/mobile-shell";
+import { auth } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: {
@@ -27,16 +29,26 @@ const navLinks = [
   { href: "/pricing", label: "Pricing" },
 ];
 
-export default function MarketingLayout({
+export default async function MarketingLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+
   return (
     <>
-      <Navbar />
-      <main>{children}</main>
-      <Footer />
+      {/* Desktop view */}
+      <div className="hidden md:block">
+        <Navbar />
+        <main>{children}</main>
+        <Footer />
+      </div>
+
+      {/* Mobile view */}
+      <div className="block md:hidden">
+        <MobileShell session={session}>{children}</MobileShell>
+      </div>
     </>
   );
 }
@@ -177,8 +189,8 @@ function Footer() {
               BHW<span className="text-premium">PAS</span>
             </Link>
             <p className="mt-3 max-w-xs text-sm text-muted-foreground">
-              The modern community platform for entrepreneurs, marketers, creators, and digital
-              professionals.
+              The modern community platform for entrepreneurs, marketers,
+              creators, and digital professionals.
             </p>
           </div>
           {sections.map((section) => (

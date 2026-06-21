@@ -85,7 +85,9 @@ export const marketplaceListings = pgTable(
     views: integer("views").default(0).notNull(),
     favorites: integer("favorites").default(0).notNull(),
     sales: integer("sales").default(0).notNull(),
-    rating: decimal("rating", { precision: 3, scale: 2 }).default("0").notNull(),
+    rating: decimal("rating", { precision: 3, scale: 2 })
+      .default("0")
+      .notNull(),
     reviewCount: integer("review_count").default(0).notNull(),
     featured: boolean("featured").default(false).notNull(),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),

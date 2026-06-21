@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export function CTASection() {
   return (
@@ -16,8 +16,8 @@ export function CTASection() {
               Ready to Build Your Network and Grow Your Business?
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-primary-foreground/80">
-              Join thousands of professionals already on the platform. Start learning,
-              networking, and earning today.
+              Join thousands of professionals already on the platform. Start
+              learning, networking, and earning today.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">

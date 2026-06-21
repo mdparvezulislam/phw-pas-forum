@@ -62,7 +62,9 @@ export const sellerProfiles = pgTable(
   (table) => [
     index("seller_profile_user_id_idx").on(table.userId),
     index("seller_profile_trust_score_idx").on(table.trustScore),
-    index("seller_profile_verification_status_idx").on(table.verificationStatus),
+    index("seller_profile_verification_status_idx").on(
+      table.verificationStatus,
+    ),
     index("seller_profile_top_seller_idx").on(table.isTopSeller),
   ],
 );

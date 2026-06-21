@@ -1,12 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
-import { createPlanAction, createResourceAction, deleteResourceAction } from "@/modules/premium/actions/premium";
-import { getDatabase, schema } from "@/db";
-import { Button } from "@/components/ui/button";
-import { ShieldCheck, Plus, Trash2, UserPlus, FileText, BadgeCheck, Settings2, Sparkles } from "lucide-react";
-import { cn } from "@/lib/utils";
+import {
+  BadgeCheck,
+  FileText,
+  Plus,
+  Settings2,
+  ShieldCheck,
+  Sparkles,
+  Trash2,
+  UserPlus,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
+import type React from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { getDatabase, schema } from "@/db";
+import { cn } from "@/lib/utils";
+import {
+  createPlanAction,
+  createResourceAction,
+  deleteResourceAction,
+} from "@/modules/premium/actions/premium";
 
 interface Plan {
   id: string;
@@ -50,9 +64,14 @@ export default function AdminMembershipClient({
   users,
   resources,
 }: AdminMembershipClientProps) {
-  const [activeTab, setActiveTab] = useState<"plans" | "users" | "resources">("plans");
+  const [activeTab, setActiveTab] = useState<"plans" | "users" | "resources">(
+    "plans",
+  );
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
   const router = useRouter();
 
   // New Plan form state
@@ -92,7 +111,10 @@ export default function AdminMembershipClient({
 
     setLoading(false);
     if (res.success) {
-      setMessage({ type: "success", text: `Plan "${newPlan.name}" created successfully!` });
+      setMessage({
+        type: "success",
+        text: `Plan "${newPlan.name}" created successfully!`,
+      });
       setNewPlan({
         name: "",
         slug: "",
@@ -105,7 +127,10 @@ export default function AdminMembershipClient({
       });
       router.refresh();
     } else {
-      setMessage({ type: "error", text: res.error || "Failed to create plan." });
+      setMessage({
+        type: "error",
+        text: res.error || "Failed to create plan.",
+      });
     }
   };
 
@@ -132,9 +157,8 @@ export default function AdminMembershipClient({
     // This is super clean! Let's edit `premium.ts` to add this action first, then call it here.
     // Wait! Let's first make the call to `createResourceWithFileAction` and then we will add it to `premium.ts` in our next step.
     // Yes, that's beautiful.
-    
+
     // We will call the new action:
-    // @ts-ignore
     const res = await createResourceAction({
       title: newResource.title,
       description: newResource.description,
@@ -147,7 +171,10 @@ export default function AdminMembershipClient({
 
     setLoading(false);
     if (res.success) {
-      setMessage({ type: "success", text: `Premium Resource "${newResource.title}" published!` });
+      setMessage({
+        type: "success",
+        text: `Premium Resource "${newResource.title}" published!`,
+      });
       setNewResource({
         title: "",
         description: "",
@@ -158,7 +185,10 @@ export default function AdminMembershipClient({
       });
       router.refresh();
     } else {
-      setMessage({ type: "error", text: res.error || "Failed to publish resource." });
+      setMessage({
+        type: "error",
+        text: res.error || "Failed to publish resource.",
+      });
     }
   };
 
@@ -171,7 +201,10 @@ export default function AdminMembershipClient({
       setMessage({ type: "success", text: "Resource deleted successfully." });
       router.refresh();
     } else {
-      setMessage({ type: "error", text: res.error || "Failed to delete resource." });
+      setMessage({
+        type: "error",
+        text: res.error || "Failed to delete resource.",
+      });
     }
   };
 
@@ -180,10 +213,12 @@ export default function AdminMembershipClient({
       <div className="flex justify-between items-center border-b border-zinc-900 pb-5">
         <div>
           <h1 className="text-3xl font-extrabold text-white flex items-center gap-2">
-            <Settings2 className="h-7 w-7 text-indigo-400" /> Admin Monetization panel
+            <Settings2 className="h-7 w-7 text-indigo-400" /> Admin Monetization
+            panel
           </h1>
           <p className="text-sm text-zinc-400 mt-1">
-            Configure premium subscription plans, manage user VIP overrides, and publish resources.
+            Configure premium subscription plans, manage user VIP overrides, and
+            publish resources.
           </p>
         </div>
       </div>
@@ -194,7 +229,7 @@ export default function AdminMembershipClient({
             "p-4 rounded-lg border text-sm flex items-center gap-3 max-w-lg",
             message.type === "success"
               ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
-              : "bg-red-500/10 border-red-500/20 text-red-400"
+              : "bg-red-500/10 border-red-500/20 text-red-400",
           )}
         >
           <span>{message.text}</span>
@@ -209,7 +244,7 @@ export default function AdminMembershipClient({
             "px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors",
             activeTab === "plans"
               ? "border-indigo-500 text-white"
-              : "border-transparent text-zinc-400 hover:text-zinc-200"
+              : "border-transparent text-zinc-400 hover:text-zinc-200",
           )}
         >
           Membership Plans
@@ -220,7 +255,7 @@ export default function AdminMembershipClient({
             "px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors",
             activeTab === "resources"
               ? "border-indigo-500 text-white"
-              : "border-transparent text-zinc-400 hover:text-zinc-200"
+              : "border-transparent text-zinc-400 hover:text-zinc-200",
           )}
         >
           Premium Resource Manager
@@ -237,92 +272,143 @@ export default function AdminMembershipClient({
             </h3>
             <form onSubmit={handleCreatePlan} className="space-y-3.5">
               <div>
-                <label className="text-xs text-zinc-400 font-semibold block mb-1">Plan Name</label>
+                <label className="text-xs text-zinc-400 font-semibold block mb-1">
+                  Plan Name
+                </label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. VIP Gold"
                   value={newPlan.name}
-                  onChange={(e) => setNewPlan({ ...newPlan, name: e.target.value })}
+                  onChange={(e) =>
+                    setNewPlan({ ...newPlan, name: e.target.value })
+                  }
                   className="w-full bg-zinc-900 border border-zinc-850 rounded px-3 py-1.5 text-sm text-white"
                 />
               </div>
               <div>
-                <label className="text-xs text-zinc-400 font-semibold block mb-1">Plan Slug</label>
+                <label className="text-xs text-zinc-400 font-semibold block mb-1">
+                  Plan Slug
+                </label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. VIP_GOLD"
                   value={newPlan.slug}
-                  onChange={(e) => setNewPlan({ ...newPlan, slug: e.target.value.toUpperCase() })}
+                  onChange={(e) =>
+                    setNewPlan({
+                      ...newPlan,
+                      slug: e.target.value.toUpperCase(),
+                    })
+                  }
                   className="w-full bg-zinc-900 border border-zinc-850 rounded px-3 py-1.5 text-sm text-white"
                 />
               </div>
               <div>
-                <label className="text-xs text-zinc-400 font-semibold block mb-1">Description</label>
+                <label className="text-xs text-zinc-400 font-semibold block mb-1">
+                  Description
+                </label>
                 <textarea
                   placeholder="Plan benefits overview"
                   value={newPlan.description}
-                  onChange={(e) => setNewPlan({ ...newPlan, description: e.target.value })}
+                  onChange={(e) =>
+                    setNewPlan({ ...newPlan, description: e.target.value })
+                  }
                   className="w-full bg-zinc-900 border border-zinc-850 rounded px-3 py-1.5 text-sm text-white h-16 resize-none"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs text-zinc-400 font-semibold block mb-1">Badge Name</label>
+                  <label className="text-xs text-zinc-400 font-semibold block mb-1">
+                    Badge Name
+                  </label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. VIP Gold"
                     value={newPlan.badgeName}
-                    onChange={(e) => setNewPlan({ ...newPlan, badgeName: e.target.value })}
+                    onChange={(e) =>
+                      setNewPlan({ ...newPlan, badgeName: e.target.value })
+                    }
                     className="w-full bg-zinc-900 border border-zinc-850 rounded px-3 py-1.5 text-sm text-white"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-400 font-semibold block mb-1">Sort Order</label>
+                  <label className="text-xs text-zinc-400 font-semibold block mb-1">
+                    Sort Order
+                  </label>
                   <input
                     type="number"
                     required
                     value={newPlan.sortOrder}
-                    onChange={(e) => setNewPlan({ ...newPlan, sortOrder: Number(e.target.value) })}
+                    onChange={(e) =>
+                      setNewPlan({
+                        ...newPlan,
+                        sortOrder: Number(e.target.value),
+                      })
+                    }
                     className="w-full bg-zinc-900 border border-zinc-850 rounded px-3 py-1.5 text-sm text-white"
                   />
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <label className="text-xs text-zinc-400 font-semibold block mb-1">Monthly ($)</label>
+                  <label className="text-xs text-zinc-400 font-semibold block mb-1">
+                    Monthly ($)
+                  </label>
                   <input
                     type="number"
                     required
                     value={newPlan.monthlyPrice / 100}
-                    onChange={(e) => setNewPlan({ ...newPlan, monthlyPrice: Number(e.target.value) * 100 })}
+                    onChange={(e) =>
+                      setNewPlan({
+                        ...newPlan,
+                        monthlyPrice: Number(e.target.value) * 100,
+                      })
+                    }
                     className="w-full bg-zinc-900 border border-zinc-850 rounded px-2 py-1.5 text-xs text-white"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-400 font-semibold block mb-1">Yearly ($)</label>
+                  <label className="text-xs text-zinc-400 font-semibold block mb-1">
+                    Yearly ($)
+                  </label>
                   <input
                     type="number"
                     required
                     value={newPlan.yearlyPrice / 100}
-                    onChange={(e) => setNewPlan({ ...newPlan, yearlyPrice: Number(e.target.value) * 100 })}
+                    onChange={(e) =>
+                      setNewPlan({
+                        ...newPlan,
+                        yearlyPrice: Number(e.target.value) * 100,
+                      })
+                    }
                     className="w-full bg-zinc-900 border border-zinc-850 rounded px-2 py-1.5 text-xs text-white"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-400 font-semibold block mb-1">Lifetime ($)</label>
+                  <label className="text-xs text-zinc-400 font-semibold block mb-1">
+                    Lifetime ($)
+                  </label>
                   <input
                     type="number"
                     required
                     value={newPlan.lifetimePrice / 100}
-                    onChange={(e) => setNewPlan({ ...newPlan, lifetimePrice: Number(e.target.value) * 100 })}
+                    onChange={(e) =>
+                      setNewPlan({
+                        ...newPlan,
+                        lifetimePrice: Number(e.target.value) * 100,
+                      })
+                    }
                     className="w-full bg-zinc-900 border border-zinc-850 rounded px-2 py-1.5 text-xs text-white"
                   />
                 </div>
               </div>
-              <Button type="submit" disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs mt-3 h-9">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs mt-3 h-9"
+              >
                 {loading ? "Creating..." : "Save Plan"}
               </Button>
             </form>
@@ -346,11 +432,19 @@ export default function AdminMembershipClient({
                 <tbody className="divide-y divide-zinc-900 text-zinc-300">
                   {plans.map((plan) => (
                     <tr key={plan.id} className="hover:bg-zinc-900/10">
-                      <td className="py-3 font-semibold text-white">{plan.name}</td>
+                      <td className="py-3 font-semibold text-white">
+                        {plan.name}
+                      </td>
                       <td className="py-3">{plan.slug}</td>
-                      <td className="py-3 text-right">${plan.monthlyPrice / 100}</td>
-                      <td className="py-3 text-right">${plan.yearlyPrice / 100}</td>
-                      <td className="py-3 text-right">${plan.lifetimePrice / 100}</td>
+                      <td className="py-3 text-right">
+                        ${plan.monthlyPrice / 100}
+                      </td>
+                      <td className="py-3 text-right">
+                        ${plan.yearlyPrice / 100}
+                      </td>
+                      <td className="py-3 text-right">
+                        ${plan.lifetimePrice / 100}
+                      </td>
                       <td className="py-3 text-center">{plan.sortOrder}</td>
                     </tr>
                   ))}
@@ -367,56 +461,83 @@ export default function AdminMembershipClient({
           {/* Add Resource Form */}
           <div className="lg:col-span-1 rounded-xl border border-zinc-800 bg-zinc-950 p-6 space-y-4">
             <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <Plus className="h-5 w-5 text-indigo-400" /> Publish Premium Download
+              <Plus className="h-5 w-5 text-indigo-400" /> Publish Premium
+              Download
             </h3>
             <form onSubmit={handleCreateResource} className="space-y-3.5">
               <div>
-                <label className="text-xs text-zinc-400 font-semibold block mb-1">Resource Title</label>
+                <label className="text-xs text-zinc-400 font-semibold block mb-1">
+                  Resource Title
+                </label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Backlink Booster Guide"
                   value={newResource.title}
-                  onChange={(e) => setNewResource({ ...newResource, title: e.target.value })}
+                  onChange={(e) =>
+                    setNewResource({ ...newResource, title: e.target.value })
+                  }
                   className="w-full bg-zinc-900 border border-zinc-850 rounded px-3 py-1.5 text-sm text-white"
                 />
               </div>
               <div>
-                <label className="text-xs text-zinc-400 font-semibold block mb-1">Description</label>
+                <label className="text-xs text-zinc-400 font-semibold block mb-1">
+                  Description
+                </label>
                 <textarea
                   placeholder="Overview of the download file"
                   value={newResource.description}
-                  onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
+                  onChange={(e) =>
+                    setNewResource({
+                      ...newResource,
+                      description: e.target.value,
+                    })
+                  }
                   className="w-full bg-zinc-900 border border-zinc-850 rounded px-3 py-1.5 text-sm text-white h-16 resize-none"
                 />
               </div>
               <div>
-                <label className="text-xs text-zinc-400 font-semibold block mb-1">File Name</label>
+                <label className="text-xs text-zinc-400 font-semibold block mb-1">
+                  File Name
+                </label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. guide.pdf"
                   value={newResource.fileName}
-                  onChange={(e) => setNewResource({ ...newResource, fileName: e.target.value })}
+                  onChange={(e) =>
+                    setNewResource({ ...newResource, fileName: e.target.value })
+                  }
                   className="w-full bg-zinc-900 border border-zinc-850 rounded px-3 py-1.5 text-sm text-white"
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs text-zinc-400 font-semibold block mb-1">File Link / URL</label>
+                  <label className="text-xs text-zinc-400 font-semibold block mb-1">
+                    File Link / URL
+                  </label>
                   <input
                     type="text"
                     required
                     value={newResource.url}
-                    onChange={(e) => setNewResource({ ...newResource, url: e.target.value })}
+                    onChange={(e) =>
+                      setNewResource({ ...newResource, url: e.target.value })
+                    }
                     className="w-full bg-zinc-900 border border-zinc-850 rounded px-3 py-1.5 text-xs text-white"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-zinc-400 font-semibold block mb-1">Gating Level</label>
+                  <label className="text-xs text-zinc-400 font-semibold block mb-1">
+                    Gating Level
+                  </label>
                   <select
                     value={newResource.requiredPlan}
-                    onChange={(e) => setNewResource({ ...newResource, requiredPlan: e.target.value })}
+                    onChange={(e) =>
+                      setNewResource({
+                        ...newResource,
+                        requiredPlan: e.target.value,
+                      })
+                    }
                     className="w-full bg-zinc-900 border border-zinc-850 rounded px-3 py-1.5 text-xs text-zinc-300 font-semibold h-8 focus:outline-none"
                   >
                     <option value="VIP">VIP</option>
@@ -426,7 +547,11 @@ export default function AdminMembershipClient({
                   </select>
                 </div>
               </div>
-              <Button type="submit" disabled={loading} className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs mt-3 h-9">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs mt-3 h-9"
+              >
                 {loading ? "Publishing..." : "Publish Resource"}
               </Button>
             </form>
@@ -437,16 +562,32 @@ export default function AdminMembershipClient({
             <h3 className="text-lg font-bold text-white">Active Resources</h3>
             <div className="space-y-3">
               {resources.map((resource) => (
-                <div key={resource.id} className="flex justify-between items-center p-4 rounded-lg bg-zinc-900/60 border border-zinc-850 hover:border-zinc-800 transition-colors">
+                <div
+                  key={resource.id}
+                  className="flex justify-between items-center p-4 rounded-lg bg-zinc-900/60 border border-zinc-850 hover:border-zinc-800 transition-colors"
+                >
                   <div>
                     <h4 className="font-bold text-white text-sm flex items-center gap-2">
-                      <FileText className="h-4.5 w-4.5 text-indigo-400" /> {resource.title}
+                      <FileText className="h-4.5 w-4.5 text-indigo-400" />{" "}
+                      {resource.title}
                     </h4>
-                    <p className="text-xs text-zinc-500 mt-1 max-w-lg line-clamp-1">{resource.description}</p>
+                    <p className="text-xs text-zinc-500 mt-1 max-w-lg line-clamp-1">
+                      {resource.description}
+                    </p>
                     <div className="flex gap-4 mt-2 text-[10px] text-zinc-600 font-semibold">
-                      <span>Gated: <span className="text-indigo-400">{resource.requiredPlan}</span></span>
+                      <span>
+                        Gated:{" "}
+                        <span className="text-indigo-400">
+                          {resource.requiredPlan}
+                        </span>
+                      </span>
                       {resource.attachmentFileName && (
-                        <span>File: <span className="text-zinc-400">{resource.attachmentFileName}</span></span>
+                        <span>
+                          File:{" "}
+                          <span className="text-zinc-400">
+                            {resource.attachmentFileName}
+                          </span>
+                        </span>
                       )}
                     </div>
                   </div>

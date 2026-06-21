@@ -69,9 +69,7 @@ function renderMarks(
         result = (
           <mark
             style={color ? { backgroundColor: color } : undefined}
-            className={cn(
-              !color && "bg-yellow-200 dark:bg-yellow-800",
-            )}
+            className={cn(!color && "bg-yellow-200 dark:bg-yellow-800")}
           >
             {result}
           </mark>
@@ -379,7 +377,12 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
       jsonContent = JSON.parse(content);
     } catch {
       return (
-        <div className={cn("prose prose-sm dark:prose-invert max-w-none", className)}>
+        <div
+          className={cn(
+            "prose prose-sm dark:prose-invert max-w-none",
+            className,
+          )}
+        >
           <p>{escapeHtml(content)}</p>
         </div>
       );
@@ -391,7 +394,9 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
   if (!jsonContent || !jsonContent.type) return null;
 
   return (
-    <div className={cn("prose prose-sm dark:prose-invert max-w-none", className)}>
+    <div
+      className={cn("prose prose-sm dark:prose-invert max-w-none", className)}
+    >
       <RenderNode node={jsonContent} />
     </div>
   );

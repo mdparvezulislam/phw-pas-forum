@@ -1,26 +1,31 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { Archive, BellOff, MessageSquare, Plus, Search } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useRealtime } from "@/hooks";
-import { useAuth } from "@/hooks";
-import { createConversationAction, searchUsersAction } from "../actions/conversations";
-import type { ConversationWithDetails } from "../types";
-import { Search, Plus, MessageSquare, Archive, BellOff } from "lucide-react";
+import { useEffect, useState, useTransition } from "react";
 import { Button } from "@/components/ui";
+import { useAuth, useRealtime } from "@/hooks";
+import {
+  createConversationAction,
+  searchUsersAction,
+} from "../actions/conversations";
+import type { ConversationWithDetails } from "../types";
 
 interface ConversationSidebarProps {
   initialConversations: ConversationWithDetails[];
 }
 
-export function ConversationSidebar({ initialConversations }: ConversationSidebarProps) {
+export function ConversationSidebar({
+  initialConversations,
+}: ConversationSidebarProps) {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
   const activeId = params.conversationId as string;
 
-  const [conversations, setConversations] = useState<ConversationWithDetails[]>(initialConversations);
+  const [conversations, setConversations] =
+    useState<ConversationWithDetails[]>(initialConversations);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<"active" | "archived">("active");
 
@@ -41,7 +46,11 @@ export function ConversationSidebar({ initialConversations }: ConversationSideba
   // Realtime updates using SSE hook
   useRealtime(user?.id ? [`user:${user.id}`] : [], (event) => {
     if (event.type === "CONVERSATION_UPDATE") {
-      const payload = event.payload as { conversationId: string; lastMessage: any; lastActivityAt: string };
+      const payload = event.payload as {
+        conversationId: string;
+        lastMessage: any;
+        lastActivityAt: string;
+      };
       setConversations((prev) => {
         const index = prev.findIndex((c) => c.id === payload.conversationId);
         if (index === -1) return prev;
@@ -55,7 +64,9 @@ export function ConversationSidebar({ initialConversations }: ConversationSideba
           unread: oldConv.id !== activeId, // Unread if not currently viewing
         };
         // Re-sort descending by activity
-        return updated.sort((a, b) => b.lastActivityAt.getTime() - a.lastActivityAt.getTime());
+        return updated.sort(
+          (a, b) => b.lastActivityAt.getTime() - a.lastActivityAt.getTime(),
+        );
       });
     } else if (event.type === "CONVERSATION_NEW") {
       const payload = event.payload as { conversation: any };
@@ -69,7 +80,9 @@ export function ConversationSidebar({ initialConversations }: ConversationSideba
           unread: payload.conversation.id !== activeId,
           participants: payload.conversation.participants || [],
         };
-        return [newConv, ...prev].sort((a, b) => b.lastActivityAt.getTime() - a.lastActivityAt.getTime());
+        return [newConv, ...prev].sort(
+          (a, b) => b.lastActivityAt.getTime() - a.lastActivityAt.getTime(),
+        );
       });
     }
   });
@@ -85,7 +98,8 @@ export function ConversationSidebar({ initialConversations }: ConversationSideba
       if (res.success && res.data) {
         // Exclude already selected users and self
         const filtered = res.data.filter(
-          (u) => u.id !== user?.id && !selectedUsers.some((su) => su.id === u.id)
+          (u) =>
+            u.id !== user?.id && !selectedUsers.some((su) => su.id === u.id),
         );
         setSearchResults(filtered);
       }
@@ -137,7 +151,9 @@ export function ConversationSidebar({ initialConversations }: ConversationSideba
     const query = searchQuery.toLowerCase();
     const titleMatch = c.title?.toLowerCase().includes(query);
     const participantMatch = c.participants.some(
-      (p) => p.displayName?.toLowerCase().includes(query) || p.username?.toLowerCase().includes(query)
+      (p) =>
+        p.displayName?.toLowerCase().includes(query) ||
+        p.username?.toLowerCase().includes(query),
     );
     return titleMatch || participantMatch;
   });
@@ -168,7 +184,12 @@ export function ConversationSidebar({ initialConversations }: ConversationSideba
       {/* Header */}
       <div className="flex items-center justify-between border-b px-4 py-3">
         <h1 className="text-xl font-bold tracking-tight">Conversations</h1>
-        <Button variant="ghost" size="icon" onClick={() => setIsNewModalOpen(true)} title="New Message">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsNewModalOpen(true)}
+          title="New Message"
+        >
           <Plus className="h-5 w-5" />
         </Button>
       </div>
@@ -193,7 +214,9 @@ export function ConversationSidebar({ initialConversations }: ConversationSideba
           type="button"
           onClick={() => setActiveTab("active")}
           className={`py-2 focus:outline-none ${
-            activeTab === "active" ? "border-b-2 border-primary text-foreground" : "hover:text-foreground"
+            activeTab === "active"
+              ? "border-b-2 border-primary text-foreground"
+              : "hover:text-foreground"
           }`}
         >
           Active
@@ -202,7 +225,9 @@ export function ConversationSidebar({ initialConversations }: ConversationSideba
           type="button"
           onClick={() => setActiveTab("archived")}
           className={`py-2 focus:outline-none ${
-            activeTab === "archived" ? "border-b-2 border-primary text-foreground" : "hover:text-foreground"
+            activeTab === "archived"
+              ? "border-b-2 border-primary text-foreground"
+              : "hover:text-foreground"
           }`}
         >
           Archived
@@ -222,7 +247,13 @@ export function ConversationSidebar({ initialConversations }: ConversationSideba
             {/* Avatar or Group Icon */}
             <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm">
               {c.type === "PRIVATE" ? (
-                (c.participants[0]?.displayName || c.participants[0]?.username || "?").charAt(0).toUpperCase()
+                (
+                  c.participants[0]?.displayName ||
+                  c.participants[0]?.username ||
+                  "?"
+                )
+                  .charAt(0)
+                  .toUpperCase()
               ) : (
                 <MessageSquare className="h-5 w-5" />
               )}
@@ -245,13 +276,18 @@ export function ConversationSidebar({ initialConversations }: ConversationSideba
                   ? `${c.lastMessage.sender?.displayName || c.lastMessage.sender?.username || "System"}: ${
                       typeof c.lastMessage.contentJson === "string"
                         ? c.lastMessage.contentJson
-                        : (c.lastMessage.contentJson as any)?.content?.[0]?.content?.[0]?.text || "Sent attachment"
+                        : (c.lastMessage.contentJson as any)?.content?.[0]
+                            ?.content?.[0]?.text || "Sent attachment"
                     }`
                   : "No messages yet"}
               </p>
               <div className="flex gap-2 mt-1">
-                {c.isMuted && <BellOff className="h-3.5 w-3.5 text-muted-foreground" />}
-                {c.isArchived && <Archive className="h-3.5 w-3.5 text-muted-foreground" />}
+                {c.isMuted && (
+                  <BellOff className="h-3.5 w-3.5 text-muted-foreground" />
+                )}
+                {c.isArchived && (
+                  <Archive className="h-3.5 w-3.5 text-muted-foreground" />
+                )}
               </div>
             </div>
           </Link>
@@ -298,7 +334,9 @@ export function ConversationSidebar({ initialConversations }: ConversationSideba
             {/* Title (Only for group chats) */}
             {newType === "GROUP" && (
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">Group Title (Optional)</label>
+                <label className="block text-sm font-medium mb-1">
+                  Group Title (Optional)
+                </label>
                 <input
                   type="text"
                   placeholder="Marketing Team, SEO Project..."
@@ -324,7 +362,11 @@ export function ConversationSidebar({ initialConversations }: ConversationSideba
                       {u.displayName || u.username}
                       <button
                         type="button"
-                        onClick={() => setSelectedUsers((prev) => prev.filter((x) => x.id !== u.id))}
+                        onClick={() =>
+                          setSelectedUsers((prev) =>
+                            prev.filter((x) => x.id !== u.id),
+                          )
+                        }
                         className="hover:text-red-500 font-bold"
                       >
                         ×
@@ -383,7 +425,11 @@ export function ConversationSidebar({ initialConversations }: ConversationSideba
               </Button>
               <Button
                 onClick={handleCreateConversation}
-                disabled={isPending || selectedUsers.length === 0 || !firstMessageText.trim()}
+                disabled={
+                  isPending ||
+                  selectedUsers.length === 0 ||
+                  !firstMessageText.trim()
+                }
               >
                 {isPending ? "Creating..." : "Start Chat"}
               </Button>

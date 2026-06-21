@@ -1,12 +1,20 @@
 import "server-only";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
-import { search as typesenseClient, COLLECTIONS } from "./typesense-sync";
 import { emitEvent } from "@/lib/event-bus";
 import { RoleName } from "@/types/rbac";
+import { COLLECTIONS, search as typesenseClient } from "./typesense-sync";
 
 export interface SearchOptions {
-  contentType?: "all" | "threads" | "posts" | "users" | "forums" | "badges" | "trophies" | "marketplace";
+  contentType?:
+    | "all"
+    | "threads"
+    | "posts"
+    | "users"
+    | "forums"
+    | "badges"
+    | "trophies"
+    | "marketplace";
   author?: string;
   forumId?: string;
   categoryId?: string;
@@ -14,7 +22,13 @@ export interface SearchOptions {
   minReputation?: number;
   startDate?: Date;
   endDate?: Date;
-  sortBy?: "relevance" | "newest" | "oldest" | "most_viewed" | "most_replies" | "reputation";
+  sortBy?:
+    | "relevance"
+    | "newest"
+    | "oldest"
+    | "most_viewed"
+    | "most_replies"
+    | "reputation";
   page?: number;
   perPage?: number;
 }
@@ -26,14 +40,15 @@ export class SearchService {
   async executeSearch(
     rawQuery: string,
     options: SearchOptions = {},
-    currentUser: any | null = null
+    currentUser: any | null = null,
   ) {
     const db = getDatabase();
     const page = options.page ?? 1;
     const perPage = options.perPage ?? 20;
 
     // Parse advanced search directives from query
-    const { parsedQuery, filters: parsedFilters } = this.parseQueryDirectives(rawQuery);
+    const { parsedQuery, filters: parsedFilters } =
+      this.parseQueryDirectives(rawQuery);
     const finalQuery = parsedQuery;
 
     // Build filter array
@@ -95,11 +110,20 @@ export class SearchService {
       perPage,
     };
 
-    const searchResult = await (typesenseClient as any).search(collectionName, finalQuery, searchParams);
+    const searchResult = await (typesenseClient as any).search(
+      collectionName,
+      finalQuery,
+      searchParams,
+    );
 
     // Log query in search analytics
     if (page === 1) {
-      await this.logSearchQuery(rawQuery, filterByParts, searchResult.found, currentUser?.id || null);
+      await this.logSearchQuery(
+        rawQuery,
+        filterByParts,
+        searchResult.found,
+        currentUser?.id || null,
+      );
     }
 
     // Save search history for authenticated users
@@ -119,7 +143,8 @@ export class SearchService {
    * Autocomplete search suggestions
    */
   async getSuggestions(query: string, limit = 5) {
-    if (!query || query.length < 2) return { threads: [], users: [], forums: [] };
+    if (!query || query.length < 2)
+      return { threads: [], users: [], forums: [] };
 
     // Search threads, users, forums in parallel
     const [threadRes, userRes, forumRes] = await Promise.all([
@@ -151,10 +176,12 @@ export class SearchService {
   async searchConversations(
     query: string,
     userId: string,
-    options: { conversationId?: string; page?: number; perPage?: number } = {}
+    options: { conversationId?: string; page?: number; perPage?: number } = {},
   ) {
     const filterBy = `participantIds:=[${userId}]${
-      options.conversationId ? ` && conversationId:=${options.conversationId}` : ""
+      options.conversationId
+        ? ` && conversationId:=${options.conversationId}`
+        : ""
     }`;
 
     const searchResult = await (typesenseClient as any).search(
@@ -165,7 +192,7 @@ export class SearchService {
         filterBy,
         page: options.page ?? 1,
         perPage: options.perPage ?? 20,
-      }
+      },
     );
 
     return {
@@ -178,7 +205,12 @@ export class SearchService {
   /**
    * Log searches for analytics
    */
-  async logSearchQuery(query: string, filters: string[], resultCount: number, userId: string | null) {
+  async logSearchQuery(
+    query: string,
+    filters: string[],
+    resultCount: number,
+    userId: string | null,
+  ) {
     const db = getDatabase();
     try {
       await db.insert(schema.searchQueries).values({
@@ -212,7 +244,7 @@ export class SearchService {
       const existing = await db.query.searchHistories.findFirst({
         where: and(
           eq(schema.searchHistories.userId, userId),
-          eq(schema.searchHistories.query, query)
+          eq(schema.searchHistories.query, query),
         ),
       });
 
@@ -243,7 +275,9 @@ export class SearchService {
 
   async clearSearchHistory(userId: string) {
     const db = getDatabase();
-    await db.delete(schema.searchHistories).where(eq(schema.searchHistories.userId, userId));
+    await db
+      .delete(schema.searchHistories)
+      .where(eq(schema.searchHistories.userId, userId));
   }
 
   /**
@@ -257,7 +291,9 @@ export class SearchService {
         count: sql<number>`count(*)::int`,
       })
       .from(schema.searchQueries)
-      .where(sql`${schema.searchQueries.searchedAt} >= now() - interval '7 days'`)
+      .where(
+        sql`${schema.searchQueries.searchedAt} >= now() - interval '7 days'`,
+      )
       .groupBy(schema.searchQueries.query)
       .orderBy(desc(sql`count(*)`))
       .limit(limit);
@@ -293,7 +329,11 @@ export class SearchService {
     if (!user) return 'visibility:="PUBLIC"';
     const role = user.role;
 
-    if (role === RoleName.VIP || role === RoleName.ADMIN || role === RoleName.SUPER_ADMIN) {
+    if (
+      role === RoleName.VIP ||
+      role === RoleName.ADMIN ||
+      role === RoleName.SUPER_ADMIN
+    ) {
       return "visibility:=[PUBLIC, PREMIUM, PRIVATE]";
     }
     if (role === RoleName.MEMBER) {
@@ -304,37 +344,59 @@ export class SearchService {
 
   private getCollectionForContentType(contentType: string): string {
     switch (contentType) {
-      case "threads": return COLLECTIONS.THREADS;
-      case "posts": return COLLECTIONS.POSTS;
-      case "users": return COLLECTIONS.USERS;
-      case "forums": return COLLECTIONS.FORUMS;
-      case "badges": return COLLECTIONS.BADGES;
-      case "trophies": return COLLECTIONS.TROPHIES;
-      case "marketplace": return COLLECTIONS.MARKETPLACE_LISTINGS;
-      default: return COLLECTIONS.THREADS;
+      case "threads":
+        return COLLECTIONS.THREADS;
+      case "posts":
+        return COLLECTIONS.POSTS;
+      case "users":
+        return COLLECTIONS.USERS;
+      case "forums":
+        return COLLECTIONS.FORUMS;
+      case "badges":
+        return COLLECTIONS.BADGES;
+      case "trophies":
+        return COLLECTIONS.TROPHIES;
+      case "marketplace":
+        return COLLECTIONS.MARKETPLACE_LISTINGS;
+      default:
+        return COLLECTIONS.THREADS;
     }
   }
 
   private getQueryByFields(contentType: string): string {
     switch (contentType) {
-      case "threads": return "title,content,tags";
-      case "posts": return "content,threadTitle";
-      case "users": return "username,displayName";
-      case "forums": return "title,description";
-      case "badges": return "name,description";
-      case "trophies": return "title,description";
-      case "marketplace": return "title,short_description,seller_name,category_name";
-      default: return "title,content,username,displayName,name,description";
+      case "threads":
+        return "title,content,tags";
+      case "posts":
+        return "content,threadTitle";
+      case "users":
+        return "username,displayName";
+      case "forums":
+        return "title,description";
+      case "badges":
+        return "name,description";
+      case "trophies":
+        return "title,description";
+      case "marketplace":
+        return "title,short_description,seller_name,category_name";
+      default:
+        return "title,content,username,displayName,name,description";
     }
   }
 
-  private getSortByExpression(sortOption?: string, contentType?: string): string | undefined {
+  private getSortByExpression(
+    sortOption?: string,
+    contentType?: string,
+  ): string | undefined {
     if (!sortOption) return undefined;
     if (sortOption === "newest") return "createdAt:desc";
     if (sortOption === "oldest") return "createdAt:asc";
-    if (sortOption === "most_viewed" && contentType === "threads") return "views:desc";
-    if (sortOption === "most_replies" && contentType === "threads") return "replies:desc";
-    if (sortOption === "reputation" && contentType === "users") return "reputation:desc";
+    if (sortOption === "most_viewed" && contentType === "threads")
+      return "views:desc";
+    if (sortOption === "most_replies" && contentType === "threads")
+      return "replies:desc";
+    if (sortOption === "reputation" && contentType === "users")
+      return "reputation:desc";
     if (contentType === "marketplace") {
       if (sortOption === "price_low") return "base_price:asc";
       if (sortOption === "price_high") return "base_price:desc";

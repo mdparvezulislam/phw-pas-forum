@@ -43,7 +43,10 @@ export function NotificationPreferencesForm({
   const [saved, setSaved] = useState(false);
 
   const handleToggle = (field: string) => {
-    setFormData((prev) => ({ ...prev, [field]: !prev[field as keyof typeof prev] }));
+    setFormData((prev) => ({
+      ...prev,
+      [field]: !prev[field as keyof typeof prev],
+    }));
     setSaved(false);
   };
 
@@ -133,9 +136,7 @@ export function NotificationPreferencesForm({
 
       <section>
         <h2 className="text-lg font-semibold mb-4">Email Notifications</h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          Coming soon
-        </p>
+        <p className="text-sm text-muted-foreground mb-4">Coming soon</p>
         <PreferenceToggle
           label="Email Notifications"
           description="Receive notifications via email"
@@ -147,9 +148,7 @@ export function NotificationPreferencesForm({
 
       <section>
         <h2 className="text-lg font-semibold mb-4">Push Notifications</h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          Coming soon
-        </p>
+        <p className="text-sm text-muted-foreground mb-4">Coming soon</p>
         <PreferenceToggle
           label="Push Notifications"
           description="Receive push notifications on your device"

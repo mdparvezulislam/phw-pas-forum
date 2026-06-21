@@ -8,16 +8,11 @@ interface LeaderboardTableProps {
   category: string;
 }
 
-export function LeaderboardTable({
-  entries,
-  category,
-}: LeaderboardTableProps) {
+export function LeaderboardTable({ entries, category }: LeaderboardTableProps) {
   if (entries.length === 0) {
     return (
       <div className="rounded-lg border bg-card p-8 text-center">
-        <p className="text-sm text-muted-foreground">
-          No data available yet.
-        </p>
+        <p className="text-sm text-muted-foreground">No data available yet.</p>
       </div>
     );
   }

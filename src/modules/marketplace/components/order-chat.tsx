@@ -65,8 +65,13 @@ export function OrderChat({
                   {msg.sender.displayName ?? msg.sender.username}
                 </p>
               )}
-              {msg.contentJson && typeof msg.contentJson === "object" && "content" in (msg as any).contentJson ? (
-                <p>{(msg as any).contentJson.content?.[0]?.content?.[0]?.text ?? "Message"}</p>
+              {msg.contentJson &&
+              typeof msg.contentJson === "object" &&
+              "content" in (msg as any).contentJson ? (
+                <p>
+                  {(msg as any).contentJson.content?.[0]?.content?.[0]?.text ??
+                    "Message"}
+                </p>
               ) : (
                 <p>Message</p>
               )}

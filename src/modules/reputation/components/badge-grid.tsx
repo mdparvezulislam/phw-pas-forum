@@ -38,15 +38,12 @@ export function BadgeGrid({ badges, compact }: BadgeGridProps) {
       }
     >
       {badges.map((badge) => {
-        const colorClass =
-          BADGE_COLORS[badge.color] ?? BADGE_COLORS.slate;
+        const colorClass = BADGE_COLORS[badge.color] ?? BADGE_COLORS.slate;
         return (
           <div
             key={badge.id}
             className={
-              compact
-                ? "group relative"
-                : "rounded-lg border bg-card p-3"
+              compact ? "group relative" : "rounded-lg border bg-card p-3"
             }
             title={badge.description ?? badge.name}
           >

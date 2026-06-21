@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { getSuggestionsAction } from "@/modules/search/actions/search";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui";
+import { getSuggestionsAction } from "@/modules/search/actions/search";
 
 interface SearchBarProps {
   initialQuery?: string;
@@ -11,7 +12,11 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-export function SearchBar({ initialQuery = "", onSearch, placeholder = "Search forums, threads, members..." }: SearchBarProps) {
+export function SearchBar({
+  initialQuery = "",
+  onSearch,
+  placeholder = "Search forums, threads, members...",
+}: SearchBarProps) {
   const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
   const [suggestions, setSuggestions] = useState<{
@@ -59,7 +64,10 @@ export function SearchBar({ initialQuery = "", onSearch, placeholder = "Search f
   // Click outside listener
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
@@ -80,19 +88,19 @@ export function SearchBar({ initialQuery = "", onSearch, placeholder = "Search f
     if (!isOpen || !suggestions) return;
 
     const flattenedList = [
-      ...suggestions.threads.map(t => ({ type: "thread", data: t })),
-      ...suggestions.users.map(u => ({ type: "user", data: u })),
-      ...suggestions.forums.map(f => ({ type: "forum", data: f }))
+      ...suggestions.threads.map((t) => ({ type: "thread", data: t })),
+      ...suggestions.users.map((u) => ({ type: "user", data: u })),
+      ...suggestions.forums.map((f) => ({ type: "forum", data: f })),
     ];
 
     const totalCount = flattenedList.length;
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setActiveIndex(prev => (prev + 1 >= totalCount ? 0 : prev + 1));
+      setActiveIndex((prev) => (prev + 1 >= totalCount ? 0 : prev + 1));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setActiveIndex(prev => (prev - 1 < 0 ? totalCount - 1 : prev - 1));
+      setActiveIndex((prev) => (prev - 1 < 0 ? totalCount - 1 : prev - 1));
     } else if (e.key === "Escape") {
       setIsOpen(false);
     } else if (e.key === "Enter" && activeIndex >= 0) {
@@ -107,7 +115,9 @@ export function SearchBar({ initialQuery = "", onSearch, placeholder = "Search f
     if (item.type === "thread") {
       const catSlug = item.data.categorySlug ?? "general";
       const forSlug = item.data.forumSlug ?? "general";
-      router.push(`/forums/${catSlug}/${forSlug}/${item.data.slug ?? item.data.id}`);
+      router.push(
+        `/forums/${catSlug}/${forSlug}/${item.data.slug ?? item.data.id}`,
+      );
     } else if (item.type === "user") {
       router.push(`/profile/${item.data.username}`);
     } else if (item.type === "forum") {
@@ -115,11 +125,11 @@ export function SearchBar({ initialQuery = "", onSearch, placeholder = "Search f
     }
   };
 
-  const hasSuggestions = suggestions && (
-    suggestions.threads.length > 0 ||
-    suggestions.users.length > 0 ||
-    suggestions.forums.length > 0
-  );
+  const hasSuggestions =
+    suggestions &&
+    (suggestions.threads.length > 0 ||
+      suggestions.users.length > 0 ||
+      suggestions.forums.length > 0);
 
   return (
     <div ref={containerRef} className="relative w-full">
@@ -169,14 +179,20 @@ export function SearchBar({ initialQuery = "", onSearch, placeholder = "Search f
                 return (
                   <button
                     key={t.id}
-                    onClick={() => navigateSuggestion({ type: "thread", data: t })}
+                    onClick={() =>
+                      navigateSuggestion({ type: "thread", data: t })
+                    }
                     type="button"
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex flex-col cursor-pointer ${
-                      isActive ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted/50 text-foreground"
+                      isActive
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "hover:bg-muted/50 text-foreground"
                     }`}
                   >
                     <span className="font-semibold truncate">{t.title}</span>
-                    <span className="text-xs text-muted-foreground">In {t.forum} • By {t.author}</span>
+                    <span className="text-xs text-muted-foreground">
+                      In {t.forum} • By {t.author}
+                    </span>
                   </button>
                 );
               })}
@@ -195,15 +211,21 @@ export function SearchBar({ initialQuery = "", onSearch, placeholder = "Search f
                 return (
                   <button
                     key={u.id}
-                    onClick={() => navigateSuggestion({ type: "user", data: u })}
+                    onClick={() =>
+                      navigateSuggestion({ type: "user", data: u })
+                    }
                     type="button"
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between cursor-pointer ${
-                      isActive ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted/50 text-foreground"
+                      isActive
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "hover:bg-muted/50 text-foreground"
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground">👤</span>
-                      <span className="font-semibold">{u.displayName ?? u.username}</span>
+                      <span className="font-semibold">
+                        {u.displayName ?? u.username}
+                      </span>
                     </div>
                     <span className="text-xs text-muted-foreground font-medium px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/15">
                       ⭐ {u.reputation} Rep
@@ -221,19 +243,28 @@ export function SearchBar({ initialQuery = "", onSearch, placeholder = "Search f
                 📁 Forums
               </h5>
               {suggestions.forums.map((f, idx) => {
-                const globalIdx = suggestions.threads.length + suggestions.users.length + idx;
+                const globalIdx =
+                  suggestions.threads.length + suggestions.users.length + idx;
                 const isActive = activeIndex === globalIdx;
                 return (
                   <button
                     key={f.id}
-                    onClick={() => navigateSuggestion({ type: "forum", data: f })}
+                    onClick={() =>
+                      navigateSuggestion({ type: "forum", data: f })
+                    }
                     type="button"
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex flex-col cursor-pointer ${
-                      isActive ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted/50 text-foreground"
+                      isActive
+                        ? "bg-primary/10 text-primary font-medium"
+                        : "hover:bg-muted/50 text-foreground"
                     }`}
                   >
                     <span className="font-semibold truncate">{f.title}</span>
-                    {f.description && <span className="text-xs text-muted-foreground truncate">{f.description}</span>}
+                    {f.description && (
+                      <span className="text-xs text-muted-foreground truncate">
+                        {f.description}
+                      </span>
+                    )}
                   </button>
                 );
               })}

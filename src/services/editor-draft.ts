@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, eq, lt, isNull } from "drizzle-orm";
+import { and, eq, isNull, lt } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
 import type { EditorDraft, NewEditorDraft } from "@/db/schema/editor-drafts";
 
@@ -76,9 +76,7 @@ export async function deleteDraft(
     );
 }
 
-export async function getUserDrafts(
-  userId: string,
-): Promise<EditorDraft[]> {
+export async function getUserDrafts(userId: string): Promise<EditorDraft[]> {
   const db = getDatabase();
   return db.query.editorDrafts.findMany({
     where: (d, { eq }) => eq(d.userId, userId),
@@ -86,9 +84,7 @@ export async function getUserDrafts(
   });
 }
 
-export async function cleanupOldDrafts(
-  olderThanDays = 30,
-): Promise<number> {
+export async function cleanupOldDrafts(olderThanDays = 30): Promise<number> {
   const db = getDatabase();
   const cutoff = new Date();
   cutoff.setDate(cutoff.getDate() - olderThanDays);

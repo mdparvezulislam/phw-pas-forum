@@ -1,6 +1,6 @@
 import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-import { users } from "./users";
 import { membershipPlans } from "./membership-plans";
+import { users } from "./users";
 
 export const userMemberships = pgTable("user_membership", {
   id: text("id")

@@ -22,17 +22,12 @@ const StatsCard = React.forwardRef<HTMLDivElement, StatsCardProps>(
     return (
       <div
         ref={ref}
-        className={cn(
-          "rounded-xl border bg-card p-6 shadow-sm",
-          className
-        )}
+        className={cn("rounded-xl border bg-card p-6 shadow-sm", className)}
         {...props}
       >
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          {icon && (
-            <div className="text-muted-foreground">{icon}</div>
-          )}
+          {icon && <div className="text-muted-foreground">{icon}</div>}
         </div>
         <div className="mt-2">
           <p className="text-2xl font-bold">{value}</p>
@@ -42,10 +37,11 @@ const StatsCard = React.forwardRef<HTMLDivElement, StatsCardProps>(
                 <span
                   className={cn(
                     "text-xs font-medium",
-                    trend.isPositive ? "text-success" : "text-danger"
+                    trend.isPositive ? "text-success" : "text-danger",
                   )}
                 >
-                  {trend.isPositive ? "+" : ""}{trend.value}%
+                  {trend.isPositive ? "+" : ""}
+                  {trend.value}%
                 </span>
               )}
               {description && (
@@ -56,7 +52,7 @@ const StatsCard = React.forwardRef<HTMLDivElement, StatsCardProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 StatsCard.displayName = "StatsCard";
 

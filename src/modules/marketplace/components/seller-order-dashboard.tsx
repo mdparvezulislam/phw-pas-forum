@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getSellerOrdersAction } from "@/actions";
-import type { Order, MarketplaceListing, User } from "@/db/schema";
+import type { MarketplaceListing, Order, User } from "@/db/schema";
 import { OrderCard } from "./order-card";
 import { OrderStatusBadge } from "./order-status-badge";
 
@@ -29,7 +29,11 @@ export function SellerOrderDashboard({ userId }: { userId: string }) {
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
-    const result = await getSellerOrdersAction({ status: activeTab || undefined, page, limit: 20 });
+    const result = await getSellerOrdersAction({
+      status: activeTab || undefined,
+      page,
+      limit: 20,
+    });
     if (result.success && result.data) {
       setOrders(result.data.orders);
       setTotalPages(result.data.totalPages);
@@ -73,7 +77,9 @@ export function SellerOrderDashboard({ userId }: { userId: string }) {
       ) : orders.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
           <p className="text-lg">No sales yet</p>
-          <p className="text-sm">Your orders will appear here once customers start purchasing</p>
+          <p className="text-sm">
+            Your orders will appear here once customers start purchasing
+          </p>
         </div>
       ) : (
         <div className="space-y-4">

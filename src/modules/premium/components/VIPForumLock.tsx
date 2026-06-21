@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
 import { motion } from "framer-motion";
-import { Lock, Sparkles, ShieldCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Lock, ShieldCheck, Sparkles } from "lucide-react";
 import Link from "next/link";
+import React from "react";
+import { Button } from "@/components/ui/button";
 
 interface VIPForumLockProps {
   requiredPlan?: string;
@@ -46,7 +46,10 @@ export function VIPForumLock({
 
         {/* Badge of required level */}
         <div className="mx-auto mt-3 flex w-fit items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-500/10 px-3.5 py-1 text-xs font-semibold text-amber-400">
-          <Sparkles className="h-3.5 w-3.5 animate-spin" style={{ animationDuration: "3s" }} />
+          <Sparkles
+            className="h-3.5 w-3.5 animate-spin"
+            style={{ animationDuration: "3s" }}
+          />
           Requires {requiredPlan} Membership or higher
         </div>
 
@@ -58,16 +61,20 @@ export function VIPForumLock({
         {/* Perks overview */}
         <div className="mt-8 grid grid-cols-2 gap-4 text-left border-y border-zinc-800/80 py-6">
           <div className="flex items-center gap-2 text-xs font-medium text-zinc-300">
-            <ShieldCheck className="h-4 w-4 text-indigo-400" /> Private SEO & Case Studies
+            <ShieldCheck className="h-4 w-4 text-indigo-400" /> Private SEO &
+            Case Studies
           </div>
           <div className="flex items-center gap-2 text-xs font-medium text-zinc-300">
-            <ShieldCheck className="h-4 w-4 text-indigo-400" /> Premium Downloads Center
+            <ShieldCheck className="h-4 w-4 text-indigo-400" /> Premium
+            Downloads Center
           </div>
           <div className="flex items-center gap-2 text-xs font-medium text-zinc-300">
-            <ShieldCheck className="h-4 w-4 text-indigo-400" /> Search Insights & PM Boost
+            <ShieldCheck className="h-4 w-4 text-indigo-400" /> Search Insights
+            & PM Boost
           </div>
           <div className="flex items-center gap-2 text-xs font-medium text-zinc-300">
-            <ShieldCheck className="h-4 w-4 text-indigo-400" /> Exclusive Marketplace Deals
+            <ShieldCheck className="h-4 w-4 text-indigo-400" /> Exclusive
+            Marketplace Deals
           </div>
         </div>
 
@@ -79,7 +86,10 @@ export function VIPForumLock({
             </Button>
           </Link>
           <Link href="/" passHref>
-            <Button variant="ghost" className="w-full border border-zinc-800 text-zinc-400 hover:bg-zinc-900 hover:text-white sm:w-auto">
+            <Button
+              variant="ghost"
+              className="w-full border border-zinc-800 text-zinc-400 hover:bg-zinc-900 hover:text-white sm:w-auto"
+            >
               Return Home
             </Button>
           </Link>

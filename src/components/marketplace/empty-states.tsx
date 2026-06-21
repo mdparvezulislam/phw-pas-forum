@@ -1,11 +1,11 @@
 import {
-  ShoppingBag,
-  Search,
+  FileText,
   Heart,
   PackageOpen,
+  Search,
+  ShoppingBag,
   Star,
   UserPlus,
-  FileText,
 } from "lucide-react";
 import Link from "next/link";
 

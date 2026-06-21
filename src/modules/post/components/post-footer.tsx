@@ -3,8 +3,8 @@
 import { useActionState, useState } from "react";
 import { formatDateRelative } from "@/lib/utils";
 import { reportPost } from "@/modules/post/actions";
-import { ReactionBar } from "@/modules/reputation/components";
 import type { PostWithAuthor } from "@/modules/post/types";
+import { ReactionBar } from "@/modules/reputation/components";
 
 interface PostFooterProps {
   post: PostWithAuthor & {

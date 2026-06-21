@@ -1,12 +1,18 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Package,
+  ShoppingBag,
+} from "lucide-react";
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
 import { getBuyerOrdersAction } from "@/actions";
-import { OrderStatusBadge } from "./order-status-badge";
-import { formatCurrency } from "@/lib/utils";
-import { Package, ShoppingBag, Clock, CheckCircle2, AlertTriangle } from "lucide-react";
 import { MarketplaceEmptyState } from "@/components/marketplace";
+import { formatCurrency } from "@/lib/utils";
+import { OrderStatusBadge } from "./order-status-badge";
 
 export function OrderDashboard({ userId }: { userId: string }) {
   const [orders, setOrders] = useState<any[]>([]);
@@ -99,7 +105,9 @@ export function OrderDashboard({ userId }: { userId: string }) {
                 </p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
                   #{order.orderNumber} &middot; Seller:{" "}
-                  {order.seller?.displayName ?? order.seller?.username ?? "Unknown"}
+                  {order.seller?.displayName ??
+                    order.seller?.username ??
+                    "Unknown"}
                 </p>
               </div>
               <div className="flex items-center gap-3">

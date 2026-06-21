@@ -7,7 +7,9 @@ interface MarketplaceQueueProps {
   submissions: any[];
 }
 
-export function MarketplaceQueue({ submissions: initialSubmissions }: MarketplaceQueueProps) {
+export function MarketplaceQueue({
+  submissions: initialSubmissions,
+}: MarketplaceQueueProps) {
   const [submissions, setSubmissions] = useState(initialSubmissions);
   const [filter, setFilter] = useState("PENDING");
 
@@ -31,7 +33,8 @@ export function MarketplaceQueue({ submissions: initialSubmissions }: Marketplac
     {
       label: "Needs Revision",
       value: "ESC_CHANGE_REQUEST",
-      count: submissions.filter((s) => s.status === "ESC_CHANGE_REQUEST").length,
+      count: submissions.filter((s) => s.status === "ESC_CHANGE_REQUEST")
+        .length,
     },
     {
       label: "Approved",

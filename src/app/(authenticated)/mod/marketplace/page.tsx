@@ -1,8 +1,8 @@
-import { requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
+import { count, desc, eq } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
-import { desc, eq, count } from "drizzle-orm";
+import { requireRole } from "@/modules/auth/guards";
 import { SellerVerificationCard } from "@/modules/marketplace/components/seller-verification-card";
+import { RoleName } from "@/types/rbac";
 
 export const dynamic = "force-dynamic";
 
@@ -39,41 +39,64 @@ export default async function ModeratorMarketplaceDashboard() {
     .then((r) => r[0]?.val ?? 0);
 
   // Group applications by status
-  const pendingVerifications = verifications.filter((v) => v.status === "PENDING");
-  const processedVerifications = verifications.filter((v) => v.status !== "PENDING");
+  const pendingVerifications = verifications.filter(
+    (v) => v.status === "PENDING",
+  );
+  const processedVerifications = verifications.filter(
+    (v) => v.status !== "PENDING",
+  );
 
   return (
     <div className="space-y-8">
       <div>
         <h2 className="text-xl font-bold">Marketplace Seller Verifications</h2>
         <p className="text-sm text-muted-foreground">
-          Manage vendor verification levels, review applicant documents, and track active marketplace metrics.
+          Manage vendor verification levels, review applicant documents, and
+          track active marketplace metrics.
         </p>
       </div>
 
       {/* Stats Dashboard Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="border rounded-2xl p-5 bg-card/20 backdrop-blur shadow-sm flex flex-col justify-between hover:shadow transition-all">
-          <span className="text-xs text-muted-foreground font-semibold uppercase">Pending Listings</span>
+          <span className="text-xs text-muted-foreground font-semibold uppercase">
+            Pending Listings
+          </span>
           <div className="flex items-baseline gap-2 mt-2">
-            <span className="text-3xl font-extrabold tracking-tight text-indigo-400">{pendingListingsCount}</span>
-            <span className="text-xs text-muted-foreground">threads awaiting bot & manual review</span>
+            <span className="text-3xl font-extrabold tracking-tight text-indigo-400">
+              {pendingListingsCount}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              threads awaiting bot & manual review
+            </span>
           </div>
         </div>
 
         <div className="border rounded-2xl p-5 bg-card/20 backdrop-blur shadow-sm flex flex-col justify-between hover:shadow transition-all">
-          <span className="text-xs text-muted-foreground font-semibold uppercase">Verified Sellers</span>
+          <span className="text-xs text-muted-foreground font-semibold uppercase">
+            Verified Sellers
+          </span>
           <div className="flex items-baseline gap-2 mt-2">
-            <span className="text-3xl font-extrabold tracking-tight text-emerald-400">{activeSellersCount}</span>
-            <span className="text-xs text-muted-foreground">vendors active in marketplace</span>
+            <span className="text-3xl font-extrabold tracking-tight text-emerald-400">
+              {activeSellersCount}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              vendors active in marketplace
+            </span>
           </div>
         </div>
 
         <div className="border rounded-2xl p-5 bg-card/20 backdrop-blur shadow-sm flex flex-col justify-between hover:shadow transition-all">
-          <span className="text-xs text-muted-foreground font-semibold uppercase">Active Flags</span>
+          <span className="text-xs text-muted-foreground font-semibold uppercase">
+            Active Flags
+          </span>
           <div className="flex items-baseline gap-2 mt-2">
-            <span className="text-3xl font-extrabold tracking-tight text-rose-400">{activeReportsCount}</span>
-            <span className="text-xs text-muted-foreground">unresolved flag alerts</span>
+            <span className="text-3xl font-extrabold tracking-tight text-rose-400">
+              {activeReportsCount}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              unresolved flag alerts
+            </span>
           </div>
         </div>
       </div>
@@ -89,7 +112,9 @@ export default async function ModeratorMarketplaceDashboard() {
 
         {pendingVerifications.length === 0 ? (
           <div className="text-center py-10 border border-dashed rounded-2xl bg-secondary/5">
-            <p className="text-sm text-muted-foreground font-medium font-sans">No pending verification applications.</p>
+            <p className="text-sm text-muted-foreground font-medium font-sans">
+              No pending verification applications.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6">
@@ -102,9 +127,13 @@ export default async function ModeratorMarketplaceDashboard() {
 
       {/* Past/Processed Applications Section */}
       <div className="space-y-4 pt-4 border-t border-muted/20">
-        <h3 className="text-base font-bold text-muted-foreground">Processed Verification Logs</h3>
+        <h3 className="text-base font-bold text-muted-foreground">
+          Processed Verification Logs
+        </h3>
         {processedVerifications.length === 0 ? (
-          <p className="text-xs text-muted-foreground font-sans">No verification actions logged yet.</p>
+          <p className="text-xs text-muted-foreground font-sans">
+            No verification actions logged yet.
+          </p>
         ) : (
           <div className="border rounded-2xl overflow-hidden bg-card/20">
             <div className="max-h-[300px] overflow-y-auto">
@@ -121,19 +150,33 @@ export default async function ModeratorMarketplaceDashboard() {
                 <tbody className="divide-y divide-muted/10">
                   {processedVerifications.map((v: any) => (
                     <tr key={v.id} className="hover:bg-secondary/10">
-                      <td className="p-3 font-semibold">{v.seller?.displayName ?? v.seller?.username ?? "Unknown"}</td>
+                      <td className="p-3 font-semibold">
+                        {v.seller?.displayName ??
+                          v.seller?.username ??
+                          "Unknown"}
+                      </td>
                       <td className="p-3 font-mono">{v.verificationLevel}</td>
                       <td className="p-3">
-                        <span className={`px-2 py-0.5 rounded font-medium ${
-                          v.status === "VERIFIED" || v.status === "TRUSTED" || v.status === "TOP_SELLER"
-                            ? "bg-emerald-500/10 text-emerald-400"
-                            : "bg-red-500/10 text-red-400"
-                        }`}>
+                        <span
+                          className={`px-2 py-0.5 rounded font-medium ${
+                            v.status === "VERIFIED" ||
+                            v.status === "TRUSTED" ||
+                            v.status === "TOP_SELLER"
+                              ? "bg-emerald-500/10 text-emerald-400"
+                              : "bg-red-500/10 text-red-400"
+                          }`}
+                        >
                           {v.status}
                         </span>
                       </td>
-                      <td className="p-3 text-muted-foreground italic max-w-xs truncate">{v.notes}</td>
-                      <td className="p-3 text-muted-foreground">{v.verifiedAt ? new Date(v.verifiedAt).toLocaleDateString() : "-"}</td>
+                      <td className="p-3 text-muted-foreground italic max-w-xs truncate">
+                        {v.notes}
+                      </td>
+                      <td className="p-3 text-muted-foreground">
+                        {v.verifiedAt
+                          ? new Date(v.verifiedAt).toLocaleDateString()
+                          : "-"}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

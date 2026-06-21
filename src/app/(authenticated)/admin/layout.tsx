@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
-import { Header, Footer } from "@/components/design-system";
-import { AdminSidebar } from "@/components/admin/sidebar";
+import { AdminShell } from "@/components/admin/layout/admin-shell";
 import { auth } from "@/lib/auth";
 
 export default async function AdminLayout({
@@ -11,18 +10,19 @@ export default async function AdminLayout({
   const session = await auth();
   if (!session?.user) redirect("/auth/login");
 
+  const u = session.user;
+
   return (
-    <div className="relative flex min-h-screen flex-col">
-      <Header />
-      <div className="flex flex-1">
-        <AdminSidebar />
-        <main className="flex-1 overflow-auto">
-          <div className="container mx-auto max-w-screen-2xl px-4 py-6">
-            {children}
-          </div>
-        </main>
-      </div>
-      <Footer />
-    </div>
+    <AdminShell
+      user={{
+        displayName: u.displayName ?? null,
+        username: u.username ?? null,
+        email: u.email ?? null,
+        image: u.image ?? null,
+        role: u.role ?? null,
+      }}
+    >
+      {children}
+    </AdminShell>
   );
 }

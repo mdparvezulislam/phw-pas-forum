@@ -1,14 +1,14 @@
 import {
-  CheckCircle,
-  Shield,
-  Award,
   AlertCircle,
+  Award,
+  CheckCircle,
   Crown,
-  Star,
   Gem,
+  Shield,
+  Star,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import type { SellerVerificationAppStatus } from "@/db/schema/seller-verifications";
+import { cn } from "@/lib/utils";
 
 interface TrustBadgeProps {
   status: SellerVerificationAppStatus | string | null;
@@ -187,9 +187,7 @@ export function SellerLevel({
       <Icon className={iconSize[size]} />
       {level.label}
       {showScore && (
-        <span className="opacity-70">
-          ({trustScore.toLocaleString()})
-        </span>
+        <span className="opacity-70">({trustScore.toLocaleString()})</span>
       )}
     </span>
   );

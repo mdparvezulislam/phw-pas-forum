@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 interface MarketplaceCategoryCardProps {
@@ -45,7 +45,8 @@ export function MarketplaceCategoryCard({
         )}
         {listingCount > 0 && (
           <p className="mt-1 text-xs text-muted-foreground">
-            {listingCount.toLocaleString()} service{listingCount !== 1 ? "s" : ""}
+            {listingCount.toLocaleString()} service
+            {listingCount !== 1 ? "s" : ""}
           </p>
         )}
       </div>

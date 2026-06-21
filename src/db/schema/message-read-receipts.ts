@@ -19,7 +19,7 @@ export const messageReadReceipts = pgTable(
   (table) => [
     index("read_receipt_message_idx").on(table.messageId),
     index("read_receipt_user_idx").on(table.userId),
-  ]
+  ],
 );
 
 export type MessageReadReceipt = typeof messageReadReceipts.$inferSelect;

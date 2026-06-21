@@ -1,7 +1,7 @@
 "use client";
 
+import { EditorContent, type JSONContent, useEditor } from "@tiptap/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useEditor, EditorContent, type JSONContent } from "@tiptap/react";
 import { cn } from "@/lib/utils";
 import { getExtensions } from "@/modules/editor/utils/extensions";
 import { EditorToolbar } from "./editor-toolbar";
@@ -144,8 +144,8 @@ export function RichTextEditor({
   if (!editor) return null;
 
   return (
-      <div
-        className={cn("relative rounded-lg border bg-card", className)}
+    <div
+      className={cn("relative rounded-lg border bg-card", className)}
       data-post-id={postId}
       data-thread-id={threadId}
     >

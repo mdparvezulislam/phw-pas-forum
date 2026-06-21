@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminForumsPage() {
-
   const db = getDatabase();
   const forums = await db.query.forums.findMany({
     orderBy: (forums, { asc }) => [asc(forums.position)],

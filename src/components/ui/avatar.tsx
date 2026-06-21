@@ -46,7 +46,7 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
         className={cn(
           "relative flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted",
           sizeClasses[size],
-          className
+          className,
         )}
         {...props}
       >
@@ -62,7 +62,7 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
         )}
       </div>
     );
-  }
+  },
 );
 Avatar.displayName = "Avatar";
 

@@ -15,7 +15,11 @@ interface SearchHistoryProps {
   onClear: () => void;
 }
 
-export function SearchHistory({ history, onSelectQuery, onClear }: SearchHistoryProps) {
+export function SearchHistory({
+  history,
+  onSelectQuery,
+  onClear,
+}: SearchHistoryProps) {
   if (history.length === 0) return null;
 
   return (
@@ -41,7 +45,9 @@ export function SearchHistory({ history, onSelectQuery, onClear }: SearchHistory
           >
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground">🔍</span>
-              <span className="font-medium text-sm text-foreground">{item.query}</span>
+              <span className="font-medium text-sm text-foreground">
+                {item.query}
+              </span>
             </div>
             <span className="text-xs text-muted-foreground">
               {formatDateRelative(new Date(item.searchedAt))}

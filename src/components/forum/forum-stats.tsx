@@ -1,9 +1,9 @@
 import {
-  MessageSquare,
   FileText,
-  Users,
-  LayoutGrid,
   FolderOpen,
+  LayoutGrid,
+  MessageSquare,
+  Users,
 } from "lucide-react";
 
 interface ForumStatsProps {

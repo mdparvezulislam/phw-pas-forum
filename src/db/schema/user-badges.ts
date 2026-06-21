@@ -16,9 +16,7 @@ export const userBadges = pgTable(
       .references(() => badges.id, { onDelete: "cascade" }),
     earnedAt: timestamp("earned_at", { mode: "date" }).defaultNow().notNull(),
   },
-  (table) => [
-    unique("user_badge_unique").on(table.userId, table.badgeId),
-  ],
+  (table) => [unique("user_badge_unique").on(table.userId, table.badgeId)],
 );
 
 export type UserBadge = typeof userBadges.$inferSelect;

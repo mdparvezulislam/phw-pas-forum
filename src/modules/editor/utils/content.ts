@@ -209,7 +209,8 @@ function jsonToHtmlNode(node: ContentNode): string {
       case "codeBlock": {
         const lang = node.attrs?.language || "";
         const firstChild = node.content?.[0];
-        const codeText = firstChild && isTextNode(firstChild) ? firstChild.text : content;
+        const codeText =
+          firstChild && isTextNode(firstChild) ? firstChild.text : content;
         return `<pre><code class="language-${escapeHtml(lang as string)}">${escapeHtml(codeText)}</code></pre>`;
       }
       case "horizontalRule":

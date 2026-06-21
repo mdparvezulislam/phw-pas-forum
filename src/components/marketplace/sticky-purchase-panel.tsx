@@ -1,7 +1,14 @@
 "use client";
 
+import {
+  Clock,
+  Heart,
+  MessageSquare,
+  RotateCcw,
+  Share2,
+  ShoppingCart,
+} from "lucide-react";
 import { useState } from "react";
-import { ShoppingCart, Heart, Share2, Clock, RotateCcw, MessageSquare } from "lucide-react";
 import { cn, formatCurrency } from "@/lib/utils";
 
 interface StickyPurchasePanelProps {
@@ -32,7 +39,8 @@ export function StickyPurchasePanel({
   const [selectedPkg, setSelectedPkg] = useState<string | null>(null);
   const [isFavorited, setIsFavorited] = useState(false);
 
-  const activePackage = packages.find((p) => p.id === selectedPkg) ?? packages[0];
+  const activePackage =
+    packages.find((p) => p.id === selectedPkg) ?? packages[0];
 
   return (
     <>
@@ -45,7 +53,9 @@ export function StickyPurchasePanel({
                 <span className="text-2xl font-bold">
                   {formatCurrency(activePackage?.price ?? listing.basePrice)}
                 </span>
-                <span className="text-sm text-muted-foreground">starting at</span>
+                <span className="text-sm text-muted-foreground">
+                  starting at
+                </span>
               </div>
             </div>
 
@@ -90,7 +100,9 @@ export function StickyPurchasePanel({
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <RotateCcw className="h-4 w-4" />
                 {activePackage?.revisions ?? listing.revisions} revision
-                {(activePackage?.revisions ?? listing.revisions) !== 1 ? "s" : ""}
+                {(activePackage?.revisions ?? listing.revisions) !== 1
+                  ? "s"
+                  : ""}
               </div>
             </div>
 
@@ -138,7 +150,9 @@ export function StickyPurchasePanel({
             <Heart
               className={cn(
                 "h-5 w-5",
-                isFavorited ? "fill-red-500 text-red-500" : "text-muted-foreground",
+                isFavorited
+                  ? "fill-red-500 text-red-500"
+                  : "text-muted-foreground",
               )}
             />
           </button>

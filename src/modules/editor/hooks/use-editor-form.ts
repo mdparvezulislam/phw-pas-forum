@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
 import type { JSONContent } from "@tiptap/core";
+import { useCallback, useRef, useState } from "react";
 import { generatePlainText } from "@/modules/editor/utils/content";
 
 interface EditorSubmitOptions {

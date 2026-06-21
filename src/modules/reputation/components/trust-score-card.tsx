@@ -43,12 +43,7 @@ export function TrustScoreCard({
         {trustScore}
       </div>
       <div>
-        <div
-          className={cn(
-            "text-sm font-semibold",
-            getScoreColor(trustScore),
-          )}
-        >
+        <div className={cn("text-sm font-semibold", getScoreColor(trustScore))}>
           {getScoreLabel(trustScore)}
         </div>
         <div className="text-xs text-muted-foreground">Trust Score</div>

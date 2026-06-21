@@ -2,12 +2,12 @@ export interface BillingProvider {
   createCheckoutSession(
     userId: string,
     planId: string,
-    cycle: "MONTHLY" | "YEARLY" | "LIFETIME"
+    cycle: "MONTHLY" | "YEARLY" | "LIFETIME",
   ): Promise<{ checkoutUrl: string; sessionId: string }>;
   cancelSubscription(subscriptionId: string): Promise<boolean>;
   handleWebhook(
     payload: any,
-    signature: string
+    signature: string,
   ): Promise<{ success: boolean; eventType: string; data: any }>;
 }
 
@@ -15,7 +15,7 @@ export class MockBillingProvider implements BillingProvider {
   async createCheckoutSession(
     userId: string,
     planId: string,
-    cycle: "MONTHLY" | "YEARLY" | "LIFETIME"
+    cycle: "MONTHLY" | "YEARLY" | "LIFETIME",
   ): Promise<{ checkoutUrl: string; sessionId: string }> {
     // Generate a mock checkout session ID
     const sessionId = `mock_sess_${crypto.randomUUID().replace(/-/g, "")}`;
@@ -31,7 +31,7 @@ export class MockBillingProvider implements BillingProvider {
 
   async handleWebhook(
     payload: any,
-    signature: string
+    signature: string,
   ): Promise<{ success: boolean; eventType: string; data: any }> {
     // Simulate webhook handling
     return {

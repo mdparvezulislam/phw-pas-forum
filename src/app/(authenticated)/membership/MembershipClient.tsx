@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import { MembershipCard, PricingTable } from "@/modules/premium/components";
-import { selectPlanAction } from "@/modules/premium/actions/premium";
 import { AlertCircle, ShieldCheck, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { selectPlanAction } from "@/modules/premium/actions/premium";
+import { MembershipCard, PricingTable } from "@/modules/premium/components";
 
 interface Benefit {
   planId: string;
@@ -28,12 +28,18 @@ interface MembershipClientProps {
   benefits: Benefit[];
 }
 
-export default function MembershipClient({ plans, benefits }: MembershipClientProps) {
+export default function MembershipClient({
+  plans,
+  benefits,
+}: MembershipClientProps) {
   const [loadingPlanId, setLoadingPlanId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSelectPlan = async (planId: string, cycle: "MONTHLY" | "YEARLY" | "LIFETIME") => {
+  const handleSelectPlan = async (
+    planId: string,
+    cycle: "MONTHLY" | "YEARLY" | "LIFETIME",
+  ) => {
     setLoadingPlanId(planId);
     setError(null);
 
@@ -43,7 +49,9 @@ export default function MembershipClient({ plans, benefits }: MembershipClientPr
       // In our mock provider, we redirect to /membership/checkout-success?session_id=...
       router.push(res.data.checkoutUrl);
     } else {
-      setError(res.error || "Failed to initiate purchase flow. Please try again.");
+      setError(
+        res.error || "Failed to initiate purchase flow. Please try again.",
+      );
       setLoadingPlanId(null);
     }
   };
@@ -53,13 +61,15 @@ export default function MembershipClient({ plans, benefits }: MembershipClientPr
       {/* Hero Section */}
       <div className="text-center space-y-4 max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-1.5 text-xs font-semibold text-indigo-400">
-          <Sparkles className="h-4 w-4 text-indigo-400" /> Premium Monetezation Engine Active
+          <Sparkles className="h-4 w-4 text-indigo-400" /> Premium Monetezation
+          Engine Active
         </div>
         <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
           Upgrade Your Community Experience
         </h1>
         <p className="text-base text-zinc-400 md:text-lg">
-          Join our premium plans to unlock private forums, premium guides, advanced tools, elevated limits, and special badges.
+          Join our premium plans to unlock private forums, premium guides,
+          advanced tools, elevated limits, and special badges.
         </p>
       </div>
 
@@ -96,7 +106,8 @@ export default function MembershipClient({ plans, benefits }: MembershipClientPr
             Compare Premium Features
           </h2>
           <p className="text-sm text-zinc-400">
-            Compare plans side-by-side to find the right level for your community operations.
+            Compare plans side-by-side to find the right level for your
+            community operations.
           </p>
         </div>
 

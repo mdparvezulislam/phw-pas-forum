@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Badge } from "@/db/schema/badges";
+import type { UserLevel } from "@/db/schema/user-levels";
+import type { UserReputation } from "@/db/schema/user-reputation";
 import { formatDate } from "@/lib/utils";
 import { LevelBadge } from "@/modules/reputation/components";
-import type { UserReputation } from "@/db/schema/user-reputation";
-import type { UserLevel } from "@/db/schema/user-levels";
-import type { Badge } from "@/db/schema/badges";
 
 interface PostAuthorSidebarProps {
   author: {
@@ -64,11 +64,7 @@ export function PostAuthorSidebar({ author }: PostAuthorSidebarProps) {
           {author.badges && author.badges.length > 0 && (
             <div className="mt-1 flex flex-wrap gap-0.5">
               {author.badges.slice(0, 3).map((badge) => (
-                <span
-                  key={badge.id}
-                  className="text-xs"
-                  title={badge.name}
-                >
+                <span key={badge.id} className="text-xs" title={badge.name}>
                   {badge.icon}
                 </span>
               ))}

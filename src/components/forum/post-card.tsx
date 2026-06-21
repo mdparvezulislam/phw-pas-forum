@@ -1,9 +1,17 @@
 "use client";
 
+import {
+  Copy,
+  Eye,
+  EyeOff,
+  Flag,
+  History,
+  MoreHorizontal,
+  Quote,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
-import { formatDateRelative } from "@/lib/utils";
-import { cn } from "@/lib/utils";
-import { MoreHorizontal, Flag, Trash2, EyeOff, Eye, History, Quote, Copy } from "lucide-react";
+import { cn, formatDateRelative } from "@/lib/utils";
 
 interface PostCardProps {
   post: {
@@ -31,9 +39,16 @@ interface PostCardProps {
   onQuote?: (postId: string, content: string) => void;
 }
 
-export function PostCard({ post, isOP, isOwner, onDelete, onQuote }: PostCardProps) {
+export function PostCard({
+  post,
+  isOP,
+  isOwner,
+  onDelete,
+  onQuote,
+}: PostCardProps) {
   const [openMenu, setOpenMenu] = useState(false);
-  const authorName = post.author.displayName ?? post.author.username ?? "Unknown";
+  const authorName =
+    post.author.displayName ?? post.author.username ?? "Unknown";
   const role = post.author.role?.name;
   const reputation = post.author.userReputation?.points ?? 0;
 
@@ -51,7 +66,9 @@ export function PostCard({ post, isOP, isOwner, onDelete, onQuote }: PostCardPro
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5 text-lg font-bold">
               {authorName[0]?.toUpperCase()}
             </div>
-            <p className="mt-2 text-sm font-semibold leading-tight">{authorName}</p>
+            <p className="mt-2 text-sm font-semibold leading-tight">
+              {authorName}
+            </p>
             {role && (
               <span className="mt-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary uppercase">
                 {role}
@@ -61,7 +78,9 @@ export function PostCard({ post, isOP, isOwner, onDelete, onQuote }: PostCardPro
           <div className="mt-3 space-y-2 text-center text-xs text-muted-foreground">
             <div className="flex items-center justify-between">
               <span>Reputation</span>
-              <span className="font-medium text-foreground">{reputation.toLocaleString()}</span>
+              <span className="font-medium text-foreground">
+                {reputation.toLocaleString()}
+              </span>
             </div>
             <div className="flex items-center justify-between">
               <span>Posts</span>
@@ -80,7 +99,9 @@ export function PostCard({ post, isOP, isOwner, onDelete, onQuote }: PostCardPro
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold truncate">{authorName}</span>
+                <span className="text-sm font-semibold truncate">
+                  {authorName}
+                </span>
                 {isOP && (
                   <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[9px] font-bold text-primary">
                     OP
@@ -92,9 +113,7 @@ export function PostCard({ post, isOP, isOwner, onDelete, onQuote }: PostCardPro
               </div>
               <div className="text-xs text-muted-foreground">
                 {formatDateRelative(post.createdAt)}
-                {post.isEdited && (
-                  <span className="ml-1">(edited)</span>
-                )}
+                {post.isEdited && <span className="ml-1">(edited)</span>}
               </div>
             </div>
 
@@ -108,7 +127,10 @@ export function PostCard({ post, isOP, isOwner, onDelete, onQuote }: PostCardPro
               </button>
               {openMenu && (
                 <>
-                  <div className="fixed inset-0 z-40" onClick={() => setOpenMenu(false)} />
+                  <div
+                    className="fixed inset-0 z-40"
+                    onClick={() => setOpenMenu(false)}
+                  />
                   <div className="absolute right-0 top-full z-50 mt-1 w-44 rounded-xl border bg-popover p-1.5 shadow-lg">
                     <button
                       onClick={() => onQuote?.(post.id, post.content)}
@@ -118,7 +140,9 @@ export function PostCard({ post, isOP, isOwner, onDelete, onQuote }: PostCardPro
                       Quote
                     </button>
                     <button
-                      onClick={() => navigator.clipboard.writeText(post.content)}
+                      onClick={() =>
+                        navigator.clipboard.writeText(post.content)
+                      }
                       className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                     >
                       <Copy className="h-3.5 w-3.5" />
@@ -156,7 +180,9 @@ export function PostCard({ post, isOP, isOwner, onDelete, onQuote }: PostCardPro
               </div>
             ) : (
               <div className="prose prose-sm dark:prose-invert max-w-none">
-                <p className="whitespace-pre-wrap text-sm leading-relaxed">{post.content}</p>
+                <p className="whitespace-pre-wrap text-sm leading-relaxed">
+                  {post.content}
+                </p>
               </div>
             )}
           </div>

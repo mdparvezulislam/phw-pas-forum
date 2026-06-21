@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { leaderboardService } from "@/services/leaderboard";
 import { LeaderboardTable } from "@/modules/reputation/components";
+import { leaderboardService } from "@/services/leaderboard";
 
 export const metadata: Metadata = {
   title: "Leaderboard",
@@ -14,9 +14,7 @@ interface LeaderboardPageProps {
   }>;
 }
 
-export default async function LeaderboardPage(
-  props: LeaderboardPageProps,
-) {
+export default async function LeaderboardPage(props: LeaderboardPageProps) {
   const searchParams = await props.searchParams;
   const category = searchParams.category ?? "reputation";
   const timeframe = (searchParams.timeframe ?? "all-time") as
@@ -24,7 +22,12 @@ export default async function LeaderboardPage(
     | "monthly"
     | "all-time";
 
-  const validCategories = ["reputation", "posts", "trophies", "badges"] as const;
+  const validCategories = [
+    "reputation",
+    "posts",
+    "trophies",
+    "badges",
+  ] as const;
   const currentCategory = validCategories.includes(category as any)
     ? (category as (typeof validCategories)[number])
     : "reputation";
@@ -46,18 +49,15 @@ export default async function LeaderboardPage(
       entries = await leaderboardService.getBadgeLeaderboard();
       break;
     default:
-      entries = await leaderboardService.getReputationLeaderboard(
-        currentTimeframe,
-      );
+      entries =
+        await leaderboardService.getReputationLeaderboard(currentTimeframe);
   }
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Leaderboard</h1>
-        <p className="text-sm text-muted-foreground">
-          Top community members
-        </p>
+        <p className="text-sm text-muted-foreground">Top community members</p>
       </div>
 
       <div className="flex flex-wrap gap-2">

@@ -1,5 +1,5 @@
+import { Clock, Eye, MessageSquare, TrendingUp, Users } from "lucide-react";
 import Link from "next/link";
-import { Clock, Eye, MessageSquare, Users, TrendingUp } from "lucide-react";
 import { formatDateRelative } from "@/lib/utils";
 
 interface ThreadSidebarProps {
@@ -14,13 +14,19 @@ interface ThreadSidebarProps {
   relatedThreads?: { title: string; slug: string; replyCount: number }[];
 }
 
-export function ThreadSidebar({ thread, participants, relatedThreads }: ThreadSidebarProps) {
+export function ThreadSidebar({
+  thread,
+  participants,
+  relatedThreads,
+}: ThreadSidebarProps) {
   return (
     <div className="space-y-4">
       {/* Thread Info */}
       <div className="overflow-hidden rounded-xl border bg-card">
         <div className="border-b px-4 py-3">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Thread Info</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Thread Info
+          </h3>
         </div>
         <div className="space-y-3 p-4">
           <div className="flex items-center justify-between text-sm">
@@ -28,21 +34,27 @@ export function ThreadSidebar({ thread, participants, relatedThreads }: ThreadSi
               <Clock className="h-3.5 w-3.5" />
               Created
             </span>
-            <span className="font-medium">{formatDateRelative(thread.createdAt)}</span>
+            <span className="font-medium">
+              {formatDateRelative(thread.createdAt)}
+            </span>
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-1.5 text-muted-foreground">
               <Eye className="h-3.5 w-3.5" />
               Views
             </span>
-            <span className="font-medium">{thread.viewCount.toLocaleString()}</span>
+            <span className="font-medium">
+              {thread.viewCount.toLocaleString()}
+            </span>
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="flex items-center gap-1.5 text-muted-foreground">
               <MessageSquare className="h-3.5 w-3.5" />
               Replies
             </span>
-            <span className="font-medium">{thread.replyCount.toLocaleString()}</span>
+            <span className="font-medium">
+              {thread.replyCount.toLocaleString()}
+            </span>
           </div>
           {thread.watchCount != null && (
             <div className="flex items-center justify-between text-sm">
@@ -50,7 +62,9 @@ export function ThreadSidebar({ thread, participants, relatedThreads }: ThreadSi
                 <Users className="h-3.5 w-3.5" />
                 Watchers
               </span>
-              <span className="font-medium">{thread.watchCount.toLocaleString()}</span>
+              <span className="font-medium">
+                {thread.watchCount.toLocaleString()}
+              </span>
             </div>
           )}
         </div>

@@ -1,9 +1,9 @@
-export { HeroSection } from "./hero-section";
 export { AnimatedCounter } from "./animated-counter";
 export { CategoryGrid } from "./category-grid";
+export { CTASection } from "./cta-section";
+export { FAQSection } from "./faq-section";
 export { FeatureGrid } from "./feature-grid";
-export { Testimonials } from "./testimonials";
+export { HeroSection } from "./hero-section";
 export { MarketplaceShowcase } from "./marketplace-showcase";
 export { PremiumSection } from "./premium-section";
-export { FAQSection } from "./faq-section";
-export { CTASection } from "./cta-section";
+export { Testimonials } from "./testimonials";

@@ -34,7 +34,7 @@ const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -42,7 +42,7 @@ const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
         className={cn(
           "relative border-b px-4 py-3",
           variantClasses[variant],
-          className
+          className,
         )}
         {...props}
       >
@@ -79,7 +79,7 @@ const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 Banner.displayName = "Banner";
 

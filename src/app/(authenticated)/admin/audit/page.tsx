@@ -1,57 +1,73 @@
 import type { Metadata } from "next";
-import { formatDateRelative } from "@/lib/utils";
+import { desc, eq } from "drizzle-orm";
+import { ScrollText } from "lucide-react";
+import { getDatabase, schema } from "@/db";
+import {
+  PageHeader,
+  KpiCard,
+  SectionCard,
+  AuditViewer,
+  type AuditRow,
+} from "@/components/admin";
 
-export const metadata: Metadata = {
-  title: "Audit Log",
-};
+export const metadata: Metadata = { title: "Audit Log" };
 
 export default async function AdminAuditPage() {
-
-  const { getDatabase, schema } = await import("@/db");
-  const { desc } = await import("drizzle-orm");
   const db = getDatabase();
-  const logs = await db.query.auditLogs.findMany({
-    orderBy: [desc(schema.auditLogs.createdAt)],
-    limit: 100,
-  });
+
+  const logs = await db
+    .select({
+      id: schema.auditLogs.id,
+      action: schema.auditLogs.action,
+      resource: schema.auditLogs.resource,
+      resourceId: schema.auditLogs.resourceId,
+      createdAt: schema.auditLogs.createdAt,
+      actorName: schema.users.displayName,
+      actorUsername: schema.users.username,
+    })
+    .from(schema.auditLogs)
+    .leftJoin(schema.users, eq(schema.auditLogs.userId, schema.users.id))
+    .orderBy(desc(schema.auditLogs.createdAt))
+    .limit(200);
+
+  const rows: AuditRow[] = logs.map((l) => ({
+    id: l.id,
+    action: l.action,
+    actorName: l.actorName ?? l.actorUsername ?? null,
+    resource: l.resource,
+    resourceId: l.resourceId,
+    createdAt: l.createdAt.toISOString(),
+  }));
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayCount = logs.filter((l) => l.createdAt >= today).length;
+  const actors = new Set(logs.map((l) => l.actorUsername).filter(Boolean)).size;
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Audit Log</h1>
-        <p className="text-sm text-muted-foreground">Track all administrative actions</p>
+      <PageHeader
+        title="Audit Log"
+        description="Every administrative and staff action, searchable and exportable."
+      />
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <KpiCard
+          title="Entries"
+          value={rows.length}
+          icon={ScrollText}
+          accent="primary"
+          description="Most recent 200 shown"
+        />
+        <KpiCard title="Today" value={todayCount} accent="info" />
+        <KpiCard title="Distinct Actors" value={actors} accent="success" />
       </div>
 
-      <div className="rounded-lg border">
-        <div className="border-b px-4 py-3">
-          <h2 className="font-semibold">Recent Activity ({logs.length})</h2>
+      <SectionCard flush>
+        <div className="p-4 sm:p-5">
+          <AuditViewer rows={rows} />
         </div>
-        {logs.length === 0 ? (
-          <div className="flex min-h-[200px] items-center justify-center">
-            <p className="text-sm text-muted-foreground">No audit log entries</p>
-          </div>
-        ) : (
-          <div className="divide-y">
-            {logs.map((log: any) => (
-              <div key={log.id} className="flex items-center justify-between px-4 py-3">
-                <div className="flex-1">
-                  <p className="text-sm font-medium">{log.action}</p>
-                  {log.metadata && (
-                    <p className="text-xs text-muted-foreground">
-                      {typeof log.metadata === "string"
-                        ? log.metadata
-                        : JSON.stringify(log.metadata).slice(0, 100)}
-                    </p>
-                  )}
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  {formatDateRelative(log.createdAt)}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      </SectionCard>
     </div>
   );
 }

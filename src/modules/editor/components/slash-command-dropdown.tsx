@@ -1,9 +1,9 @@
 "use client";
 
-import { useEditorState, type Editor } from "@tiptap/react";
+import { type Editor, useEditorState } from "@tiptap/react";
 import { useEffect, useRef } from "react";
-import type { SlashCommandItem } from "../extensions/slash-command";
 import { cn } from "@/lib/utils";
+import type { SlashCommandItem } from "../extensions/slash-command";
 
 interface SlashCommandDropdownProps {
   editor: Editor | null;
@@ -27,9 +27,9 @@ export function SlashCommandDropdown({ editor }: SlashCommandDropdownProps) {
     editor,
     selector: ({ editor: ed }) => {
       if (!ed) return null;
-      const pluginState = (ed.state as any).plugins?.find(
-        (p: any) => p?.key?.key === SLASH_COMMAND_PLUGIN_KEY,
-      )?.getState(ed.state);
+      const pluginState = (ed.state as any).plugins
+        ?.find((p: any) => p?.key?.key === SLASH_COMMAND_PLUGIN_KEY)
+        ?.getState(ed.state);
       if (!pluginState || !pluginState.active) return null;
       return pluginState as unknown as SlashCommandState;
     },
@@ -45,7 +45,9 @@ export function SlashCommandDropdown({ editor }: SlashCommandDropdownProps) {
   // Scroll selected item into view
   useEffect(() => {
     if (!state?.active || !menuRef.current) return;
-    const selected = menuRef.current.children[state.index] as HTMLElement | undefined;
+    const selected = menuRef.current.children[state.index] as
+      | HTMLElement
+      | undefined;
     selected?.scrollIntoView({ block: "nearest" });
   }, [state?.index]);
 
@@ -56,12 +58,8 @@ export function SlashCommandDropdown({ editor }: SlashCommandDropdownProps) {
   const coords = editor?.view.coordsAtPos(from);
   const editorRect = editor?.view.dom.getBoundingClientRect();
 
-  const top = coords
-    ? coords.bottom - (editorRect?.top ?? 0) + 4
-    : 0;
-  const left = coords
-    ? coords.left - (editorRect?.left ?? 0)
-    : 0;
+  const top = coords ? coords.bottom - (editorRect?.top ?? 0) + 4 : 0;
+  const left = coords ? coords.left - (editorRect?.left ?? 0) : 0;
 
   return (
     <div

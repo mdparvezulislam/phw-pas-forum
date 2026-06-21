@@ -1,20 +1,20 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
-  User,
-  LayoutDashboard,
-  MessageSquare,
   Bell,
-  ShoppingBag,
-  Settings,
-  LogOut,
-  Medal,
   Bookmark,
   Eye,
+  LayoutDashboard,
+  LogOut,
+  Medal,
+  MessageSquare,
+  Settings,
+  ShoppingBag,
+  User,
 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { logout } from "@/modules/auth/actions";
 
@@ -59,7 +59,11 @@ export function UserDropdown({ user, className }: UserDropdownProps) {
       >
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5 text-xs font-bold">
           {user.image ? (
-            <img src={user.image} alt={name} className="h-full w-full rounded-full object-cover" />
+            <img
+              src={user.image}
+              alt={name}
+              className="h-full w-full rounded-full object-cover"
+            />
           ) : (
             name[0]?.toUpperCase()
           )}
@@ -76,18 +80,42 @@ export function UserDropdown({ user, className }: UserDropdownProps) {
 
           {/* Links */}
           <div className="p-1.5">
-            <DropdownItem href="/dashboard" icon={LayoutDashboard} label="Dashboard" />
-            <DropdownItem href={`/profile/${user.username}`} icon={User} label="Profile" />
-            <DropdownItem href="/notifications" icon={Bell} label="Notifications" />
-            <DropdownItem href="/conversations" icon={MessageSquare} label="Messages" />
+            <DropdownItem
+              href="/dashboard"
+              icon={LayoutDashboard}
+              label="Dashboard"
+            />
+            <DropdownItem
+              href={`/profile/${user.username}`}
+              icon={User}
+              label="Profile"
+            />
+            <DropdownItem
+              href="/notifications"
+              icon={Bell}
+              label="Notifications"
+            />
+            <DropdownItem
+              href="/conversations"
+              icon={MessageSquare}
+              label="Messages"
+            />
             <DropdownItem href="/bookmarks" icon={Bookmark} label="Bookmarks" />
             <DropdownItem href="/watched" icon={Eye} label="Watched" />
             <DropdownItem href="/orders" icon={ShoppingBag} label="Orders" />
-            <DropdownItem href="/achievements" icon={Medal} label="Achievements" />
+            <DropdownItem
+              href="/achievements"
+              icon={Medal}
+              label="Achievements"
+            />
           </div>
 
           <div className="border-t p-1.5">
-            <DropdownItem href="/settings/profile" icon={Settings} label="Settings" />
+            <DropdownItem
+              href="/settings/profile"
+              icon={Settings}
+              label="Settings"
+            />
             <button
               onClick={handleLogout}
               className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-red-500 transition-colors hover:bg-red-500/10"

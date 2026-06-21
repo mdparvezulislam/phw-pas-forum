@@ -1,9 +1,9 @@
 "use client";
 
+import { AlertCircle, Check, Edit3, Loader2, X } from "lucide-react";
 import { useState } from "react";
-import { reviewSubmissionAction } from "../actions/moderation";
-import { Check, X, Edit3, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui";
+import { reviewSubmissionAction } from "../actions/moderation";
 
 interface ApprovalPanelProps {
   submissionId: string;
@@ -21,7 +21,11 @@ export function ApprovalPanel({ submissionId, onSuccess }: ApprovalPanelProps) {
   const handleApprove = async () => {
     setLoading(true);
     setError(null);
-    const res = await reviewSubmissionAction(submissionId, "APPROVE", notes || "Approved by Moderator");
+    const res = await reviewSubmissionAction(
+      submissionId,
+      "APPROVE",
+      notes || "Approved by Moderator",
+    );
     setLoading(false);
     if (res.success) {
       if (onSuccess) onSuccess();
@@ -38,7 +42,12 @@ export function ApprovalPanel({ submissionId, onSuccess }: ApprovalPanelProps) {
     }
     setLoading(true);
     setError(null);
-    const res = await reviewSubmissionAction(submissionId, "REJECT", notes, rejectionReason);
+    const res = await reviewSubmissionAction(
+      submissionId,
+      "REJECT",
+      notes,
+      rejectionReason,
+    );
     setLoading(false);
     if (res.success) {
       if (onSuccess) onSuccess();
@@ -55,7 +64,11 @@ export function ApprovalPanel({ submissionId, onSuccess }: ApprovalPanelProps) {
     }
     setLoading(true);
     setError(null);
-    const res = await reviewSubmissionAction(submissionId, "REQUEST_CHANGES", notes);
+    const res = await reviewSubmissionAction(
+      submissionId,
+      "REQUEST_CHANGES",
+      notes,
+    );
     setLoading(false);
     if (res.success) {
       if (onSuccess) onSuccess();

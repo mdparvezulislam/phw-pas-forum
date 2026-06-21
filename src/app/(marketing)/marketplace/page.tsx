@@ -1,14 +1,21 @@
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Shield,
+  Star,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Shield, Zap, TrendingUp, Star } from "lucide-react";
 import {
-  MarketplaceHero,
-  MarketplaceCategoryCard,
   FeaturedListings,
-  TrendingListings,
-  MarketplaceLeaderboard,
   ListingGrid,
+  MarketplaceCategoryCard,
   MarketplaceEmptyState,
+  MarketplaceHero,
+  MarketplaceLeaderboard,
+  TrendingListings,
 } from "@/components/marketplace";
 import { getMarketplaceHomepageData } from "@/services/marketplace";
 
@@ -46,10 +53,7 @@ export default async function MarketplacePage() {
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {data.categories.map((category) => (
-              <MarketplaceCategoryCard
-                key={category.id}
-                category={category}
-              />
+              <MarketplaceCategoryCard key={category.id} category={category} />
             ))}
           </div>
         </section>
@@ -95,7 +99,8 @@ export default async function MarketplacePage() {
         <div className="px-6 py-10 text-center sm:px-10">
           <h2 className="text-2xl font-bold">Ready to Start Selling?</h2>
           <p className="mt-2 text-muted-foreground">
-            Join thousands of sellers offering premium services to the community.
+            Join thousands of sellers offering premium services to the
+            community.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Link

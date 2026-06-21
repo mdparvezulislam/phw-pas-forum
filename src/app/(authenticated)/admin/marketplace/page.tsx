@@ -1,8 +1,8 @@
 "use client";
 
+import { Check, Key, Settings, ShieldAlert, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui";
-import { Check, ShieldAlert, ShieldCheck, Settings, Key } from "lucide-react";
 
 export default function AdminMarketplaceSettings() {
   const [success, setSuccess] = useState(false);
@@ -21,16 +21,20 @@ export default function AdminMarketplaceSettings() {
   return (
     <form onSubmit={handleSave} className="space-y-8">
       <div>
-        <h2 className="text-xl font-bold">Marketplace Governance Configuration</h2>
+        <h2 className="text-xl font-bold">
+          Marketplace Governance Configuration
+        </h2>
         <p className="text-sm text-muted-foreground font-sans">
-          Tune automated risk scoring thresholds, compliance checklists, and seller verification rules.
+          Tune automated risk scoring thresholds, compliance checklists, and
+          seller verification rules.
         </p>
       </div>
 
       {success && (
         <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-2xl text-sm flex items-center gap-2 animate-pulse font-sans">
           <Check className="w-4 h-4" />
-          Settings updated successfully! Configurations applied dynamically to new listing submissions.
+          Settings updated successfully! Configurations applied dynamically to
+          new listing submissions.
         </div>
       )}
 
@@ -42,7 +46,8 @@ export default function AdminMarketplaceSettings() {
             iModBot Compliance Baseline
           </h3>
           <p className="text-xs text-muted-foreground font-sans">
-            Configure the baseline rules that marketplace threads must meet to receive a passing compliance score.
+            Configure the baseline rules that marketplace threads must meet to
+            receive a passing compliance score.
           </p>
 
           <div className="space-y-4 pt-2">
@@ -59,7 +64,9 @@ export default function AdminMarketplaceSettings() {
                 onChange={(e) => setMinWords(Number(e.target.value))}
                 className="w-full h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
               />
-              <span className="text-[10px] text-muted-foreground font-sans block mt-1">Threads below this are marked non-compliant.</span>
+              <span className="text-[10px] text-muted-foreground font-sans block mt-1">
+                Threads below this are marked non-compliant.
+              </span>
             </div>
 
             <div className="flex items-center justify-between pt-2">
@@ -67,7 +74,9 @@ export default function AdminMarketplaceSettings() {
                 <label className="block text-xs font-semibold text-foreground">
                   Media Attachment Required
                 </label>
-                <span className="text-[10px] text-muted-foreground font-sans">Force presence of at least one image or video.</span>
+                <span className="text-[10px] text-muted-foreground font-sans">
+                  Force presence of at least one image or video.
+                </span>
               </div>
               <input
                 type="checkbox"
@@ -86,7 +95,8 @@ export default function AdminMarketplaceSettings() {
             Scoring Risk Tolerances
           </h3>
           <p className="text-xs text-muted-foreground font-sans">
-            Define limits for link density and text parsing weights that raise thread risk scores.
+            Define limits for link density and text parsing weights that raise
+            thread risk scores.
           </p>
 
           <div className="space-y-4 pt-2">
@@ -103,7 +113,9 @@ export default function AdminMarketplaceSettings() {
                 onChange={(e) => setMaxLinks(Number(e.target.value))}
                 className="w-full h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
               />
-              <span className="text-[10px] text-muted-foreground font-sans block mt-1">Exceeding this threshold penalizes risk index.</span>
+              <span className="text-[10px] text-muted-foreground font-sans block mt-1">
+                Exceeding this threshold penalizes risk index.
+              </span>
             </div>
 
             <div>
@@ -119,7 +131,9 @@ export default function AdminMarketplaceSettings() {
                 onChange={(e) => setSpamScoreWeight(Number(e.target.value))}
                 className="w-full h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
               />
-              <span className="text-[10px] text-muted-foreground font-sans block mt-1">Impact weight on overall automated risk check.</span>
+              <span className="text-[10px] text-muted-foreground font-sans block mt-1">
+                Impact weight on overall automated risk check.
+              </span>
             </div>
           </div>
         </div>
@@ -131,7 +145,8 @@ export default function AdminMarketplaceSettings() {
             Vendor Access Policies
           </h3>
           <p className="text-xs text-muted-foreground font-sans">
-            Control automated vs. moderator verification triggers based on community trust level and badges.
+            Control automated vs. moderator verification triggers based on
+            community trust level and badges.
           </p>
 
           <div className="space-y-4 pt-2">
@@ -141,7 +156,8 @@ export default function AdminMarketplaceSettings() {
                   Auto-approve VIP Thread Submissions
                 </label>
                 <span className="text-[10px] text-muted-foreground font-sans">
-                  Skip the moderation queue entirely if the thread creator is a VIP or Staff.
+                  Skip the moderation queue entirely if the thread creator is a
+                  VIP or Staff.
                 </span>
               </div>
               <input

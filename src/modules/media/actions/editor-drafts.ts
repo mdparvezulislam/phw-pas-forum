@@ -1,6 +1,6 @@
 "use server";
 
-import { and, eq, desc } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
 import { requireAuth } from "@/modules/auth/guards";
 
@@ -22,7 +22,9 @@ export async function saveEditorDraftAction(input: {
   const existing = await db.query.editorDrafts.findFirst({
     where: and(
       eq(schema.editorDrafts.userId, user.id),
-      input.threadId ? eq(schema.editorDrafts.threadId, input.threadId) : undefined,
+      input.threadId
+        ? eq(schema.editorDrafts.threadId, input.threadId)
+        : undefined,
       input.postId ? eq(schema.editorDrafts.postId, input.postId) : undefined,
     ),
   });
@@ -54,14 +56,18 @@ export async function saveEditorDraftAction(input: {
 export async function getEditorDraftAction(input: {
   threadId?: string;
   postId?: string;
-}): Promise<ActionResponse<{ content: string; title: string | null; updatedAt: string }>> {
+}): Promise<
+  ActionResponse<{ content: string; title: string | null; updatedAt: string }>
+> {
   const user = await requireAuth();
   const db = getDatabase();
 
   const draft = await db.query.editorDrafts.findFirst({
     where: and(
       eq(schema.editorDrafts.userId, user.id),
-      input.threadId ? eq(schema.editorDrafts.threadId, input.threadId) : undefined,
+      input.threadId
+        ? eq(schema.editorDrafts.threadId, input.threadId)
+        : undefined,
       input.postId ? eq(schema.editorDrafts.postId, input.postId) : undefined,
     ),
     orderBy: desc(schema.editorDrafts.updatedAt),
@@ -93,7 +99,9 @@ export async function deleteEditorDraftAction(input: {
     .where(
       and(
         eq(schema.editorDrafts.userId, user.id),
-        input.threadId ? eq(schema.editorDrafts.threadId, input.threadId) : undefined,
+        input.threadId
+          ? eq(schema.editorDrafts.threadId, input.threadId)
+          : undefined,
         input.postId ? eq(schema.editorDrafts.postId, input.postId) : undefined,
       ),
     );

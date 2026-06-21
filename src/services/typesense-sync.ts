@@ -1,9 +1,12 @@
 import "server-only";
 import { and, eq, inArray } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
+import type {
+  SearchIndexAction,
+  SearchIndexEntityType,
+} from "@/db/schema/search-index-jobs";
 import { search as typesenseClient } from "@/lib/typesense";
 import { auditService } from "./audit";
-import type { SearchIndexEntityType, SearchIndexAction } from "@/db/schema/search-index-jobs";
 
 export const search = typesenseClient;
 
@@ -119,61 +122,61 @@ export class TypesenseSyncService {
         ],
         default_sorting_field: "createdAt",
       },
-       {
-         name: COLLECTIONS.MARKETPLACE_LISTINGS,
-         fields: [
-           { name: "id", type: "string" },
-           { name: "title", type: "string" },
-           { name: "slug", type: "string" },
-           { name: "short_description", type: "string" },
-           { name: "seller_id", type: "string" },
-           { name: "seller_name", type: "string" },
-           { name: "category_id", type: "string" },
-           { name: "category_name", type: "string" },
-           { name: "listing_type", type: "string" },
-           { name: "status", type: "string" },
-           { name: "visibility", type: "string", facet: true },
-           { name: "base_price", type: "int32" },
-           { name: "delivery_days", type: "int32" },
-           { name: "revisions", type: "int32" },
-           { name: "views", type: "int32" },
-           { name: "favorites", type: "int32" },
-           { name: "sales", type: "int32" },
-           { name: "rating", type: "int32" },
-           { name: "review_count", type: "int32" },
-           { name: "featured", type: "bool", facet: true },
-           { name: "created_at", type: "int64" },
-         ],
-         default_sorting_field: "created_at",
-       },
-       {
-         name: COLLECTIONS.MARKETPLACE_SELLERS,
-         fields: [
-           { name: "id", type: "string" },
-           { name: "user_id", type: "string" },
-           { name: "username", type: "string" },
-           { name: "display_name", type: "string" },
-           { name: "bio", type: "string" },
-           { name: "avatar", type: "string" },
-           { name: "website", type: "string" },
-           { name: "telegram", type: "string" },
-           { name: "discord", type: "string" },
-           { name: "joined_marketplace_at", type: "int64" },
-           { name: "verification_status", type: "string", facet: true },
-           { name: "total_sales", type: "int32" },
-           { name: "total_reviews", type: "int32" },
-           { name: "average_rating", type: "int32" },
-           { name: "trust_score", type: "int32" },
-           { name: "response_rate", type: "int32" },
-           { name: "response_time", type: "int32" },
-           { name: "completion_rate", type: "int32" },
-           { name: "is_verified_seller", type: "bool" },
-           { name: "is_top_seller", type: "bool" },
-           { name: "created_at", type: "int64" },
-         ],
-         default_sorting_field: "created_at",
-       }
-     ];
+      {
+        name: COLLECTIONS.MARKETPLACE_LISTINGS,
+        fields: [
+          { name: "id", type: "string" },
+          { name: "title", type: "string" },
+          { name: "slug", type: "string" },
+          { name: "short_description", type: "string" },
+          { name: "seller_id", type: "string" },
+          { name: "seller_name", type: "string" },
+          { name: "category_id", type: "string" },
+          { name: "category_name", type: "string" },
+          { name: "listing_type", type: "string" },
+          { name: "status", type: "string" },
+          { name: "visibility", type: "string", facet: true },
+          { name: "base_price", type: "int32" },
+          { name: "delivery_days", type: "int32" },
+          { name: "revisions", type: "int32" },
+          { name: "views", type: "int32" },
+          { name: "favorites", type: "int32" },
+          { name: "sales", type: "int32" },
+          { name: "rating", type: "int32" },
+          { name: "review_count", type: "int32" },
+          { name: "featured", type: "bool", facet: true },
+          { name: "created_at", type: "int64" },
+        ],
+        default_sorting_field: "created_at",
+      },
+      {
+        name: COLLECTIONS.MARKETPLACE_SELLERS,
+        fields: [
+          { name: "id", type: "string" },
+          { name: "user_id", type: "string" },
+          { name: "username", type: "string" },
+          { name: "display_name", type: "string" },
+          { name: "bio", type: "string" },
+          { name: "avatar", type: "string" },
+          { name: "website", type: "string" },
+          { name: "telegram", type: "string" },
+          { name: "discord", type: "string" },
+          { name: "joined_marketplace_at", type: "int64" },
+          { name: "verification_status", type: "string", facet: true },
+          { name: "total_sales", type: "int32" },
+          { name: "total_reviews", type: "int32" },
+          { name: "average_rating", type: "int32" },
+          { name: "trust_score", type: "int32" },
+          { name: "response_rate", type: "int32" },
+          { name: "response_time", type: "int32" },
+          { name: "completion_rate", type: "int32" },
+          { name: "is_verified_seller", type: "bool" },
+          { name: "is_top_seller", type: "bool" },
+          { name: "created_at", type: "int64" },
+        ],
+        default_sorting_field: "created_at",
+      },
+    ];
 
     for (const schemaDef of collections) {
       await typesenseClient.createCollection(schemaDef as any);
@@ -186,7 +189,7 @@ export class TypesenseSyncService {
   async queueIndexJob(
     entityType: SearchIndexEntityType,
     entityId: string,
-    action: SearchIndexAction
+    action: SearchIndexAction,
   ): Promise<void> {
     const db = getDatabase();
     await db.insert(schema.searchIndexJobs).values({
@@ -198,7 +201,10 @@ export class TypesenseSyncService {
 
     // Trigger queue processing asynchronously in the background
     this.processQueue().catch((error) => {
-      console.error("[TypesenseSync] Background queue processing failed:", error);
+      console.error(
+        "[TypesenseSync] Background queue processing failed:",
+        error,
+      );
     });
   }
 
@@ -268,7 +274,7 @@ export class TypesenseSyncService {
     // Delete existing collection first
     try {
       await typesenseClient.deleteCollection(collection);
-    } catch { }
+    } catch {}
 
     // Initialize collections again
     await this.initializeCollections();
@@ -276,69 +282,103 @@ export class TypesenseSyncService {
     // Fetch and index in batches
     if (entityType === "USER") {
       const records = await db.query.users.findMany();
-      const docs = await Promise.all(records.map(r => this.buildDocument("USER", r.id)));
+      const docs = await Promise.all(
+        records.map((r) => this.buildDocument("USER", r.id)),
+      );
       const filtered = docs.filter(Boolean) as any[];
-      if (filtered.length > 0) await typesenseClient.indexDocuments(collection, filtered);
+      if (filtered.length > 0)
+        await typesenseClient.indexDocuments(collection, filtered);
     } else if (entityType === "THREAD") {
       const records = await db.query.threads.findMany();
-      const docs = await Promise.all(records.map(r => this.buildDocument("THREAD", r.id)));
+      const docs = await Promise.all(
+        records.map((r) => this.buildDocument("THREAD", r.id)),
+      );
       const filtered = docs.filter(Boolean) as any[];
-      if (filtered.length > 0) await typesenseClient.indexDocuments(collection, filtered);
+      if (filtered.length > 0)
+        await typesenseClient.indexDocuments(collection, filtered);
     } else if (entityType === "POST") {
       const records = await db.query.posts.findMany();
-      const docs = await Promise.all(records.map(r => this.buildDocument("POST", r.id)));
+      const docs = await Promise.all(
+        records.map((r) => this.buildDocument("POST", r.id)),
+      );
       const filtered = docs.filter(Boolean) as any[];
-      if (filtered.length > 0) await typesenseClient.indexDocuments(collection, filtered);
+      if (filtered.length > 0)
+        await typesenseClient.indexDocuments(collection, filtered);
     } else if (entityType === "FORUM") {
       const records = await db.query.forums.findMany();
-      const docs = await Promise.all(records.map(r => this.buildDocument("FORUM", r.id)));
+      const docs = await Promise.all(
+        records.map((r) => this.buildDocument("FORUM", r.id)),
+      );
       const filtered = docs.filter(Boolean) as any[];
-      if (filtered.length > 0) await typesenseClient.indexDocuments(collection, filtered);
+      if (filtered.length > 0)
+        await typesenseClient.indexDocuments(collection, filtered);
     } else if (entityType === "BADGE") {
       const records = await db.query.badges.findMany();
-      const docs = await Promise.all(records.map(r => this.buildDocument("BADGE", r.id)));
+      const docs = await Promise.all(
+        records.map((r) => this.buildDocument("BADGE", r.id)),
+      );
       const filtered = docs.filter(Boolean) as any[];
-      if (filtered.length > 0) await typesenseClient.indexDocuments(collection, filtered);
+      if (filtered.length > 0)
+        await typesenseClient.indexDocuments(collection, filtered);
     } else if (entityType === "TROPHY") {
       const records = await db.query.trophies.findMany();
-      const docs = await Promise.all(records.map(r => this.buildDocument("TROPHY", r.id)));
+      const docs = await Promise.all(
+        records.map((r) => this.buildDocument("TROPHY", r.id)),
+      );
       const filtered = docs.filter(Boolean) as any[];
-      if (filtered.length > 0) await typesenseClient.indexDocuments(collection, filtered);
+      if (filtered.length > 0)
+        await typesenseClient.indexDocuments(collection, filtered);
     } else if (entityType === "CONVERSATION_MESSAGE") {
       const records = await db.query.conversationMessages.findMany();
-      const docs = await Promise.all(records.map(r => this.buildDocument("CONVERSATION_MESSAGE", r.id)));
+      const docs = await Promise.all(
+        records.map((r) => this.buildDocument("CONVERSATION_MESSAGE", r.id)),
+      );
       const filtered = docs.filter(Boolean) as any[];
-      if (filtered.length > 0) await typesenseClient.indexDocuments(collection, filtered);
+      if (filtered.length > 0)
+        await typesenseClient.indexDocuments(collection, filtered);
     }
   }
 
   // Helpers
   private getCollectionName(type: SearchIndexEntityType): string {
     switch (type) {
-      case "USER": return COLLECTIONS.USERS;
-      case "THREAD": return COLLECTIONS.THREADS;
-      case "POST": return COLLECTIONS.POSTS;
-      case "FORUM": return COLLECTIONS.FORUMS;
-      case "BADGE": return COLLECTIONS.BADGES;
-      case "TROPHY": return COLLECTIONS.TROPHIES;
-      case "CONVERSATION_MESSAGE": return COLLECTIONS.CONVERSATION_MESSAGES;
-      case "MARKETPLACE_LISTING": return COLLECTIONS.MARKETPLACE_LISTINGS;
-      case "MARKETPLACE_SELLER": return COLLECTIONS.MARKETPLACE_SELLERS;
-      default: throw new Error(`Unknown entity type: ${type}`);
+      case "USER":
+        return COLLECTIONS.USERS;
+      case "THREAD":
+        return COLLECTIONS.THREADS;
+      case "POST":
+        return COLLECTIONS.POSTS;
+      case "FORUM":
+        return COLLECTIONS.FORUMS;
+      case "BADGE":
+        return COLLECTIONS.BADGES;
+      case "TROPHY":
+        return COLLECTIONS.TROPHIES;
+      case "CONVERSATION_MESSAGE":
+        return COLLECTIONS.CONVERSATION_MESSAGES;
+      case "MARKETPLACE_LISTING":
+        return COLLECTIONS.MARKETPLACE_LISTINGS;
+      case "MARKETPLACE_SELLER":
+        return COLLECTIONS.MARKETPLACE_SELLERS;
+      default:
+        throw new Error(`Unknown entity type: ${type}`);
     }
   }
 
-  private async buildDocument(type: SearchIndexEntityType, id: string): Promise<Record<string, any> | null> {
+  private async buildDocument(
+    type: SearchIndexEntityType,
+    id: string,
+  ): Promise<Record<string, any> | null> {
     const db = getDatabase();
 
     if (type === "USER") {
-      const record = await db.query.users.findFirst({
+      const record = (await db.query.users.findFirst({
         where: eq(schema.users.id, id),
         with: {
           badges: true,
           reputation: true,
         } as any,
-      }) as any;
+      })) as any;
       if (!record) return null;
 
       return {
@@ -353,7 +393,7 @@ export class TypesenseSyncService {
     }
 
     if (type === "THREAD") {
-      const record = await db.query.threads.findFirst({
+      const record = (await db.query.threads.findFirst({
         where: eq(schema.threads.id, id),
         with: {
           author: true,
@@ -364,7 +404,7 @@ export class TypesenseSyncService {
           },
           tags: true,
         } as any,
-      }) as any;
+      })) as any;
       if (!record || record.status !== "PUBLISHED") return null;
 
       return {
@@ -373,7 +413,10 @@ export class TypesenseSyncService {
         slug: record.slug,
         content: record.content,
         tags: record.tags?.map((t: any) => t.tag) ?? [],
-        author: (record as any).author?.displayName ?? (record as any).author?.username ?? "Unknown",
+        author:
+          (record as any).author?.displayName ??
+          (record as any).author?.username ??
+          "Unknown",
         authorId: record.authorId,
         forum: (record as any).forum?.title ?? "General",
         forumId: record.forumId,
@@ -389,7 +432,7 @@ export class TypesenseSyncService {
     }
 
     if (type === "POST") {
-      const record = await db.query.posts.findFirst({
+      const record = (await db.query.posts.findFirst({
         where: eq(schema.posts.id, id),
         with: {
           author: true,
@@ -403,13 +446,21 @@ export class TypesenseSyncService {
             },
           },
         } as any,
-      }) as any;
-      if (!record || record.status !== "PUBLISHED" || (record as any).thread?.status !== "PUBLISHED") return null;
+      })) as any;
+      if (
+        !record ||
+        record.status !== "PUBLISHED" ||
+        (record as any).thread?.status !== "PUBLISHED"
+      )
+        return null;
 
       return {
         id: record.id,
         content: record.content,
-        author: (record as any).author?.displayName ?? (record as any).author?.username ?? "Unknown",
+        author:
+          (record as any).author?.displayName ??
+          (record as any).author?.username ??
+          "Unknown",
         authorId: record.authorId,
         threadId: record.threadId,
         threadTitle: (record as any).thread?.title ?? "",
@@ -454,9 +505,9 @@ export class TypesenseSyncService {
     }
 
     if (type === "TROPHY") {
-      const record = await db.query.trophies.findFirst({
+      const record = (await db.query.trophies.findFirst({
         where: eq(schema.trophies.id, id),
-      }) as any;
+      })) as any;
       if (!record) return null;
 
       return {
@@ -487,7 +538,10 @@ export class TypesenseSyncService {
 
       // Find participants
       const parts = await db.query.conversationParticipants.findMany({
-        where: eq(schema.conversationParticipants.conversationId, record.conversationId),
+        where: eq(
+          schema.conversationParticipants.conversationId,
+          record.conversationId,
+        ),
       });
 
       const participantIds = parts.map((p) => p.userId);
@@ -501,75 +555,75 @@ export class TypesenseSyncService {
         createdAt: record.createdAt.getTime(),
       };
     }
-     if (type === "MARKETPLACE_LISTING") {
-       const record = await db.query.marketplaceListings.findFirst({
-         where: eq(schema.marketplaceListings.id, id),
-         with: {
-           seller: true,
-           category: true,
-         },
-       }) as any;
-       if (!record) return null;
+    if (type === "MARKETPLACE_LISTING") {
+      const record = (await db.query.marketplaceListings.findFirst({
+        where: eq(schema.marketplaceListings.id, id),
+        with: {
+          seller: true,
+          category: true,
+        },
+      })) as any;
+      if (!record) return null;
 
-       return {
-         id: record.id,
-         title: record.title,
-         slug: record.slug,
-         short_description: record.shortDescription,
-         seller_id: record.sellerId,
-         seller_name: record.seller?.displayName ?? "",
-         category_id: record.categoryId,
-         category_name: record.category?.name ?? "",
-         listing_type: record.listingType,
-         status: record.status,
-         visibility: record.visibility,
-         base_price: record.basePrice,
-         delivery_days: record.deliveryDays,
-         revisions: record.revisions,
-         views: record.views,
-         favorites: record.favorites,
-         sales: record.sales,
-         rating: Math.round((record.rating ?? 0) * 10),
-         review_count: record.reviewCount,
-         featured: record.featured,
-         created_at: record.createdAt.getTime(),
-       };
-     }
-     if (type === "MARKETPLACE_SELLER") {
-       const record = await db.query.sellerProfiles.findFirst({
-         where: eq(schema.sellerProfiles.id, id),
-         with: {
-           user: true,
-         },
-       }) as any;
-       if (!record) return null;
+      return {
+        id: record.id,
+        title: record.title,
+        slug: record.slug,
+        short_description: record.shortDescription,
+        seller_id: record.sellerId,
+        seller_name: record.seller?.displayName ?? "",
+        category_id: record.categoryId,
+        category_name: record.category?.name ?? "",
+        listing_type: record.listingType,
+        status: record.status,
+        visibility: record.visibility,
+        base_price: record.basePrice,
+        delivery_days: record.deliveryDays,
+        revisions: record.revisions,
+        views: record.views,
+        favorites: record.favorites,
+        sales: record.sales,
+        rating: Math.round((record.rating ?? 0) * 10),
+        review_count: record.reviewCount,
+        featured: record.featured,
+        created_at: record.createdAt.getTime(),
+      };
+    }
+    if (type === "MARKETPLACE_SELLER") {
+      const record = (await db.query.sellerProfiles.findFirst({
+        where: eq(schema.sellerProfiles.id, id),
+        with: {
+          user: true,
+        },
+      })) as any;
+      if (!record) return null;
 
-       return {
-         id: record.id,
-         user_id: record.userId,
-         username: record.user?.username ?? "",
-         display_name: record.displayName ?? "",
-         bio: record.bio ?? "",
-         avatar: record.avatar ?? "",
-         website: record.website ?? "",
-         telegram: record.telegram ?? "",
-         discord: record.discord ?? "",
-         joined_marketplace_at: record.joinedMarketplaceAt.getTime(),
-         verification_status: record.verificationStatus,
-         total_sales: record.totalSales,
-         total_reviews: record.totalReviews,
-         average_rating: Math.round((record.averageRating ?? 0) * 10),
-         trust_score: record.trustScore,
-         response_rate: record.responseRate,
-         response_time: record.responseTime,
-         completion_rate: record.completionRate,
-         is_verified_seller: record.isVerifiedSeller,
-         is_top_seller: record.isTopSeller,
-         created_at: record.createdAt.getTime(),
-       };
-     }
+      return {
+        id: record.id,
+        user_id: record.userId,
+        username: record.user?.username ?? "",
+        display_name: record.displayName ?? "",
+        bio: record.bio ?? "",
+        avatar: record.avatar ?? "",
+        website: record.website ?? "",
+        telegram: record.telegram ?? "",
+        discord: record.discord ?? "",
+        joined_marketplace_at: record.joinedMarketplaceAt.getTime(),
+        verification_status: record.verificationStatus,
+        total_sales: record.totalSales,
+        total_reviews: record.totalReviews,
+        average_rating: Math.round((record.averageRating ?? 0) * 10),
+        trust_score: record.trustScore,
+        response_rate: record.responseRate,
+        response_time: record.responseTime,
+        completion_rate: record.completionRate,
+        is_verified_seller: record.isVerifiedSeller,
+        is_top_seller: record.isTopSeller,
+        created_at: record.createdAt.getTime(),
+      };
+    }
 
-     return null;
+    return null;
   }
 }
 

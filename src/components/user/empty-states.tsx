@@ -1,12 +1,12 @@
 import {
+  Activity,
   Bell,
   Bookmark,
   Eye,
-  Trophy,
-  MessageSquare,
-  Activity,
   Medal,
+  MessageSquare,
   Search,
+  Trophy,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -26,7 +26,8 @@ const configs = {
   "no-notifications": {
     icon: Bell,
     title: "No notifications",
-    description: "You're all caught up! We'll let you know when something happens.",
+    description:
+      "You're all caught up! We'll let you know when something happens.",
     cta: { label: "Browse Forums", href: "/forums" },
   },
   "no-messages": {
@@ -50,7 +51,8 @@ const configs = {
   "no-activity": {
     icon: Activity,
     title: "No recent activity",
-    description: "Your activity will appear here as you engage with the community.",
+    description:
+      "Your activity will appear here as you engage with the community.",
     cta: { label: "Explore Community", href: "/forums" },
   },
   "no-achievements": {

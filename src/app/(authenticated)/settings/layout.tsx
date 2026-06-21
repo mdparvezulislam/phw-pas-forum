@@ -14,7 +14,7 @@ export default async function SettingsLayout({
 
   return (
     <div className="grid gap-8 md:grid-cols-[200px_1fr]">
-      <aside>
+      <aside className="hidden md:block">
         <SettingsSidebar />
       </aside>
       <div>{children}</div>

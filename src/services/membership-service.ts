@@ -1,9 +1,9 @@
 import "server-only";
 import { and, eq } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
+import { createEventId, emitEvent } from "@/lib/event-bus";
 import { auditService } from "@/services/audit";
 import { RoleName } from "@/types/rbac";
-import { createEventId, emitEvent } from "@/lib/event-bus";
 
 export class MembershipService {
   /**
@@ -12,7 +12,7 @@ export class MembershipService {
   async activateMembership(
     userId: string,
     planId: string,
-    cycle: "MONTHLY" | "YEARLY" | "LIFETIME"
+    cycle: "MONTHLY" | "YEARLY" | "LIFETIME",
   ): Promise<{ userMembershipId: string; subscriptionId?: string }> {
     const db = getDatabase();
 
@@ -203,7 +203,9 @@ export class MembershipService {
     });
 
     if (!membership || membership.status !== "ACTIVE") {
-      throw new Error(`Active membership ${membershipId} not found for renewal`);
+      throw new Error(
+        `Active membership ${membershipId} not found for renewal`,
+      );
     }
 
     const sub = await db.query.subscriptions.findFirst({
@@ -213,7 +215,7 @@ export class MembershipService {
 
     if (!sub) return;
 
-    let expiresAt = membership.expiresAt || new Date();
+    const expiresAt = membership.expiresAt || new Date();
     if (sub.billingCycle === "MONTHLY") {
       expiresAt.setMonth(expiresAt.getMonth() + 1);
     } else if (sub.billingCycle === "YEARLY") {
@@ -304,7 +306,7 @@ export class MembershipService {
    */
   async hasPremiumAccess(
     userId: string,
-    requiredPlanSlug: string
+    requiredPlanSlug: string,
   ): Promise<boolean> {
     const db = getDatabase();
 
@@ -341,9 +343,13 @@ export class MembershipService {
    */
   async purchaseListingBoost(
     listingId: string,
-    type: "FEATURED" | "TOP_POSITION" | "CATEGORY_SPOTLIGHT" | "HOMEPAGE_FEATURED",
+    type:
+      | "FEATURED"
+      | "TOP_POSITION"
+      | "CATEGORY_SPOTLIGHT"
+      | "HOMEPAGE_FEATURED",
     days: number,
-    userId: string
+    userId: string,
   ): Promise<string> {
     const db = getDatabase();
     const startedAt = new Date();

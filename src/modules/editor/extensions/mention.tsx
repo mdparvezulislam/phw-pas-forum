@@ -5,11 +5,7 @@ interface MentionOptions {
   HTMLAttributes: Record<string, unknown>;
   suggestion: {
     char?: string;
-    command?: (props: {
-      editor: any;
-      range: any;
-      props: MentionAttrs;
-    }) => void;
+    command?: (props: { editor: any; range: any; props: MentionAttrs }) => void;
   };
 }
 

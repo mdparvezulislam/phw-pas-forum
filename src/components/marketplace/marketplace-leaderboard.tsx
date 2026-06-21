@@ -1,5 +1,5 @@
+import { ArrowRight, Shield, ShoppingBag, Star, Trophy } from "lucide-react";
 import Link from "next/link";
-import { Trophy, ArrowRight, ShoppingBag, Star, Shield } from "lucide-react";
 import { TrustBadge } from "./trust-badge";
 
 interface LeaderboardEntry {

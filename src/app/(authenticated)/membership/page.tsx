@@ -1,11 +1,12 @@
+import type { Metadata } from "next";
 import React from "react";
 import { getDatabase, schema } from "@/db";
 import MembershipClient from "./MembershipClient";
-import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Premium Membership Plans",
-  description: "Join VIP, VIP+, or Elite plans to unlock exclusive communities, marketplace features, and special reputation benefits.",
+  description:
+    "Join VIP, VIP+, or Elite plans to unlock exclusive communities, marketplace features, and special reputation benefits.",
 };
 
 export default async function MembershipPage() {
@@ -35,7 +36,8 @@ export default async function MembershipPage() {
       {
         name: "VIP+",
         slug: "VIP_PLUS",
-        description: "Elevated messaging limits, profile covers, and free monthly boosts.",
+        description:
+          "Elevated messaging limits, profile covers, and free monthly boosts.",
         badgeName: "VIP+",
         monthlyPrice: 3999, // $39.99
         yearlyPrice: 29999, // $299.99
@@ -46,7 +48,8 @@ export default async function MembershipPage() {
       {
         name: "Elite",
         slug: "ELITE",
-        description: "Unlimited conversations, priority support, and high listing boosts.",
+        description:
+          "Unlimited conversations, priority support, and high listing boosts.",
         badgeName: "Elite",
         monthlyPrice: 9999, // $99.99
         yearlyPrice: 79999, // $799.99
@@ -57,7 +60,8 @@ export default async function MembershipPage() {
       {
         name: "Lifetime Member",
         slug: "LIFETIME",
-        description: "Maximum Elite tier features for life, with a custom glowing username.",
+        description:
+          "Maximum Elite tier features for life, with a custom glowing username.",
         badgeName: "Lifetime Member",
         monthlyPrice: 0, // Not available
         yearlyPrice: 0, // Not available
@@ -68,7 +72,10 @@ export default async function MembershipPage() {
     ];
 
     for (const planData of seededPlans) {
-      const result = await db.insert(schema.membershipPlans).values(planData).returning();
+      const result = await db
+        .insert(schema.membershipPlans)
+        .values(planData)
+        .returning();
       const plan = result[0];
 
       // Add default benefits for each plan
@@ -95,18 +102,30 @@ export default async function MembershipPage() {
           { key: "premiumForums", value: "Access to All VIP & Elite Forums" },
           { key: "extraPmLimit", value: "Unlimited Private PM Threads" },
           { key: "attachmentLimit", value: "500 MB File attachments in PMs" },
-          { key: "customSignature", value: "Custom colored username highlight" },
+          {
+            key: "customSignature",
+            value: "Custom colored username highlight",
+          },
           { key: "sellerBoost", value: "10 Promoted Listing Boosts / Month" },
-          { key: "prioritySupport", value: "Priority support and moderation queue" },
+          {
+            key: "prioritySupport",
+            value: "Priority support and moderation queue",
+          },
         ];
       } else if (plan.slug === "LIFETIME") {
         benefitsData = [
-          { key: "premiumForums", value: "All VIP & Elite Forums Access for Life" },
+          {
+            key: "premiumForums",
+            value: "All VIP & Elite Forums Access for Life",
+          },
           { key: "extraPmLimit", value: "Unlimited Private PM Threads" },
           { key: "attachmentLimit", value: "500 MB File attachments in PMs" },
           { key: "customSignature", value: "Custom glowing username style" },
           { key: "sellerBoost", value: "10 Promoted Listing Boosts / Month" },
-          { key: "badgeAssigned", value: "Special glowing Lifetime Member badge" },
+          {
+            key: "badgeAssigned",
+            value: "Special glowing Lifetime Member badge",
+          },
         ];
       }
 

@@ -1,28 +1,28 @@
-import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { formatCurrency } from "@/lib/utils";
 import {
-  TrustBadge,
-  ListingGallery,
-  PricingPackages,
-  StickyPurchasePanel,
-  SellerProfileHeader,
-  SellerStats,
-  ReviewCard,
-  RatingBreakdown,
-  MarketplaceEmptyState,
-} from "@/components/marketplace";
-import { getListingBySlug } from "@/services/marketplace";
-import {
-  Star,
-  ShoppingBag,
+  ChevronDown,
   Clock,
   Eye,
   Heart,
   MessageSquare,
-  ChevronDown,
+  ShoppingBag,
+  Star,
 } from "lucide-react";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import {
+  ListingGallery,
+  MarketplaceEmptyState,
+  PricingPackages,
+  RatingBreakdown,
+  ReviewCard,
+  SellerProfileHeader,
+  SellerStats,
+  StickyPurchasePanel,
+  TrustBadge,
+} from "@/components/marketplace";
+import { auth } from "@/lib/auth";
+import { formatCurrency } from "@/lib/utils";
+import { getListingBySlug } from "@/services/marketplace";
 
 interface ListingPageProps {
   params: Promise<{ listingSlug: string }>;
@@ -86,7 +86,9 @@ export default async function ListingDetailPage(props: ListingPageProps) {
             <div className="mt-4 flex flex-wrap items-center gap-4">
               <div className="flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5 text-sm font-bold">
-                  {(listing.seller.displayName ?? listing.seller.username ?? "?")[0]?.toUpperCase()}
+                  {(listing.seller.displayName ??
+                    listing.seller.username ??
+                    "?")[0]?.toUpperCase()}
                 </div>
                 <div>
                   <span className="text-sm font-medium">
@@ -104,9 +106,7 @@ export default async function ListingDetailPage(props: ListingPageProps) {
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                  {listing.rating > 0
-                    ? listing.rating.toFixed(1)
-                    : "New"}
+                  {listing.rating > 0 ? listing.rating.toFixed(1) : "New"}
                   {listing.reviewCount > 0 && (
                     <span>({listing.reviewCount})</span>
                   )}
@@ -175,10 +175,7 @@ export default async function ListingDetailPage(props: ListingPageProps) {
               </h2>
               <div className="space-y-3">
                 {listing.faqs.map((faq) => (
-                  <details
-                    key={faq.id}
-                    className="group rounded-lg border p-4"
-                  >
+                  <details key={faq.id} className="group rounded-lg border p-4">
                     <summary className="flex cursor-pointer items-center justify-between text-sm font-medium">
                       {faq.question}
                       <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-open:rotate-180" />
@@ -195,10 +192,7 @@ export default async function ListingDetailPage(props: ListingPageProps) {
 
         {/* Sidebar: Pricing + Purchase */}
         <div className="space-y-4">
-          <StickyPurchasePanel
-            listing={listing}
-            packages={listing.packages}
-          />
+          <StickyPurchasePanel listing={listing} packages={listing.packages} />
 
           {/* Seller Info Card */}
           <div className="overflow-hidden rounded-xl border bg-card p-5">
@@ -207,7 +201,9 @@ export default async function ListingDetailPage(props: ListingPageProps) {
             </h3>
             <div className="flex items-center gap-3">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary/20 to-primary/5 text-lg font-bold">
-                {(listing.seller.displayName ?? listing.seller.username ?? "?")[0]?.toUpperCase()}
+                {(listing.seller.displayName ??
+                  listing.seller.username ??
+                  "?")[0]?.toUpperCase()}
               </div>
               <div>
                 <p className="font-semibold">
@@ -232,9 +228,9 @@ export default async function ListingDetailPage(props: ListingPageProps) {
               <div className="rounded-lg bg-muted/50 p-2.5">
                 <p className="text-lg font-bold">
                   {(listing.seller.averageRating ?? 0) > 0
-                    ? (Number(listing.seller.averageRating) > 100
-                        ? (Number(listing.seller.averageRating) / 100).toFixed(1)
-                        : Number(listing.seller.averageRating).toFixed(1))
+                    ? Number(listing.seller.averageRating) > 100
+                      ? (Number(listing.seller.averageRating) / 100).toFixed(1)
+                      : Number(listing.seller.averageRating).toFixed(1)
                     : "N/A"}
                 </p>
                 <p className="text-xs text-muted-foreground">Rating</p>

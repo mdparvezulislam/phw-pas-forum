@@ -23,8 +23,7 @@ export function DraftRecoveryDialog({
           Recover draft?
         </p>
         <p className="text-xs text-amber-600 dark:text-amber-400">
-          You have an unsaved draft from{" "}
-          {new Date(lastSaved).toLocaleString()}.
+          You have an unsaved draft from {new Date(lastSaved).toLocaleString()}.
         </p>
       </div>
       <div className="flex gap-2">

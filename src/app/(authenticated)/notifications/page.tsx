@@ -1,11 +1,11 @@
+import { Bell, CheckCheck, Inbox, Settings } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { notificationService } from "@/services/notification";
 import { NotificationList } from "@/components/notifications";
 import { UserEmptyState } from "@/components/user";
-import { Bell, Settings, Inbox, CheckCheck } from "lucide-react";
-import Link from "next/link";
+import { auth } from "@/lib/auth";
+import { notificationService } from "@/services/notification";
 
 export const metadata: Metadata = {
   title: "Notifications",
@@ -17,7 +17,9 @@ export default async function NotificationsPage() {
   if (!session?.user) redirect("/auth/login");
 
   const userId = session.user.id;
-  const notifications = await notificationService.getNotifications(userId, { limit: 50 });
+  const notifications = await notificationService.getNotifications(userId, {
+    limit: 50,
+  });
   const unreadCount = await notificationService.getUnreadCount(userId);
 
   return (

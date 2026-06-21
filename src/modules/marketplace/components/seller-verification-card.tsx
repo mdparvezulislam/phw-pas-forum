@@ -1,10 +1,10 @@
 "use client";
 
+import { Check, Loader2, ShieldAlert, ShieldCheck, X } from "lucide-react";
 import { useState } from "react";
-import { verifySellerAction } from "../actions/moderation";
-import { Check, X, ShieldAlert, ShieldCheck, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui";
 import type { SellerVerificationAppStatus } from "@/db/schema/seller-verifications";
+import { verifySellerAction } from "../actions/moderation";
 
 interface SellerVerificationCardProps {
   verification: {
@@ -29,7 +29,9 @@ export function SellerVerificationCard({
 }: SellerVerificationCardProps) {
   const [loading, setLoading] = useState(false);
   const [notes, setNotes] = useState("");
-  const [level, setLevel] = useState(verification.verificationLevel || "LEVEL_1");
+  const [level, setLevel] = useState(
+    verification.verificationLevel || "LEVEL_1",
+  );
   const [error, setError] = useState<string | null>(null);
 
   const handleVerify = async (status: SellerVerificationAppStatus) => {
@@ -39,7 +41,7 @@ export function SellerVerificationCard({
       verification.sellerId,
       status,
       level,
-      notes || `Verified as ${status}`
+      notes || `Verified as ${status}`,
     );
     setLoading(false);
     if (res.success) {
@@ -50,7 +52,9 @@ export function SellerVerificationCard({
   };
 
   const sellerName =
-    verification.seller.displayName ?? verification.seller.username ?? "Unknown Seller";
+    verification.seller.displayName ??
+    verification.seller.username ??
+    "Unknown Seller";
 
   return (
     <div className="border rounded-2xl p-5 bg-card/40 backdrop-blur shadow-sm space-y-4">
@@ -69,7 +73,9 @@ export function SellerVerificationCard({
 
       {verification.notes && (
         <div className="p-3 bg-secondary/20 rounded-xl text-xs text-muted-foreground border">
-          <span className="font-semibold block mb-1 text-foreground">Seller's Notes:</span>
+          <span className="font-semibold block mb-1 text-foreground">
+            Seller's Notes:
+          </span>
           {verification.notes}
         </div>
       )}

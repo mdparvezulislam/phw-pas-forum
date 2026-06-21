@@ -1,8 +1,8 @@
-import { requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
-import { getDatabase, schema } from "@/db";
 import { desc } from "drizzle-orm";
+import { getDatabase, schema } from "@/db";
+import { requireRole } from "@/modules/auth/guards";
 import { MarketplaceQueue } from "@/modules/marketplace/components/marketplace-queue";
+import { RoleName } from "@/types/rbac";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +29,8 @@ export default async function MarketplaceQueuePage() {
       <div>
         <h2 className="text-xl font-bold">Marketplace Submission Queue</h2>
         <p className="text-sm text-muted-foreground">
-          Approve or reject marketplace sales threads after reviewing their automated risk scoring.
+          Approve or reject marketplace sales threads after reviewing their
+          automated risk scoring.
         </p>
       </div>
 

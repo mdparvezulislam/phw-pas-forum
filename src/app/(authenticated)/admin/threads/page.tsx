@@ -1,31 +1,21 @@
 import type { Metadata } from "next";
+import { MessageSquare, Pin, Star } from "lucide-react";
 import { getDatabase } from "@/db";
-import { AdminThreadRow } from "./thread-row";
+import { PageHeader, KpiCard } from "@/components/admin";
+import { ThreadsTable, type AdminThreadItem } from "./threads-table";
 
-export const metadata: Metadata = {
-  title: "Manage Threads",
-};
+export const metadata: Metadata = { title: "Manage Threads" };
 
 export default async function AdminThreadsPage() {
-
   const db = getDatabase();
   const threads = (await db.query.threads.findMany({
     orderBy: (threads, { desc }) => [desc(threads.publishedAt)],
     limit: 100,
     with: {
-      author: {
-        columns: { id: true, username: true, displayName: true },
-      },
-      forum: {
-        columns: { id: true, title: true, slug: true },
-        with: {
-          category: {
-            columns: { slug: true },
-          },
-        },
-      },
+      author: { columns: { id: true, username: true, displayName: true } },
+      forum: { columns: { id: true, title: true, slug: true } },
     },
-  })) as {
+  })) as Array<{
     id: string;
     title: string;
     slug: string;
@@ -35,56 +25,52 @@ export default async function AdminThreadsPage() {
     isFeatured: boolean;
     replyCount: number;
     viewCount: number;
-    author: { id: string; username: string | null; displayName: string | null };
-    forum: {
-      id: string;
-      title: string;
-      slug: string;
-      category: { slug: string };
-    };
-  }[];
+    author: { username: string | null; displayName: string | null };
+    forum: { title: string };
+  }>;
+
+  const items: AdminThreadItem[] = threads.map((t) => ({
+    id: t.id,
+    title: t.title,
+    slug: t.slug,
+    status: t.status,
+    isPinned: t.isPinned,
+    isLocked: t.isLocked,
+    isFeatured: t.isFeatured,
+    replyCount: t.replyCount,
+    viewCount: t.viewCount,
+    authorName: t.author.displayName ?? t.author.username ?? "Unknown",
+    forumTitle: t.forum.title,
+  }));
+
+  const pinned = items.filter((t) => t.isPinned).length;
+  const featured = items.filter((t) => t.isFeatured).length;
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Manage Threads</h1>
-        <p className="text-sm text-muted-foreground">
-          View and moderate all threads across the forum.
-        </p>
+      <PageHeader
+        title="Threads"
+        description="View and moderate threads across the forum."
+      />
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <KpiCard
+          title="Threads"
+          value={items.length.toLocaleString()}
+          icon={MessageSquare}
+          accent="info"
+          description="Most recent 100 shown"
+        />
+        <KpiCard title="Pinned" value={pinned} icon={Pin} accent="primary" />
+        <KpiCard
+          title="Featured"
+          value={featured}
+          icon={Star}
+          accent="premium"
+        />
       </div>
 
-      <div className="rounded-lg border">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b bg-muted/50">
-                <th className="px-4 py-3 text-left font-medium">Thread</th>
-                <th className="px-4 py-3 text-left font-medium">Author</th>
-                <th className="px-4 py-3 text-left font-medium">Status</th>
-                <th className="px-4 py-3 text-center font-medium">Replies</th>
-                <th className="px-4 py-3 text-center font-medium">Views</th>
-                <th className="px-4 py-3 text-left font-medium">Forum</th>
-                <th className="px-4 py-3 text-left font-medium">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {threads.map((thread) => (
-                <AdminThreadRow key={thread.id} thread={thread} />
-              ))}
-              {threads.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={7}
-                    className="px-4 py-8 text-center text-muted-foreground"
-                  >
-                    No threads found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <ThreadsTable threads={items} />
     </div>
   );
 }

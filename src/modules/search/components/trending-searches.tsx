@@ -7,7 +7,10 @@ interface TrendingSearchesProps {
   onSelectQuery: (query: string) => void;
 }
 
-export function TrendingSearches({ trending, onSelectQuery }: TrendingSearchesProps) {
+export function TrendingSearches({
+  trending,
+  onSelectQuery,
+}: TrendingSearchesProps) {
   if (trending.length === 0) return null;
 
   return (

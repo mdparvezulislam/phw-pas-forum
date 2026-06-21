@@ -1,12 +1,18 @@
 "use client";
 
+import type { JSONContent } from "@tiptap/core";
 import { useRouter } from "next/navigation";
-import { useActionState, useCallback, useEffect, useRef, useState } from "react";
-import { updateThread } from "@/modules/thread/actions";
-import type { ThreadWithRelations } from "@/modules/thread/types";
+import {
+  useActionState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { RichTextEditor } from "@/modules/editor/components";
 import { generatePlainText } from "@/modules/editor/utils/content";
-import type { JSONContent } from "@tiptap/core";
+import { updateThread } from "@/modules/thread/actions";
+import type { ThreadWithRelations } from "@/modules/thread/types";
 
 interface EditThreadFormProps {
   thread: ThreadWithRelations;

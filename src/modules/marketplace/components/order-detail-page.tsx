@@ -1,13 +1,33 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { getOrderByIdAction, completeOrderAction, cancelOrderAction, requestRevisionAction, submitReviewAction, submitITraderFeedbackAction, createDisputeAction, sendOrderMessageAction } from "@/actions";
-import { OrderStatusBadge } from "./order-status-badge";
-import { OrderTimeline } from "./order-timeline";
+import {
+  cancelOrderAction,
+  completeOrderAction,
+  createDisputeAction,
+  getOrderByIdAction,
+  requestRevisionAction,
+  sendOrderMessageAction,
+  submitITraderFeedbackAction,
+  submitReviewAction,
+} from "@/actions";
+import type {
+  BuyerReview,
+  Dispute,
+  ListingPackage,
+  MarketplaceListing,
+  Order,
+  OrderDelivery,
+  OrderMessage,
+  OrderRevision,
+  Transaction,
+  User,
+} from "@/db/schema";
 import { OrderChat } from "./order-chat";
 import { OrderDeliveryCard } from "./order-delivery-card";
+import { OrderStatusBadge } from "./order-status-badge";
+import { OrderTimeline } from "./order-timeline";
 import { TrustScoreCard } from "./trust-score-card";
-import type { Order, User, MarketplaceListing, ListingPackage, OrderMessage, OrderDelivery, OrderRevision, Transaction, BuyerReview, Dispute } from "@/db/schema";
 
 interface OrderWithFullRelations extends Order {
   buyer: User;
@@ -21,7 +41,13 @@ interface OrderWithFullRelations extends Order {
   review: BuyerReview | null;
 }
 
-export function OrderDetailPage({ orderId, userId }: { orderId: string; userId: string }) {
+export function OrderDetailPage({
+  orderId,
+  userId,
+}: {
+  orderId: string;
+  userId: string;
+}) {
   const [order, setOrder] = useState<OrderWithFullRelations | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -88,23 +114,31 @@ export function OrderDetailPage({ orderId, userId }: { orderId: string; userId: 
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-muted-foreground">Amount:</span>
-              <span className="ml-2 font-medium">${(order.amount / 100).toFixed(2)}</span>
+              <span className="ml-2 font-medium">
+                ${(order.amount / 100).toFixed(2)}
+              </span>
             </div>
             <div>
               <span className="text-muted-foreground">Created:</span>
-              <span className="ml-2">{new Date(order.createdAt).toLocaleDateString()}</span>
+              <span className="ml-2">
+                {new Date(order.createdAt).toLocaleDateString()}
+              </span>
             </div>
             <div>
-              <span className="text-muted-foreground">{isBuyer ? "Seller:" : "Buyer:"}</span>
+              <span className="text-muted-foreground">
+                {isBuyer ? "Seller:" : "Buyer:"}
+              </span>
               <span className="ml-2 font-medium">
                 {isBuyer
-                  ? order.seller?.displayName ?? order.seller?.username
-                  : order.buyer?.displayName ?? order.buyer?.username}
+                  ? (order.seller?.displayName ?? order.seller?.username)
+                  : (order.buyer?.displayName ?? order.buyer?.username)}
               </span>
             </div>
             {order.isUrgent ? (
               <div>
-                <span className="rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-600">Urgent</span>
+                <span className="rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-600">
+                  Urgent
+                </span>
               </div>
             ) : null}
           </div>
@@ -112,7 +146,9 @@ export function OrderDetailPage({ orderId, userId }: { orderId: string; userId: 
           {order.requirements && (
             <div className="mt-4 rounded-lg bg-muted p-3">
               <p className="text-sm font-medium">Requirements</p>
-              <p className="mt-1 text-sm text-muted-foreground">{order.requirements}</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {order.requirements}
+              </p>
             </div>
           )}
 
@@ -120,17 +156,25 @@ export function OrderDetailPage({ orderId, userId }: { orderId: string; userId: 
             {isBuyer && order.status === "DELIVERED" && (
               <>
                 <button
-                  onClick={() => handleAction("complete", () => completeOrderAction({ orderId: order.id }))}
+                  onClick={() =>
+                    handleAction("complete", () =>
+                      completeOrderAction({ orderId: order.id }),
+                    )
+                  }
                   disabled={actionLoading === "complete"}
                   className="rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
                 >
-                  {actionLoading === "complete" ? "Processing..." : "Complete Order"}
+                  {actionLoading === "complete"
+                    ? "Processing..."
+                    : "Complete Order"}
                 </button>
                 <button
                   onClick={() => {
                     const reason = prompt("Reason for revision:");
                     if (reason) {
-                      handleAction("revision", () => requestRevisionAction({ orderId: order.id, reason }));
+                      handleAction("revision", () =>
+                        requestRevisionAction({ orderId: order.id, reason }),
+                      );
                     }
                   }}
                   disabled={actionLoading === "revision"}
@@ -140,38 +184,57 @@ export function OrderDetailPage({ orderId, userId }: { orderId: string; userId: 
                 </button>
               </>
             )}
-            {(isBuyer || isSeller) && ["PENDING", "ACCEPTED"].includes(order.status) && (
-              <button
-                onClick={() => {
-                  const reason = prompt("Cancellation reason:");
-                  if (reason) {
-                    handleAction("cancel", () => cancelOrderAction({ orderId: order.id, reason }));
-                  }
-                }}
-                disabled={actionLoading === "cancel"}
-                className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
-              >
-                {actionLoading === "cancel" ? "Processing..." : "Cancel Order"}
-              </button>
-            )}
+            {(isBuyer || isSeller) &&
+              ["PENDING", "ACCEPTED"].includes(order.status) && (
+                <button
+                  onClick={() => {
+                    const reason = prompt("Cancellation reason:");
+                    if (reason) {
+                      handleAction("cancel", () =>
+                        cancelOrderAction({ orderId: order.id, reason }),
+                      );
+                    }
+                  }}
+                  disabled={actionLoading === "cancel"}
+                  className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+                >
+                  {actionLoading === "cancel"
+                    ? "Processing..."
+                    : "Cancel Order"}
+                </button>
+              )}
             {isBuyer && order.status === "COMPLETED" && !order.review && (
-              <ReviewSection orderId={order.id} sellerId={order.sellerId} onSubmitted={fetchOrder} />
+              <ReviewSection
+                orderId={order.id}
+                sellerId={order.sellerId}
+                onSubmitted={fetchOrder}
+              />
             )}
-            {isBuyer && !["COMPLETED", "CANCELLED", "REFUNDED"].includes(order.status) && order.status !== "DISPUTED" && (
-              <button
-                onClick={() => {
-                  const reason = prompt("Dispute reason:");
-                  const description = prompt("Describe the issue:");
-                  if (reason && description) {
-                    handleAction("dispute", () => createDisputeAction({ orderId: order.id, reason, description }));
-                  }
-                }}
-                disabled={actionLoading === "dispute"}
-                className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
-              >
-                {actionLoading === "dispute" ? "Processing..." : "Open Dispute"}
-              </button>
-            )}
+            {isBuyer &&
+              !["COMPLETED", "CANCELLED", "REFUNDED"].includes(order.status) &&
+              order.status !== "DISPUTED" && (
+                <button
+                  onClick={() => {
+                    const reason = prompt("Dispute reason:");
+                    const description = prompt("Describe the issue:");
+                    if (reason && description) {
+                      handleAction("dispute", () =>
+                        createDisputeAction({
+                          orderId: order.id,
+                          reason,
+                          description,
+                        }),
+                      );
+                    }
+                  }}
+                  disabled={actionLoading === "dispute"}
+                  className="rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+                >
+                  {actionLoading === "dispute"
+                    ? "Processing..."
+                    : "Open Dispute"}
+                </button>
+              )}
           </div>
         </div>
 
@@ -197,11 +260,16 @@ export function OrderDetailPage({ orderId, userId }: { orderId: string; userId: 
             <div className="space-y-2">
               <div className="flex items-center gap-1">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <span key={i} className={`text-lg ${i < order.review!.rating ? "text-yellow-400" : "text-gray-300"}`}>
+                  <span
+                    key={i}
+                    className={`text-lg ${i < order.review!.rating ? "text-yellow-400" : "text-gray-300"}`}
+                  >
                     ★
                   </span>
                 ))}
-                <span className="ml-2 text-sm text-muted-foreground">{order.review.rating}/5</span>
+                <span className="ml-2 text-sm text-muted-foreground">
+                  {order.review.rating}/5
+                </span>
               </div>
               <p className="text-sm">{order.review.content}</p>
               {order.review.isRecommended ? (
@@ -224,7 +292,11 @@ export function OrderDetailPage({ orderId, userId }: { orderId: string; userId: 
           <div className="p-4">
             <h2 className="text-lg font-semibold">Order Chat</h2>
           </div>
-          <OrderChat orderId={order.id} userId={userId} messages={order.messages} />
+          <OrderChat
+            orderId={order.id}
+            userId={userId}
+            messages={order.messages}
+          />
         </div>
 
         {order.transactions.length > 0 && (
@@ -232,12 +304,19 @@ export function OrderDetailPage({ orderId, userId }: { orderId: string; userId: 
             <h2 className="mb-4 text-lg font-semibold">Transactions</h2>
             <div className="space-y-2">
               {order.transactions.map((txn) => (
-                <div key={txn.id} className="flex items-center justify-between rounded-lg bg-muted p-2 text-sm">
+                <div
+                  key={txn.id}
+                  className="flex items-center justify-between rounded-lg bg-muted p-2 text-sm"
+                >
                   <div>
                     <span className="font-medium">{txn.type}</span>
-                    <span className="ml-2 text-muted-foreground">{txn.status}</span>
+                    <span className="ml-2 text-muted-foreground">
+                      {txn.status}
+                    </span>
                   </div>
-                  <span className="font-medium">${(txn.amount / 100).toFixed(2)}</span>
+                  <span className="font-medium">
+                    ${(txn.amount / 100).toFixed(2)}
+                  </span>
                 </div>
               ))}
             </div>
@@ -260,7 +339,9 @@ function ReviewSection({
   const [showForm, setShowForm] = useState(false);
   const [rating, setRating] = useState(5);
   const [content, setContent] = useState("");
-  const [itraderRating, setItraderRating] = useState<"POSITIVE" | "NEUTRAL" | "NEGATIVE">("POSITIVE");
+  const [itraderRating, setItraderRating] = useState<
+    "POSITIVE" | "NEUTRAL" | "NEGATIVE"
+  >("POSITIVE");
   const [itraderComment, setItraderComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -301,8 +382,16 @@ function ReviewSection({
         <p className="mb-1 text-sm">Rating</p>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((star) => (
-            <button key={star} onClick={() => setRating(star)} className="text-2xl">
-              <span className={star <= rating ? "text-yellow-400" : "text-gray-300"}>★</span>
+            <button
+              key={star}
+              onClick={() => setRating(star)}
+              className="text-2xl"
+            >
+              <span
+                className={star <= rating ? "text-yellow-400" : "text-gray-300"}
+              >
+                ★
+              </span>
             </button>
           ))}
         </div>

@@ -7,7 +7,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminBadgesPage() {
-
   const db = getDatabase();
   const allBadges = await db.query.badges.findMany({
     orderBy: (b, { asc }) => [asc(b.category), asc(b.name)],
@@ -17,7 +16,14 @@ export default async function AdminBadgesPage() {
     <div className="space-y-8">
       <div className="rounded-lg border p-4">
         <h2 className="mb-4 font-semibold">Create Badge</h2>
-        <form action={createBadge.bind(null, undefined) as unknown as (formData: FormData) => void} className="space-y-3">
+        <form
+          action={
+            createBadge.bind(null, undefined) as unknown as (
+              formData: FormData,
+            ) => void
+          }
+          className="space-y-3"
+        >
           <div className="grid gap-3 sm:grid-cols-2">
             <div>
               <label htmlFor="name" className="mb-1 block text-sm font-medium">
@@ -76,7 +82,10 @@ export default async function AdminBadgesPage() {
             </div>
           </div>
           <div>
-            <label htmlFor="description" className="mb-1 block text-sm font-medium">
+            <label
+              htmlFor="description"
+              className="mb-1 block text-sm font-medium"
+            >
               Description
             </label>
             <textarea
@@ -89,7 +98,10 @@ export default async function AdminBadgesPage() {
           </div>
           <div className="flex items-center gap-4">
             <div>
-              <label htmlFor="category" className="mb-1 block text-sm font-medium">
+              <label
+                htmlFor="category"
+                className="mb-1 block text-sm font-medium"
+              >
                 Category
               </label>
               <select

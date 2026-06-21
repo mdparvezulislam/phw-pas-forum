@@ -1,50 +1,74 @@
 import type { Metadata } from "next";
+import { UsersRound, Shield, ShieldCheck } from "lucide-react";
 import { adminStaffService } from "@/services/admin-staff";
+import {
+  PageHeader,
+  KpiCard,
+  SectionCard,
+  PermissionMatrix,
+} from "@/components/admin";
+import { StaffTable, type StaffItem } from "./staff-table";
 
-export const metadata: Metadata = {
-  title: "Staff Management",
-};
+export const metadata: Metadata = { title: "Staff Management" };
 
 export default async function AdminStaffPage() {
+  const staff = (await adminStaffService.getStaffMembers()) as Array<{
+    id: string;
+    username: string | null;
+    displayName: string | null;
+    email: string | null;
+    image: string | null;
+    createdAt: Date;
+    role: { name: string } | null;
+  }>;
 
-  const staff = await adminStaffService.getStaffMembers();
+  const items: StaffItem[] = staff.map((s) => ({
+    id: s.id,
+    name: s.displayName ?? s.username ?? "Unknown",
+    username: s.username,
+    email: s.email,
+    image: s.image,
+    role: s.role?.name ?? "STAFF",
+    createdAt: s.createdAt.toISOString(),
+  }));
+
+  const admins = items.filter((s) => s.role.includes("ADMIN")).length;
+  const mods = items.filter((s) => s.role.includes("MODERATOR")).length;
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Staff Management</h1>
-        <p className="text-sm text-muted-foreground">Manage staff members and their roles</p>
+      <PageHeader
+        title="Staff Management"
+        description="Manage staff members, roles and permission coverage."
+      />
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <KpiCard
+          title="Staff Members"
+          value={items.length}
+          icon={UsersRound}
+          accent="primary"
+        />
+        <KpiCard title="Admins" value={admins} icon={Shield} accent="admin" />
+        <KpiCard
+          title="Moderators"
+          value={mods}
+          icon={ShieldCheck}
+          accent="moderator"
+        />
       </div>
 
-      <div className="rounded-lg border">
-        <div className="border-b px-4 py-3">
-          <h2 className="font-semibold">Staff Members ({staff.length})</h2>
-        </div>
-        {staff.length === 0 ? (
-          <div className="flex min-h-[200px] items-center justify-center">
-            <p className="text-sm text-muted-foreground">No staff members</p>
-          </div>
-        ) : (
-          <div className="divide-y">
-            {staff.map((member: any) => (
-              <div key={member.id} className="flex items-center justify-between px-4 py-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-medium">
-                    {member.name?.[0] ?? "?"}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">{member.name ?? "Unknown"}</p>
-                    <p className="text-xs text-muted-foreground">{member.email}</p>
-                  </div>
-                </div>
-                <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">
-                  {member.role}
-                </span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      <SectionCard title="Team" description="Everyone with a staff role">
+        <StaffTable staff={items} />
+      </SectionCard>
+
+      <SectionCard
+        title="Permission Matrix"
+        description="Coverage of permissions by role across each module"
+        flush
+      >
+        <PermissionMatrix />
+      </SectionCard>
     </div>
   );
 }

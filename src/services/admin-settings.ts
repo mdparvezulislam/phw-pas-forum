@@ -2,8 +2,8 @@ import "server-only";
 
 import { and, eq } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
-import { auditService } from "@/services/audit";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
+import { auditService } from "@/services/audit";
 
 export class AdminSettingsService {
   async getSetting(key: string) {
@@ -142,7 +142,9 @@ export class AdminSettingsService {
       where: eq(schema.featureFlags.id, flagId),
     });
 
-    await db.delete(schema.featureFlags).where(eq(schema.featureFlags.id, flagId));
+    await db
+      .delete(schema.featureFlags)
+      .where(eq(schema.featureFlags.id, flagId));
 
     await auditService.log(userId, AUDIT_ACTIONS.FEATURE_FLAG_DELETED, {
       resource: "feature_flag",

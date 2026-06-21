@@ -145,7 +145,10 @@ export class AdminMetricsService {
       .groupBy(sql`DATE(${schema.transactions.createdAt})`)
       .orderBy(sql`DATE(${schema.transactions.createdAt})`);
 
-    const totalRevenue = dailyRevenue.reduce((sum, r) => sum + Number(r.amount), 0);
+    const totalRevenue = dailyRevenue.reduce(
+      (sum, r) => sum + Number(r.amount),
+      0,
+    );
 
     return { dailyRevenue, totalRevenue, days };
   }
@@ -187,7 +190,10 @@ export class AdminMetricsService {
         postCount: sql<number>`count(distinct ${schema.posts.id})`,
       })
       .from(schema.categories)
-      .leftJoin(schema.forums, eq(schema.forums.categoryId, schema.categories.id))
+      .leftJoin(
+        schema.forums,
+        eq(schema.forums.categoryId, schema.categories.id),
+      )
       .leftJoin(schema.threads, eq(schema.threads.forumId, schema.forums.id))
       .leftJoin(schema.posts, eq(schema.posts.threadId, schema.threads.id))
       .groupBy(schema.categories.id, schema.categories.title)
@@ -210,7 +216,10 @@ export class AdminMetricsService {
         trustScore: schema.sellerProfiles.trustScore,
       })
       .from(schema.sellerProfiles)
-      .innerJoin(schema.users, eq(schema.sellerProfiles.userId, schema.users.id))
+      .innerJoin(
+        schema.users,
+        eq(schema.sellerProfiles.userId, schema.users.id),
+      )
       .orderBy(sql`${schema.sellerProfiles.totalSales} desc`)
       .limit(10);
 
@@ -222,7 +231,10 @@ export class AdminMetricsService {
       .from(schema.marketplaceCategories)
       .leftJoin(
         schema.marketplaceListings,
-        eq(schema.marketplaceListings.categoryId, schema.marketplaceCategories.id),
+        eq(
+          schema.marketplaceListings.categoryId,
+          schema.marketplaceCategories.id,
+        ),
       )
       .groupBy(schema.marketplaceCategories.name)
       .orderBy(sql`count(*) desc`);

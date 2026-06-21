@@ -1,13 +1,16 @@
 "use client";
 
+import { AlertCircle, ArrowLeft, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { cn } from "@/lib/utils";
 import { forgotPassword } from "@/modules/auth/actions";
-import { Loader2, AlertCircle, CheckCircle2, ArrowLeft } from "lucide-react";
 
 export function ForgotPasswordForm() {
-  const [state, formAction, pending] = useActionState(forgotPassword, undefined);
+  const [state, formAction, pending] = useActionState(
+    forgotPassword,
+    undefined,
+  );
   const [email, setEmail] = useState("");
 
   return (
@@ -29,11 +32,15 @@ export function ForgotPasswordForm() {
       ) : (
         <>
           <p className="text-sm text-muted-foreground">
-            Enter your email address and we&apos;ll send you instructions to reset your password.
+            Enter your email address and we&apos;ll send you instructions to
+            reset your password.
           </p>
 
           <div className="space-y-1.5">
-            <label htmlFor="email" className="text-xs font-medium text-muted-foreground">
+            <label
+              htmlFor="email"
+              className="text-xs font-medium text-muted-foreground"
+            >
               Email
             </label>
             <input

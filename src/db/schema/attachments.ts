@@ -1,7 +1,12 @@
 import { index, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 import { users } from "./users";
 
-export const attachmentStatus = ["PENDING", "ACTIVE", "DELETED", "QUARANTINED"] as const;
+export const attachmentStatus = [
+  "PENDING",
+  "ACTIVE",
+  "DELETED",
+  "QUARANTINED",
+] as const;
 export type AttachmentStatus = (typeof attachmentStatus)[number];
 
 export const attachments = pgTable(

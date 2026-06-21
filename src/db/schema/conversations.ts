@@ -1,7 +1,20 @@
-import { boolean, index, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  index,
+  integer,
+  pgTable,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { users } from "./users";
 
-export const conversationType = ["PRIVATE", "GROUP", "SUPPORT", "MARKETPLACE", "SYSTEM"] as const;
+export const conversationType = [
+  "PRIVATE",
+  "GROUP",
+  "SUPPORT",
+  "MARKETPLACE",
+  "SYSTEM",
+] as const;
 export type ConversationType = (typeof conversationType)[number];
 
 export const conversations = pgTable(
@@ -33,7 +46,7 @@ export const conversations = pgTable(
   (table) => [
     index("conversation_last_activity_idx").on(table.lastActivityAt),
     index("conversation_created_by_idx").on(table.createdBy),
-  ]
+  ],
 );
 
 export type Conversation = typeof conversations.$inferSelect;

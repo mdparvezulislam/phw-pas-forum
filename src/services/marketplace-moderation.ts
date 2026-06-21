@@ -103,7 +103,7 @@ export class MarketplaceModerationService {
     const existingSub = await db.query.marketplaceSubmissions.findFirst({
       where: and(
         eq(schema.marketplaceSubmissions.listingId, params.threadId),
-        eq(schema.marketplaceSubmissions.status, "PENDING")
+        eq(schema.marketplaceSubmissions.status, "PENDING"),
       ),
     });
 
@@ -174,7 +174,11 @@ export class MarketplaceModerationService {
   /**
    * Approve a listing submission
    */
-  async approveSubmission(submissionId: string, moderatorId: string, notes: string) {
+  async approveSubmission(
+    submissionId: string,
+    moderatorId: string,
+    notes: string,
+  ) {
     const db = getDatabase();
 
     const sub = await db.query.marketplaceSubmissions.findFirst({
@@ -270,7 +274,11 @@ export class MarketplaceModerationService {
   /**
    * Reject a listing submission
    */
-  async rejectSubmission(submissionId: string, moderatorId: string, reason: string) {
+  async rejectSubmission(
+    submissionId: string,
+    moderatorId: string,
+    reason: string,
+  ) {
     const db = getDatabase();
 
     const sub = await db.query.marketplaceSubmissions.findFirst({
@@ -317,7 +325,11 @@ export class MarketplaceModerationService {
   /**
    * Request changes to a listing submission
    */
-  async requestChanges(submissionId: string, moderatorId: string, notes: string) {
+  async requestChanges(
+    submissionId: string,
+    moderatorId: string,
+    notes: string,
+  ) {
     const db = getDatabase();
 
     const sub = await db.query.marketplaceSubmissions.findFirst({
@@ -364,7 +376,12 @@ export class MarketplaceModerationService {
   /**
    * Report / Flag a marketplace listing
    */
-  async flagListing(params: { listingId: string; userId: string; reason: any; notes?: string }) {
+  async flagListing(params: {
+    listingId: string;
+    userId: string;
+    reason: any;
+    notes?: string;
+  }) {
     const db = getDatabase();
 
     const [flag] = await db
@@ -394,7 +411,11 @@ export class MarketplaceModerationService {
   /**
    * Resolve a listing flag report
    */
-  async resolveFlag(flagId: string, action: "RESOLVED" | "DISMISSED", moderatorId: string) {
+  async resolveFlag(
+    flagId: string,
+    action: "RESOLVED" | "DISMISSED",
+    moderatorId: string,
+  ) {
     const db = getDatabase();
 
     await db
@@ -416,7 +437,7 @@ export class MarketplaceModerationService {
     const existing = await db.query.sellerVerifications.findFirst({
       where: and(
         eq(schema.sellerVerifications.sellerId, sellerId),
-        eq(schema.sellerVerifications.status, "PENDING")
+        eq(schema.sellerVerifications.status, "PENDING"),
       ),
     });
 
@@ -442,7 +463,7 @@ export class MarketplaceModerationService {
     status: any,
     verificationLevel: string,
     notes: string,
-    moderatorId: string
+    moderatorId: string,
   ) {
     const db = getDatabase();
 
@@ -476,7 +497,12 @@ export class MarketplaceModerationService {
       // If verified, update the users.isVerified flag as well!
       await tx
         .update(schema.users)
-        .set({ isVerified: status === "VERIFIED" || status === "TRUSTED" || status === "TOP_SELLER" })
+        .set({
+          isVerified:
+            status === "VERIFIED" ||
+            status === "TRUSTED" ||
+            status === "TOP_SELLER",
+        })
         .where(eq(schema.users.id, sellerId));
     });
 
@@ -494,7 +520,11 @@ export class MarketplaceModerationService {
   /**
    * Promote listing to featured list
    */
-  async toggleFeaturedListing(threadId: string, featuredDays: number, moderatorId: string) {
+  async toggleFeaturedListing(
+    threadId: string,
+    featuredDays: number,
+    moderatorId: string,
+  ) {
     const db = getDatabase();
 
     const existing = await db.query.featuredListings.findFirst({
@@ -502,7 +532,9 @@ export class MarketplaceModerationService {
     });
 
     if (existing) {
-      await db.delete(schema.featuredListings).where(eq(schema.featuredListings.listingId, threadId));
+      await db
+        .delete(schema.featuredListings)
+        .where(eq(schema.featuredListings.listingId, threadId));
       await db
         .update(schema.threads)
         .set({ isFeatured: false })
@@ -533,7 +565,15 @@ export class MarketplaceModerationService {
     else if (analysis.externalUrlCount > 5) score += 20;
 
     // Price claim keywords or suspicious terms in title
-    const blacklisted = ["scam", "guaranteed", "100%", "earn money", "infinite", "unlimited", "hack"];
+    const blacklisted = [
+      "scam",
+      "guaranteed",
+      "100%",
+      "earn money",
+      "infinite",
+      "unlimited",
+      "hack",
+    ];
     const lowercaseTitle = title.toLowerCase();
     for (const word of blacklisted) {
       if (lowercaseTitle.includes(word)) {
@@ -569,8 +609,13 @@ export class MarketplaceModerationService {
   }) {
     const formattedPrice = (params.price / 100).toFixed(2);
     const riskLabel =
-      params.riskScore > 60 ? "HIGH RISK 🚨" : params.riskScore > 30 ? "MEDIUM RISK ⚠️" : "LOW RISK ✅";
-    const complianceLabel = params.complianceScore > 75 ? "COMPLIANT ✅" : "MINOR ISSUES ⚠️";
+      params.riskScore > 60
+        ? "HIGH RISK 🚨"
+        : params.riskScore > 30
+          ? "MEDIUM RISK ⚠️"
+          : "LOW RISK ✅";
+    const complianceLabel =
+      params.complianceScore > 75 ? "COMPLIANT ✅" : "MINOR ISSUES ⚠️";
 
     return `### 🛡️ Marketplace Approval Report (iModBot System Verification)
 

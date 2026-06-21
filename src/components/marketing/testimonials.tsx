@@ -34,7 +34,9 @@ export function Testimonials() {
     <section className="border-t border-border py-20">
       <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl">Trusted by the Community</h2>
+          <h2 className="text-3xl font-bold sm:text-4xl">
+            Trusted by the Community
+          </h2>
           <p className="mt-3 text-muted-foreground">
             Hear from our members, sellers, and partners
           </p>

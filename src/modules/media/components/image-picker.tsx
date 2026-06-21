@@ -1,7 +1,7 @@
 "use client";
 
+import { Upload, X } from "lucide-react";
 import { useState } from "react";
-import { X, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useFileUpload } from "@/modules/media/hooks/use-file-upload";
 import type { UploadResult } from "@/modules/media/types";

@@ -6,7 +6,8 @@ import { cn } from "@/lib/utils";
    Toggle switch
    ============================================ */
 
-interface SwitchProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onChange"> {
+interface SwitchProps
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onChange"> {
   checked?: boolean;
   onCheckedChange?: (checked: boolean) => void;
 }
@@ -25,7 +26,7 @@ const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           "disabled:cursor-not-allowed disabled:opacity-50",
           checked ? "bg-primary" : "bg-muted",
-          className
+          className,
         )}
         onClick={() => onCheckedChange?.(!checked)}
         {...props}
@@ -33,12 +34,12 @@ const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
         <span
           className={cn(
             "pointer-events-none block h-4 w-4 rounded-full bg-background shadow-lg ring-0 transition-transform",
-            checked ? "translate-x-4" : "translate-x-0"
+            checked ? "translate-x-4" : "translate-x-0",
           )}
         />
       </button>
     );
-  }
+  },
 );
 Switch.displayName = "Switch";
 

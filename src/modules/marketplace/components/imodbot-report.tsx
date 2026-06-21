@@ -26,7 +26,9 @@ export function IModBotReport({
           <Bot className="w-5 h-5" />
         </div>
         <div>
-          <h4 className="font-bold text-sm text-indigo-400">iModBot Compliance Post Preview</h4>
+          <h4 className="font-bold text-sm text-indigo-400">
+            iModBot Compliance Post Preview
+          </h4>
           <p className="text-xs text-muted-foreground">
             This post will be appended as Post #2 automatically upon approval.
           </p>
@@ -55,7 +57,8 @@ export function IModBotReport({
             • <strong>Plagiarism Check:</strong> Original Content Verified
           </li>
           <li>
-            • <strong>Risk Score:</strong> {riskScore}/100 ({isHighRisk ? "HIGH RISK 🚨" : "LOW RISK ✅"})
+            • <strong>Risk Score:</strong> {riskScore}/100 (
+            {isHighRisk ? "HIGH RISK 🚨" : "LOW RISK ✅"})
           </li>
           <li>
             • <strong>Compliance Score:</strong> {complianceScore}/100 (
@@ -64,7 +67,8 @@ export function IModBotReport({
         </ul>
 
         <div className="text-[10px] text-muted-foreground border-t border-indigo-500/10 pt-2 italic">
-          *Note: This report is automatically generated and pinned for marketplace transparency.
+          *Note: This report is automatically generated and pinned for
+          marketplace transparency.
         </div>
       </div>
     </div>

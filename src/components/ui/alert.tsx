@@ -1,6 +1,6 @@
+import { X } from "lucide-react";
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { X } from "lucide-react";
 
 /* ============================================
    ALERT COMPONENT
@@ -37,7 +37,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -46,19 +46,15 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         className={cn(
           "relative rounded-lg p-4",
           variantClasses[variant],
-          className
+          className,
         )}
         {...props}
       >
         <div className="flex gap-3">
           {icon && <div className="shrink-0 mt-0.5">{icon}</div>}
           <div className="flex-1 min-w-0">
-            {title && (
-              <h5 className="font-semibold text-sm mb-1">{title}</h5>
-            )}
-            {description && (
-              <p className="text-sm opacity-90">{description}</p>
-            )}
+            {title && <h5 className="font-semibold text-sm mb-1">{title}</h5>}
+            {description && <p className="text-sm opacity-90">{description}</p>}
             {children}
           </div>
           {closable && (
@@ -73,7 +69,7 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         </div>
       </div>
     );
-  }
+  },
 );
 Alert.displayName = "Alert";
 

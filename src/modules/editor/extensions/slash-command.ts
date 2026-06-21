@@ -1,6 +1,5 @@
-import type { Range } from "@tiptap/core";
+import type { Editor, Range } from "@tiptap/core";
 import { Extension } from "@tiptap/core";
-import type { Editor } from "@tiptap/core";
 import { Plugin, PluginKey } from "@tiptap/pm/state";
 import { DecorationSet, type EditorView } from "@tiptap/pm/view";
 

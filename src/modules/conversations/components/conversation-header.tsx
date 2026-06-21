@@ -1,16 +1,16 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { Archive, Bell, BellOff, LogOut, Plus, Users, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
+import { Button } from "@/components/ui";
 import {
-  archiveConversationAction,
-  muteConversationAction,
-  leaveConversationAction,
   addParticipantAction,
+  archiveConversationAction,
+  leaveConversationAction,
+  muteConversationAction,
   searchUsersAction,
 } from "../actions/conversations";
-import { Button } from "@/components/ui";
-import { Users, Bell, BellOff, Archive, LogOut, Plus, X } from "lucide-react";
 
 interface Participant {
   id: string;
@@ -85,7 +85,7 @@ export function ConversationHeader({
       if (res.success && res.data) {
         // Exclude current participants
         const filtered = res.data.filter(
-          (u) => !participants.some((p) => p.id === u.id)
+          (u) => !participants.some((p) => p.id === u.id),
         );
         setSearchResults(filtered);
       }
@@ -112,7 +112,9 @@ export function ConversationHeader({
     <div className="flex items-center justify-between border-b px-6 py-3 bg-card shrink-0">
       {/* Title & Participants */}
       <div className="min-w-0">
-        <h2 className="text-base font-bold truncate text-foreground">{title}</h2>
+        <h2 className="text-base font-bold truncate text-foreground">
+          {title}
+        </h2>
         <div className="flex items-center gap-1.5 mt-0.5 text-xs text-muted-foreground">
           <Users className="h-3.5 w-3.5" />
           <span className="truncate">
@@ -156,7 +158,9 @@ export function ConversationHeader({
           title={isArchived ? "Unarchive" : "Archive"}
           disabled={isPending}
         >
-          <Archive className={`h-4.5 w-4.5 ${isArchived ? "text-primary" : ""}`} />
+          <Archive
+            className={`h-4.5 w-4.5 ${isArchived ? "text-primary" : ""}`}
+          />
         </Button>
 
         <Button

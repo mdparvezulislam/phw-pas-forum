@@ -1,15 +1,15 @@
 "use client";
 
-import { useState } from "react";
 import {
   ChevronLeft,
   ChevronRight,
-  Maximize2,
-  X,
-  Image as ImageIcon,
-  Video,
   FileText,
+  Image as ImageIcon,
+  Maximize2,
+  Video,
+  X,
 } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface MediaItem {
@@ -176,9 +176,7 @@ export function ListingGallery({ media, className }: ListingGalleryProps) {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setActiveIndex((i) =>
-                    i > 0 ? i - 1 : media.length - 1,
-                  );
+                  setActiveIndex((i) => (i > 0 ? i - 1 : media.length - 1));
                 }}
                 className="absolute left-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm"
               >
@@ -187,9 +185,7 @@ export function ListingGallery({ media, className }: ListingGalleryProps) {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  setActiveIndex((i) =>
-                    i < media.length - 1 ? i + 1 : 0,
-                  );
+                  setActiveIndex((i) => (i < media.length - 1 ? i + 1 : 0));
                 }}
                 className="absolute right-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-sm"
               >

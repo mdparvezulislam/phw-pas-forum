@@ -1,14 +1,14 @@
-import Link from "next/link";
 import {
-  MapPin,
   Calendar,
   Clock,
+  ExternalLink,
+  MapPin,
   MessageSquare,
   UserPlus,
-  ExternalLink,
 } from "lucide-react";
+import Link from "next/link";
 import { cn, formatDate } from "@/lib/utils";
-import { TrustBadge, SellerLevel } from "./trust-badge";
+import { SellerLevel, TrustBadge } from "./trust-badge";
 
 interface SellerProfileHeaderProps {
   seller: {
@@ -41,7 +41,9 @@ export function SellerProfileHeader({
   const name = seller.displayName ?? seller.username ?? "Unknown";
 
   return (
-    <div className={cn("overflow-hidden rounded-2xl border bg-card", className)}>
+    <div
+      className={cn("overflow-hidden rounded-2xl border bg-card", className)}
+    >
       {/* Banner */}
       <div className="relative h-32 sm:h-40 bg-gradient-to-br from-primary/10 via-muted to-premium/10">
         {seller.bannerImage && (
@@ -76,7 +78,11 @@ export function SellerProfileHeader({
               )}
             </div>
             {seller.trustScore != null && (
-              <SellerLevel trustScore={seller.trustScore} size="sm" className="mt-1" />
+              <SellerLevel
+                trustScore={seller.trustScore}
+                size="sm"
+                className="mt-1"
+              />
             )}
           </div>
         </div>

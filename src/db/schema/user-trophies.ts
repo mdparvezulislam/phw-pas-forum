@@ -16,9 +16,7 @@ export const userTrophies = pgTable(
       .references(() => trophies.id, { onDelete: "cascade" }),
     earnedAt: timestamp("earned_at", { mode: "date" }).defaultNow().notNull(),
   },
-  (table) => [
-    unique("user_trophy_unique").on(table.userId, table.trophyId),
-  ],
+  (table) => [unique("user_trophy_unique").on(table.userId, table.trophyId)],
 );
 
 export type UserTrophy = typeof userTrophies.$inferSelect;

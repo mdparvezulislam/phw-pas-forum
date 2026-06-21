@@ -1,15 +1,15 @@
-import Link from "next/link";
 import {
-  MessageSquare,
-  Heart,
-  Award,
-  Star,
-  ShoppingBag,
-  TrendingUp,
-  FileText,
-  Quote,
   AtSign,
+  Award,
+  FileText,
+  Heart,
+  MessageSquare,
+  Quote,
+  ShoppingBag,
+  Star,
+  TrendingUp,
 } from "lucide-react";
+import Link from "next/link";
 import { cn, formatDateRelative } from "@/lib/utils";
 
 interface ActivityItem {
@@ -74,8 +74,7 @@ export function ActivityTimeline({ items, className }: ActivityTimelineProps) {
   return (
     <div className={cn("space-y-0", className)}>
       {items.map((item, i) => {
-        const config =
-          activityConfig[item.type] ?? activityConfig.post;
+        const config = activityConfig[item.type] ?? activityConfig.post;
         const Icon = config.icon;
         const isLast = i === items.length - 1;
 
@@ -101,7 +100,9 @@ export function ActivityTimeline({ items, className }: ActivityTimelineProps) {
                   {item.title ?? "Activity"}
                 </Link>
               ) : (
-                <p className="text-sm font-medium">{item.title ?? "Activity"}</p>
+                <p className="text-sm font-medium">
+                  {item.title ?? "Activity"}
+                </p>
               )}
               {item.description && (
                 <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2">

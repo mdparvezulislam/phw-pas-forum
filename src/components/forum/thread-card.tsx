@@ -1,5 +1,12 @@
+import {
+  CheckCircle2,
+  Eye,
+  Lock,
+  MessageSquare,
+  Pin,
+  Star,
+} from "lucide-react";
 import Link from "next/link";
-import { MessageSquare, Eye, Pin, Lock, Star, CheckCircle2 } from "lucide-react";
 import { formatDateRelative } from "@/lib/utils";
 
 interface ThreadCardProps {
@@ -35,9 +42,17 @@ interface ThreadCardProps {
   forumSlug: string;
 }
 
-export function ThreadCard({ thread, categorySlug, forumSlug }: ThreadCardProps) {
-  const authorName = thread.author.displayName ?? thread.author.username ?? "Unknown";
-  const isPremium = thread.author.role?.name === "VIP" || thread.author.role?.name === "VIP+" || thread.author.role?.name === "ELITE";
+export function ThreadCard({
+  thread,
+  categorySlug,
+  forumSlug,
+}: ThreadCardProps) {
+  const authorName =
+    thread.author.displayName ?? thread.author.username ?? "Unknown";
+  const isPremium =
+    thread.author.role?.name === "VIP" ||
+    thread.author.role?.name === "VIP+" ||
+    thread.author.role?.name === "ELITE";
 
   return (
     <div className="group relative overflow-hidden rounded-xl border bg-card transition-all hover:border-primary/20 hover:shadow-md hover:shadow-primary/5">
@@ -109,12 +124,18 @@ export function ThreadCard({ thread, categorySlug, forumSlug }: ThreadCardProps)
                 </span>
               )}
             </span>
-            <span>{formatDateRelative(thread.publishedAt ?? thread.createdAt)}</span>
+            <span>
+              {formatDateRelative(thread.publishedAt ?? thread.createdAt)}
+            </span>
             {thread.lastReply && (
               <>
                 <span aria-hidden="true">·</span>
                 <span className="flex items-center gap-1">
-                  Last reply by <span className="font-medium text-foreground">{thread.lastReply.author.displayName ?? thread.lastReply.author.username}</span>
+                  Last reply by{" "}
+                  <span className="font-medium text-foreground">
+                    {thread.lastReply.author.displayName ??
+                      thread.lastReply.author.username}
+                  </span>
                 </span>
               </>
             )}
@@ -125,7 +146,9 @@ export function ThreadCard({ thread, categorySlug, forumSlug }: ThreadCardProps)
         <div className="hidden shrink-0 flex-col items-end gap-1 text-right text-xs text-muted-foreground sm:flex">
           <div className="flex items-center gap-1.5 rounded-lg bg-muted/50 px-2.5 py-1">
             <MessageSquare className="h-3 w-3" />
-            <span className="font-medium">{thread.replyCount.toLocaleString()}</span>
+            <span className="font-medium">
+              {thread.replyCount.toLocaleString()}
+            </span>
           </div>
           <div className="flex items-center gap-1.5 rounded-lg bg-muted/50 px-2.5 py-1">
             <Eye className="h-3 w-3" />
@@ -144,7 +167,9 @@ export function ThreadCard({ thread, categorySlug, forumSlug }: ThreadCardProps)
           <Eye className="h-3 w-3" />
           {thread.viewCount}
         </span>
-        <span className="ml-auto">{formatDateRelative(thread.publishedAt ?? thread.createdAt)}</span>
+        <span className="ml-auto">
+          {formatDateRelative(thread.publishedAt ?? thread.createdAt)}
+        </span>
       </div>
     </div>
   );

@@ -1,39 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { requireRole } from "@/modules/auth/guards";
 
-export function AdminTransactionManagement() {
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+interface AdminTransactionManagementProps {
+  initialTransactions: any[];
+}
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const { getDatabase, schema } = await import("@/db");
-        const { desc } = await import("drizzle-orm");
-        const db = getDatabase();
-        const items = await db.query.transactions.findMany({
-          orderBy: [desc(schema.transactions.createdAt)],
-          limit: 50,
-          with: { order: true, buyer: true, seller: true },
-        });
-        setTransactions(items);
-      } catch (err) {
-        console.error(err);
-      }
-      setLoading(false);
-    };
-    fetchTransactions();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      </div>
-    );
-  }
+export function AdminTransactionManagement({
+  initialTransactions,
+}: AdminTransactionManagementProps) {
+  const [transactions] = useState<any[]>(initialTransactions);
 
   return (
     <div className="space-y-6">
@@ -56,7 +33,9 @@ export function AdminTransactionManagement() {
           <tbody className="divide-y">
             {transactions.map((txn) => (
               <tr key={txn.id} className="hover:bg-muted/30">
-                <td className="px-4 py-3 font-mono text-xs">{txn.id.slice(0, 8)}...</td>
+                <td className="px-4 py-3 font-mono text-xs">
+                  {txn.id.slice(0, 8)}...
+                </td>
                 <td className="px-4 py-3">#{txn.order?.orderNumber}</td>
                 <td className="px-4 py-3">
                   {txn.buyer?.displayName ?? txn.buyer?.username ?? "Unknown"}

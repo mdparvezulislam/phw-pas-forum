@@ -12,7 +12,9 @@ interface RadioGroupContextType {
   name: string;
 }
 
-const RadioGroupContext = React.createContext<RadioGroupContextType | undefined>(undefined);
+const RadioGroupContext = React.createContext<
+  RadioGroupContextType | undefined
+>(undefined);
 
 interface RadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   value?: string;
@@ -20,11 +22,18 @@ interface RadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   name?: string;
 }
 
-function RadioGroup({ className, value, onValueChange, name, children, ...props }: RadioGroupProps) {
+function RadioGroup({
+  className,
+  value,
+  onValueChange,
+  name,
+  children,
+  ...props
+}: RadioGroupProps) {
   const groupName = React.useId();
   const contextValue = React.useMemo(
     () => ({ value, onValueChange, name: name ?? groupName }),
-    [value, onValueChange, name, groupName]
+    [value, onValueChange, name, groupName],
   );
 
   return (
@@ -36,7 +45,11 @@ function RadioGroup({ className, value, onValueChange, name, children, ...props 
   );
 }
 
-interface RadioGroupItemProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange" | "type"> {
+interface RadioGroupItemProps
+  extends Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    "onChange" | "type"
+  > {
   value: string;
 }
 
@@ -49,7 +62,7 @@ const RadioGroupItem = React.forwardRef<HTMLInputElement, RadioGroupItemProps>(
         className={cn(
           "inline-flex items-center gap-2 cursor-pointer",
           "peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-          className
+          className,
         )}
       >
         <input
@@ -65,7 +78,7 @@ const RadioGroupItem = React.forwardRef<HTMLInputElement, RadioGroupItemProps>(
         <span
           className={cn(
             "flex h-4 w-4 items-center justify-center rounded-full border border-primary text-primary",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           )}
         >
           {context?.value === value && (
@@ -74,7 +87,7 @@ const RadioGroupItem = React.forwardRef<HTMLInputElement, RadioGroupItemProps>(
         </span>
       </label>
     );
-  }
+  },
 );
 RadioGroupItem.displayName = "RadioGroupItem";
 

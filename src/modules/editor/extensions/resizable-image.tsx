@@ -229,7 +229,8 @@ export const ResizableImage = Node.create<ResizableImageOptions>({
       },
       align: {
         default: "left",
-        parseHTML: (element: HTMLElement) => element.getAttribute("data-align") || "left",
+        parseHTML: (element: HTMLElement) =>
+          element.getAttribute("data-align") || "left",
         renderHTML: (attributes: Record<string, unknown>) => ({
           "data-align": attributes.align,
         }),

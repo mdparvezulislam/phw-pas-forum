@@ -1,11 +1,11 @@
+import type { Badge } from "@/db/schema/badges";
 import type {
   PostReportReason,
   PostReportStatus,
 } from "@/db/schema/post-reports";
 import type { Post } from "@/db/schema/posts";
-import type { UserReputation } from "@/db/schema/user-reputation";
 import type { UserLevel } from "@/db/schema/user-levels";
-import type { Badge } from "@/db/schema/badges";
+import type { UserReputation } from "@/db/schema/user-reputation";
 
 export interface PostWithAuthor extends Post {
   author: {

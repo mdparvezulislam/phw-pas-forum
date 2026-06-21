@@ -1,16 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAuth, requireRole } from "@/modules/auth/guards";
-import { RoleName } from "@/types/rbac";
-import { marketplaceModerationService } from "@/services/marketplace-moderation";
 import type { MarketplaceFlagReason } from "@/db/schema/marketplace-flags";
 import type { SellerVerificationAppStatus } from "@/db/schema/seller-verifications";
+import { requireAuth, requireRole } from "@/modules/auth/guards";
+import { marketplaceModerationService } from "@/services/marketplace-moderation";
+import { RoleName } from "@/types/rbac";
 
 export async function submitListingAction(
   threadId: string,
   price: number,
-  paymentDetails?: string
+  paymentDetails?: string,
 ): Promise<{ success: boolean; submissionId?: string; error?: string }> {
   try {
     const user = await requireAuth();
@@ -31,16 +31,28 @@ export async function reviewSubmissionAction(
   submissionId: string,
   decision: "APPROVE" | "REJECT" | "REQUEST_CHANGES",
   notes: string,
-  rejectionReason?: string
+  rejectionReason?: string,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const user = await requireRole(RoleName.MODERATOR);
     if (decision === "APPROVE") {
-      await marketplaceModerationService.approveSubmission(submissionId, user.id, notes);
+      await marketplaceModerationService.approveSubmission(
+        submissionId,
+        user.id,
+        notes,
+      );
     } else if (decision === "REJECT") {
-      await marketplaceModerationService.rejectSubmission(submissionId, user.id, rejectionReason || notes);
+      await marketplaceModerationService.rejectSubmission(
+        submissionId,
+        user.id,
+        rejectionReason || notes,
+      );
     } else if (decision === "REQUEST_CHANGES") {
-      await marketplaceModerationService.requestChanges(submissionId, user.id, notes);
+      await marketplaceModerationService.requestChanges(
+        submissionId,
+        user.id,
+        notes,
+      );
     } else {
       throw new Error("Invalid review decision");
     }
@@ -56,7 +68,7 @@ export async function reviewSubmissionAction(
 export async function reportListingAction(
   listingId: string,
   reason: MarketplaceFlagReason,
-  notes?: string
+  notes?: string,
 ): Promise<{ success: boolean; flagId?: string; error?: string }> {
   try {
     const user = await requireAuth();
@@ -74,14 +86,12 @@ export async function reportListingAction(
 }
 
 export async function applyForVerificationAction(
-  notes?: string
+  notes?: string,
 ): Promise<{ success: boolean; verificationId?: string; error?: string }> {
   try {
     const user = await requireAuth();
-    const verificationId = await marketplaceModerationService.applyForVerification(
-      user.id,
-      notes
-    );
+    const verificationId =
+      await marketplaceModerationService.applyForVerification(user.id, notes);
     return { success: true, verificationId };
   } catch (error: any) {
     return { success: false, error: error.message || String(error) };
@@ -92,7 +102,7 @@ export async function verifySellerAction(
   sellerId: string,
   status: SellerVerificationAppStatus,
   verificationLevel: string,
-  notes: string
+  notes: string,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const user = await requireRole(RoleName.MODERATOR);
@@ -101,7 +111,7 @@ export async function verifySellerAction(
       status,
       verificationLevel,
       notes,
-      user.id
+      user.id,
     );
     revalidatePath("/mod/marketplace");
     return { success: true };
@@ -112,14 +122,14 @@ export async function verifySellerAction(
 
 export async function toggleFeaturedAction(
   threadId: string,
-  featuredDays: number
+  featuredDays: number,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const user = await requireRole(RoleName.MODERATOR);
     await marketplaceModerationService.toggleFeaturedListing(
       threadId,
       featuredDays,
-      user.id
+      user.id,
     );
     revalidatePath("/forums");
     return { success: true };

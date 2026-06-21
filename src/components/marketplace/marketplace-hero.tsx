@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { ArrowRight, Search, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Search, ArrowRight, Sparkles } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 interface MarketplaceHeroProps {
@@ -45,7 +45,8 @@ export function MarketplaceHero({ stats }: MarketplaceHeroProps) {
             </span>
           </h1>
           <p className="mt-3 text-muted-foreground">
-            Discover trusted sellers, verified services, and premium digital products from the community.
+            Discover trusted sellers, verified services, and premium digital
+            products from the community.
           </p>
 
           {/* Search */}
@@ -106,7 +107,9 @@ export function MarketplaceHero({ stats }: MarketplaceHeroProps) {
                 key={stat.label}
                 className="rounded-xl border bg-card/50 px-4 py-3 text-center backdrop-blur-sm"
               >
-                <p className="text-2xl font-bold">{stat.value.toLocaleString()}</p>
+                <p className="text-2xl font-bold">
+                  {stat.value.toLocaleString()}
+                </p>
                 <p className="mt-0.5 text-xs text-muted-foreground">
                   {stat.label}
                 </p>

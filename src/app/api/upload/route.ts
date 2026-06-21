@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { FILE_LIMITS } from "@/constants";
-import { storage } from "@/lib/r2";
 import { auth } from "@/lib/auth";
+import { storage } from "@/lib/r2";
 import { rateLimiter } from "@/services/rate-limit";
 
 /**
@@ -70,9 +70,6 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("[/api/upload] upload failed", error);
-    return NextResponse.json(
-      { error: "Upload failed" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }

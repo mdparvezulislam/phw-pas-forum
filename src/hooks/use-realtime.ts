@@ -8,7 +8,7 @@ interface RealtimeEvent {
 
 export function useRealtime(
   channels: string[],
-  onMessage: (event: RealtimeEvent) => void
+  onMessage: (event: RealtimeEvent) => void,
 ) {
   const onMessageRef = useRef(onMessage);
   onMessageRef.current = onMessage;

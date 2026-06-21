@@ -2,11 +2,11 @@ import "server-only";
 
 import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
-import type { Post } from "@/db/schema/posts";
-import type { PaginatedResult } from "@/modules/thread/types";
-import type { UserReputation } from "@/db/schema/user-reputation";
-import type { UserLevel } from "@/db/schema/user-levels";
 import type { Badge } from "@/db/schema/badges";
+import type { Post } from "@/db/schema/posts";
+import type { UserLevel } from "@/db/schema/user-levels";
+import type { UserReputation } from "@/db/schema/user-reputation";
+import type { PaginatedResult } from "@/modules/thread/types";
 
 export interface PostWithAuthor extends Post {
   author: {
@@ -102,9 +102,7 @@ export async function getPostsWithReputation(
   const result = await getPosts(options);
   const db = getDatabase();
 
-  const authorIds = [
-    ...new Set(result.items.map((p) => p.author.id)),
-  ];
+  const authorIds = [...new Set(result.items.map((p) => p.author.id))];
 
   if (authorIds.length === 0) {
     return result as unknown as PaginatedResult<PostWithAuthorReputation>;

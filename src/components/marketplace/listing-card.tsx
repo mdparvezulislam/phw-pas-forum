@@ -1,16 +1,16 @@
 "use client";
 
+import {
+  Clock,
+  Crown,
+  Flame,
+  Heart,
+  ShoppingBag,
+  Star,
+  TrendingUp,
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import {
-  Star,
-  Clock,
-  ShoppingBag,
-  Heart,
-  TrendingUp,
-  Flame,
-  Crown,
-} from "lucide-react";
 import { cn, formatCurrency } from "@/lib/utils";
 import { TrustBadge } from "./trust-badge";
 
@@ -119,9 +119,7 @@ export function ListingCard({
               : "bg-black/30 text-white/80 hover:bg-black/50 hover:text-white",
           )}
         >
-          <Heart
-            className={cn("h-4 w-4", isFavorited && "fill-current")}
-          />
+          <Heart className={cn("h-4 w-4", isFavorited && "fill-current")} />
         </button>
 
         {/* Price tag */}

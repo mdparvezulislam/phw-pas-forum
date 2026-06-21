@@ -4,14 +4,13 @@ import { and, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getDatabase, schema } from "@/db";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
-import { requireAuth } from "@/modules/auth/guards";
+import { requireAuth, requireRole } from "@/modules/auth/guards";
 import { auditService } from "@/services/audit";
-import { requireRole } from "@/modules/auth/guards";
 import { RoleName } from "@/types/rbac";
 import {
+  adminBadgeAssignSchema,
   createBadgeSchema,
   updateBadgeSchema,
-  adminBadgeAssignSchema,
 } from "@/validations/reputation";
 
 export async function createBadge(
@@ -102,7 +101,10 @@ export async function assignBadge(
 
   const existing = await db.query.userBadges.findFirst({
     where: (ub, { and: andFn, eq: eqFn }) =>
-      andFn(eqFn(ub.userId, parsed.data.userId), eqFn(ub.badgeId, parsed.data.badgeId)),
+      andFn(
+        eqFn(ub.userId, parsed.data.userId),
+        eqFn(ub.badgeId, parsed.data.badgeId),
+      ),
   });
   if (existing) return { error: "User already has this badge" };
 
@@ -144,7 +146,9 @@ export async function revokeBadge(
   });
   if (!userBadge) return { error: "Badge not found" };
 
-  await db.delete(schema.userBadges).where(eq(schema.userBadges.id, userBadgeId));
+  await db
+    .delete(schema.userBadges)
+    .where(eq(schema.userBadges.id, userBadgeId));
 
   await db
     .update(schema.userReputation)

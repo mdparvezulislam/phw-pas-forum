@@ -1,11 +1,18 @@
 "use client";
 
+import {
+  Archive,
+  FileText,
+  Film,
+  Image as ImageIcon,
+  Upload,
+  X,
+} from "lucide-react";
 import { useCallback, useRef, useState } from "react";
-import { Upload, X, FileText, Image as ImageIcon, Film, Archive } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useFileUpload } from "@/modules/media/hooks/use-file-upload";
-import { formatFileSize, getMimeTypeCategory } from "@/validations/media";
 import type { UploadResult } from "@/modules/media/types";
+import { formatFileSize, getMimeTypeCategory } from "@/validations/media";
 
 interface MediaUploaderProps {
   onUpload: (file: UploadResult) => void;

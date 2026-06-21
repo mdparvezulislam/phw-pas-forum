@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  clearSearchHistoryAction,
   executeSearchAction,
   getSearchHistoryAction,
-  clearSearchHistoryAction,
   getTrendingSearchesAction,
   type SerializableSearchOptions,
 } from "@/modules/search/actions/search";
 import { SearchBar } from "./search-bar";
-import { SearchFilters, type SearchFilterState } from "./search-filters";
-import { SearchResults } from "./search-results";
-import { SearchHistory } from "./search-history";
-import { TrendingSearches } from "./trending-searches";
 import { SearchEmptyState } from "./search-empty-state";
+import { type SearchFilterState, SearchFilters } from "./search-filters";
+import { SearchHistory } from "./search-history";
+import { SearchResults } from "./search-results";
+import { TrendingSearches } from "./trending-searches";
 
 export function SearchDashboard() {
   const [query, setQuery] = useState("");
@@ -81,7 +81,11 @@ export function SearchDashboard() {
   };
 
   // Perform search operation
-  const handleSearch = async (searchQuery: string, overridePage?: number, overrideFilters?: SearchFilterState) => {
+  const handleSearch = async (
+    searchQuery: string,
+    overridePage?: number,
+    overrideFilters?: SearchFilterState,
+  ) => {
     const activeFilters = overrideFilters || filters;
     const activePage = overridePage ?? 1;
 
@@ -93,11 +97,18 @@ export function SearchDashboard() {
     const options: SerializableSearchOptions = {
       contentType: activeFilters.contentType,
       author: activeFilters.author.trim() || undefined,
-      minReputation: activeFilters.minReputation ? parseInt(activeFilters.minReputation, 10) : undefined,
+      minReputation: activeFilters.minReputation
+        ? parseInt(activeFilters.minReputation, 10)
+        : undefined,
       sortBy: activeFilters.sortBy,
       startDate: activeFilters.startDate || undefined,
       endDate: activeFilters.endDate || undefined,
-      tags: activeFilters.tagsString ? activeFilters.tagsString.split(",").map(t => t.trim()).filter(Boolean) : undefined,
+      tags: activeFilters.tagsString
+        ? activeFilters.tagsString
+            .split(",")
+            .map((t) => t.trim())
+            .filter(Boolean)
+        : undefined,
       page: activePage,
       perPage: 15,
     };
@@ -138,7 +149,7 @@ export function SearchDashboard() {
   };
 
   const handleFilterUpdate = (updates: Partial<SearchFilterState>) => {
-    setFilters(prev => ({ ...prev, ...updates }));
+    setFilters((prev) => ({ ...prev, ...updates }));
   };
 
   return (
@@ -149,7 +160,8 @@ export function SearchDashboard() {
           Advanced Search Engine
         </h1>
         <p className="text-muted-foreground text-sm max-w-xl">
-          Search the entire ecosystem with lightning speed, advanced filter queries, and autocompletion.
+          Search the entire ecosystem with lightning speed, advanced filter
+          queries, and autocompletion.
         </p>
       </div>
 
@@ -169,8 +181,21 @@ export function SearchDashboard() {
           {/* Results Header Tabs */}
           <div className="flex items-center justify-between border-b pb-1 overflow-x-auto gap-2">
             <div className="flex gap-2 shrink-0">
-              {(["all", "threads", "posts", "users", "forums", "badges", "trophies"] as const).map((tab) => {
-                const label = tab === "all" ? "All" : tab.charAt(0).toUpperCase() + tab.slice(1);
+              {(
+                [
+                  "all",
+                  "threads",
+                  "posts",
+                  "users",
+                  "forums",
+                  "badges",
+                  "trophies",
+                ] as const
+              ).map((tab) => {
+                const label =
+                  tab === "all"
+                    ? "All"
+                    : tab.charAt(0).toUpperCase() + tab.slice(1);
                 const isActive = filters.contentType === tab;
                 return (
                   <button
@@ -199,7 +224,10 @@ export function SearchDashboard() {
           {isLoading ? (
             <div className="space-y-4 py-6">
               {[1, 2, 3].map((n) => (
-                <div key={n} className="p-5 border rounded-xl bg-card/20 space-y-3 animate-pulse">
+                <div
+                  key={n}
+                  className="p-5 border rounded-xl bg-card/20 space-y-3 animate-pulse"
+                >
                   <div className="h-4 bg-muted rounded w-2/5" />
                   <div className="h-3 bg-muted rounded w-4/5" />
                   <div className="h-3 bg-muted rounded w-3/5" />
@@ -212,7 +240,10 @@ export function SearchDashboard() {
             </div>
           ) : results && results.hits.length > 0 ? (
             <div className="space-y-6">
-              <SearchResults hits={results.hits} contentType={filters.contentType} />
+              <SearchResults
+                hits={results.hits}
+                contentType={filters.contentType}
+              />
 
               {/* Pagination */}
               {results.totalPages > 1 && (
@@ -246,8 +277,15 @@ export function SearchDashboard() {
       ) : (
         /* Idle State - Show History and Trending */
         <div className="grid gap-6 md:grid-cols-2 pt-4">
-          <TrendingSearches trending={trending} onSelectQuery={(q) => handleSearch(q)} />
-          <SearchHistory history={history} onSelectQuery={(q) => handleSearch(q)} onClear={handleClearHistory} />
+          <TrendingSearches
+            trending={trending}
+            onSelectQuery={(q) => handleSearch(q)}
+          />
+          <SearchHistory
+            history={history}
+            onSelectQuery={(q) => handleSearch(q)}
+            onClear={handleClearHistory}
+          />
         </div>
       )}
     </div>

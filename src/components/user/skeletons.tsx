@@ -72,7 +72,10 @@ export function NotificationSkeleton() {
   return (
     <div className="space-y-3">
       {[1, 2, 3, 4, 5].map((i) => (
-        <div key={i} className="flex items-center gap-3 rounded-xl border bg-card p-4">
+        <div
+          key={i}
+          className="flex items-center gap-3 rounded-xl border bg-card p-4"
+        >
           <Skeleton className="h-10 w-10 rounded-full" />
           <div className="flex-1 space-y-1.5">
             <Skeleton className="h-4 w-3/4" />
@@ -113,7 +116,10 @@ export function AchievementSkeleton() {
     <div className="space-y-6">
       <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6">
         {Array.from({ length: 12 }).map((_, i) => (
-          <div key={i} className="flex flex-col items-center rounded-xl border bg-card p-4">
+          <div
+            key={i}
+            className="flex flex-col items-center rounded-xl border bg-card p-4"
+          >
             <Skeleton className="h-12 w-12 rounded-xl" />
             <Skeleton className="mt-2 h-3 w-16" />
           </div>

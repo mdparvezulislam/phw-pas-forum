@@ -7,11 +7,19 @@ interface OrderWithTimeline extends Order {
 
 export function OrderTimeline({ order }: { order: OrderWithTimeline }) {
   const events: { date: Date; label: string; description: string }[] = [
-    { date: new Date(order.createdAt), label: "Order Placed", description: "Order was created" },
+    {
+      date: new Date(order.createdAt),
+      label: "Order Placed",
+      description: "Order was created",
+    },
   ];
 
   if (order.status !== "PENDING") {
-    events.push({ date: new Date(order.updatedAt), label: "Accepted", description: "Seller accepted the order" });
+    events.push({
+      date: new Date(order.updatedAt),
+      label: "Accepted",
+      description: "Seller accepted the order",
+    });
   }
 
   if (order.deliveries) {
@@ -35,7 +43,11 @@ export function OrderTimeline({ order }: { order: OrderWithTimeline }) {
   }
 
   if (order.completedAt) {
-    events.push({ date: new Date(order.completedAt), label: "Completed", description: "Order completed" });
+    events.push({
+      date: new Date(order.completedAt),
+      label: "Completed",
+      description: "Order completed",
+    });
   }
 
   if (order.cancelledAt) {
@@ -54,12 +66,16 @@ export function OrderTimeline({ order }: { order: OrderWithTimeline }) {
         <div key={index} className="relative flex gap-4">
           <div className="flex flex-col items-center">
             <div className="h-3 w-3 rounded-full border-2 border-primary bg-background" />
-            {index < events.length - 1 && <div className="h-full w-0.5 bg-border" />}
+            {index < events.length - 1 && (
+              <div className="h-full w-0.5 bg-border" />
+            )}
           </div>
           <div className="pb-4">
             <p className="text-sm font-medium">{event.label}</p>
             <p className="text-xs text-muted-foreground">{event.description}</p>
-            <p className="text-xs text-muted-foreground">{event.date.toLocaleString()}</p>
+            <p className="text-xs text-muted-foreground">
+              {event.date.toLocaleString()}
+            </p>
           </div>
         </div>
       ))}

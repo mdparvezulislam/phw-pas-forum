@@ -6,6 +6,7 @@ import { hasPermission } from "@/config/rbac";
 import { getDatabase, schema } from "@/db";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
 import { requireAuth } from "@/modules/auth/guards";
+import { AIModerationEngine } from "@/modules/ai/moderation/moderation";
 import { auditService } from "@/services/audit";
 import { getNextPostNumber, getPostById } from "@/services/post";
 import { rateLimiter } from "@/services/rate-limit";
@@ -64,6 +65,25 @@ export async function createPost(
       status: "PUBLISHED",
     })
     .returning();
+
+  // AI safety checks scan
+  const modScan = await AIModerationEngine.scanContent({
+    targetId: post.id,
+    targetType: "POST",
+    title: `Post #${postNumber} in thread ${parsed.data.threadId}`,
+    body: parsed.data.content,
+    userId: user.id,
+  });
+
+  if (modScan.decision === "BLOCKED") {
+    await db
+      .update(schema.posts)
+      .set({ status: "DELETED" })
+      .where(eq(schema.posts.id, post.id));
+    return {
+      error: `Content blocked by safety policy: ${modScan.explanation}`,
+    };
+  }
 
   await db
     .update(schema.threads)

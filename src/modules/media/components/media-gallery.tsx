@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import type { MediaItem } from "@/modules/media/types";
 
@@ -19,7 +19,8 @@ export function MediaGallery({
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const current = items[currentIndex];
 
-  const goNext = () => setCurrentIndex((i) => Math.min(i + 1, items.length - 1));
+  const goNext = () =>
+    setCurrentIndex((i) => Math.min(i + 1, items.length - 1));
   const goPrev = () => setCurrentIndex((i) => Math.max(i - 1, 0));
 
   if (!current) return null;

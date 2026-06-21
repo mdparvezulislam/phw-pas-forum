@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { getSuggestionsAction } from "@/modules/search/actions/search";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui";
+import { getSuggestionsAction } from "@/modules/search/actions/search";
 
 export function GlobalSearch() {
   const router = useRouter();
@@ -100,7 +101,9 @@ export function GlobalSearch() {
     if (item.type === "thread") {
       const catSlug = item.data.categorySlug ?? "general";
       const forSlug = item.data.forumSlug ?? "general";
-      router.push(`/forums/${catSlug}/${forSlug}/${item.data.slug ?? item.data.id}`);
+      router.push(
+        `/forums/${catSlug}/${forSlug}/${item.data.slug ?? item.data.id}`,
+      );
     } else if (item.type === "user") {
       router.push(`/profile/${item.data.username}`);
     } else if (item.type === "forum") {
@@ -144,7 +147,10 @@ export function GlobalSearch() {
               className="relative w-full max-w-lg overflow-hidden rounded-xl border bg-card shadow-2xl mx-4"
             >
               {/* Input Row */}
-              <form onSubmit={handleSearchSubmit} className="relative flex items-center border-b p-3">
+              <form
+                onSubmit={handleSearchSubmit}
+                className="relative flex items-center border-b p-3"
+              >
                 <span className="text-muted-foreground mr-2.5 pl-1.5">🔍</span>
                 <Input
                   ref={inputRef}
@@ -166,7 +172,9 @@ export function GlobalSearch() {
                   {suggestions.threads.length === 0 &&
                     suggestions.users.length === 0 &&
                     suggestions.forums.length === 0 && (
-                      <p className="text-sm text-muted-foreground text-center py-6">No suggestions found.</p>
+                      <p className="text-sm text-muted-foreground text-center py-6">
+                        No suggestions found.
+                      </p>
                     )}
 
                   {/* Threads */}
@@ -180,14 +188,22 @@ export function GlobalSearch() {
                         return (
                           <button
                             key={t.id}
-                            onClick={() => navigateSuggestion({ type: "thread", data: t })}
+                            onClick={() =>
+                              navigateSuggestion({ type: "thread", data: t })
+                            }
                             type="button"
                             className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex flex-col cursor-pointer ${
-                              isSelected ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted/50 text-foreground"
+                              isSelected
+                                ? "bg-primary/10 text-primary font-medium"
+                                : "hover:bg-muted/50 text-foreground"
                             }`}
                           >
-                            <span className="font-semibold truncate">{t.title}</span>
-                            <span className="text-xs text-muted-foreground">In {t.forum} • By {t.author}</span>
+                            <span className="font-semibold truncate">
+                              {t.title}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              In {t.forum} • By {t.author}
+                            </span>
                           </button>
                         );
                       })}
@@ -201,17 +217,24 @@ export function GlobalSearch() {
                         Members
                       </span>
                       {suggestions.users.map((u, idx) => {
-                        const isSelected = activeIndex === suggestions.threads.length + idx;
+                        const isSelected =
+                          activeIndex === suggestions.threads.length + idx;
                         return (
                           <button
                             key={u.id}
-                            onClick={() => navigateSuggestion({ type: "user", data: u })}
+                            onClick={() =>
+                              navigateSuggestion({ type: "user", data: u })
+                            }
                             type="button"
                             className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center justify-between cursor-pointer ${
-                              isSelected ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted/50 text-foreground"
+                              isSelected
+                                ? "bg-primary/10 text-primary font-medium"
+                                : "hover:bg-muted/50 text-foreground"
                             }`}
                           >
-                            <span className="font-semibold">{u.displayName ?? u.username}</span>
+                            <span className="font-semibold">
+                              {u.displayName ?? u.username}
+                            </span>
                             <span className="text-xs font-semibold px-2 py-0.5 rounded bg-amber-500/10 text-amber-500">
                               ⭐ {u.reputation} Rep
                             </span>
@@ -228,14 +251,22 @@ export function GlobalSearch() {
                         Forums
                       </span>
                       {suggestions.forums.map((f, idx) => {
-                        const isSelected = activeIndex === suggestions.threads.length + suggestions.users.length + idx;
+                        const isSelected =
+                          activeIndex ===
+                          suggestions.threads.length +
+                            suggestions.users.length +
+                            idx;
                         return (
                           <button
                             key={f.id}
-                            onClick={() => navigateSuggestion({ type: "forum", data: f })}
+                            onClick={() =>
+                              navigateSuggestion({ type: "forum", data: f })
+                            }
                             type="button"
                             className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex flex-col cursor-pointer ${
-                              isSelected ? "bg-primary/10 text-primary font-medium" : "hover:bg-muted/50 text-foreground"
+                              isSelected
+                                ? "bg-primary/10 text-primary font-medium"
+                                : "hover:bg-muted/50 text-foreground"
                             }`}
                           >
                             <span className="font-semibold">{f.title}</span>

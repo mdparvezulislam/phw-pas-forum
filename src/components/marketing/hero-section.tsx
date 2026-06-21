@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
+import Link from "next/link";
 
 export function HeroSection() {
   return (
@@ -44,8 +44,8 @@ export function HeroSection() {
 
           {/* Subheadline */}
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">
-            Join thousands of entrepreneurs, marketers, developers, and creators sharing
-            knowledge, growing businesses, and selling services.
+            Join thousands of entrepreneurs, marketers, developers, and creators
+            sharing knowledge, growing businesses, and selling services.
           </p>
 
           {/* CTAs */}
@@ -75,7 +75,9 @@ export function HeroSection() {
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <p className="text-2xl font-bold sm:text-3xl">{stat.value}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{stat.label}</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {stat.label}
+                </p>
               </div>
             ))}
           </div>

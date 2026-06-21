@@ -1,14 +1,15 @@
+import type { Metadata } from "next";
 import React from "react";
+import { isAtLeast } from "@/config/rbac";
 import { getDatabase, schema } from "@/db";
 import { requireAuth } from "@/modules/auth/guards";
-import ResourcesClient from "./ResourcesClient";
 import { RoleName } from "@/types/rbac";
-import { isAtLeast } from "@/config/rbac";
-import { Metadata } from "next";
+import ResourcesClient from "./ResourcesClient";
 
 export const metadata: Metadata = {
   title: "Premium Resource Center",
-  description: "Browse and download exclusive SEO scripts, software, guides, and tools.",
+  description:
+    "Browse and download exclusive SEO scripts, software, guides, and tools.",
 };
 
 export default async function ResourcesPage() {
@@ -71,7 +72,8 @@ export default async function ResourcesPage() {
         uploaderId: user.id,
         fileName: "niche_research_insights.xlsx",
         originalName: "High Margin Niches Database.xlsx",
-        mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        mimeType:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         fileSize: 1200000, // 1.2 MB
         storageKey: "resources/niche_research_insights.xlsx",
         url: "https://file-examples.com/wp-content/uploads/2017/02/file_example_XLSX_10.xlsx",
@@ -80,7 +82,10 @@ export default async function ResourcesPage() {
     ];
 
     for (const mockAtt of mockAttachments) {
-      const attResult = await db.insert(schema.attachments).values(mockAtt).returning();
+      const attResult = await db
+        .insert(schema.attachments)
+        .values(mockAtt)
+        .returning();
       const att = attResult[0];
 
       let requiredPlan = "VIP";
@@ -90,15 +95,18 @@ export default async function ResourcesPage() {
       if (mockAtt.fileName.includes("seo")) {
         requiredPlan = "VIP";
         title = "BlackHatWorld SEO Method Cheat Sheet (2026 Edition)";
-        description = "Step-by-step framework to index new websites in under 24 hours and rank on the first page using high quality tier 2 links.";
+        description =
+          "Step-by-step framework to index new websites in under 24 hours and rank on the first page using high quality tier 2 links.";
       } else if (mockAtt.fileName.includes("ctr")) {
         requiredPlan = "VIP_PLUS";
         title = "CTR Automation Click Booster Tool";
-        description = "Automates simulated organic traffic clicks from custom residential proxy lists to boost CTR rank scores on major search networks.";
+        description =
+          "Automates simulated organic traffic clicks from custom residential proxy lists to boost CTR rank scores on major search networks.";
       } else {
         requiredPlan = "ELITE";
         title = "High-Margin E-Commerce Niche Intelligence Sheet";
-        description = "Filtered list of 500+ low-competition, high-margin e-commerce product niches compiled using organic search volume tools.";
+        description =
+          "Filtered list of 500+ low-competition, high-margin e-commerce product niches compiled using organic search volume tools.";
       }
 
       await db.insert(schema.premiumResources).values({

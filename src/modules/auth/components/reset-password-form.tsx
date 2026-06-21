@@ -1,12 +1,19 @@
 "use client";
 
+import {
+  AlertCircle,
+  ArrowLeft,
+  CheckCircle2,
+  Eye,
+  EyeOff,
+  Loader2,
+} from "lucide-react";
 import Link from "next/link";
-import { useActionState, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useActionState, useState } from "react";
+import { PasswordStrength } from "@/components/auth";
 import { cn } from "@/lib/utils";
 import { resetPassword } from "@/modules/auth/actions";
-import { PasswordStrength } from "@/components/auth";
-import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle2, ArrowLeft } from "lucide-react";
 
 export function ResetPasswordForm() {
   const searchParams = useSearchParams();
@@ -44,7 +51,10 @@ export function ResetPasswordForm() {
 
       {/* Password */}
       <div className="space-y-1.5">
-        <label htmlFor="password" className="text-xs font-medium text-muted-foreground">
+        <label
+          htmlFor="password"
+          className="text-xs font-medium text-muted-foreground"
+        >
           New Password
         </label>
         <div className="relative">
@@ -71,18 +81,27 @@ export function ResetPasswordForm() {
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
             tabIndex={-1}
           >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
           </button>
         </div>
         <PasswordStrength password={password} />
         {state?.fieldErrors?.password && (
-          <p className="text-xs text-destructive">{state.fieldErrors.password[0]}</p>
+          <p className="text-xs text-destructive">
+            {state.fieldErrors.password[0]}
+          </p>
         )}
       </div>
 
       {/* Confirm Password */}
       <div className="space-y-1.5">
-        <label htmlFor="confirmPassword" className="text-xs font-medium text-muted-foreground">
+        <label
+          htmlFor="confirmPassword"
+          className="text-xs font-medium text-muted-foreground"
+        >
           Confirm New Password
         </label>
         <div className="relative">
@@ -105,11 +124,17 @@ export function ResetPasswordForm() {
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
             tabIndex={-1}
           >
-            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showConfirmPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
           </button>
         </div>
         {state?.fieldErrors?.confirmPassword && (
-          <p className="text-xs text-destructive">{state.fieldErrors.confirmPassword[0]}</p>
+          <p className="text-xs text-destructive">
+            {state.fieldErrors.confirmPassword[0]}
+          </p>
         )}
       </div>
 

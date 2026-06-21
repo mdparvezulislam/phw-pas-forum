@@ -1,5 +1,5 @@
+import { ArrowRight, Check, Crown } from "lucide-react";
 import Link from "next/link";
-import { Check, ArrowRight, Crown } from "lucide-react";
 
 const benefits = [
   "Access to VIP-only forums",
@@ -27,12 +27,15 @@ export function PremiumSection() {
                 Unlock the Full Experience
               </h2>
               <p className="mt-3 text-muted-foreground">
-                Upgrade to VIP and get access to premium forums, exclusive resources,
-                marketplace boosts, and priority support.
+                Upgrade to VIP and get access to premium forums, exclusive
+                resources, marketplace boosts, and priority support.
               </p>
               <ul className="mt-6 space-y-3">
                 {benefits.map((benefit) => (
-                  <li key={benefit} className="flex items-center gap-2.5 text-sm">
+                  <li
+                    key={benefit}
+                    className="flex items-center gap-2.5 text-sm"
+                  >
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-premium/10 text-premium">
                       <Check className="h-3 w-3" />
                     </span>
@@ -53,12 +56,17 @@ export function PremiumSection() {
               <div className="relative">
                 <div className="absolute inset-0 rounded-2xl bg-premium/5 blur-3xl" />
                 <div className="relative rounded-2xl border border-premium/10 bg-premium/5 p-8">
-                  <p className="text-center text-5xl font-bold text-premium">VIP</p>
+                  <p className="text-center text-5xl font-bold text-premium">
+                    VIP
+                  </p>
                   <p className="mt-2 text-center text-sm text-muted-foreground">
                     Starting from
                   </p>
                   <p className="mt-1 text-center text-4xl font-bold">
-                    $19<span className="text-lg font-normal text-muted-foreground">/mo</span>
+                    $19
+                    <span className="text-lg font-normal text-muted-foreground">
+                      /mo
+                    </span>
                   </p>
                   <div className="mt-6 space-y-2 text-center text-sm text-muted-foreground">
                     <p>Cancel anytime &middot; Annual plans available</p>

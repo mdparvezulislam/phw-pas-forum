@@ -1,10 +1,18 @@
+import {
+  Award,
+  Medal,
+  MessageSquare,
+  Star,
+  TrendingUp,
+  Trophy,
+  Users,
+} from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { leaderboardService } from "@/services/leaderboard";
-import { Trophy, Medal, Star, Users, TrendingUp, Award, MessageSquare } from "lucide-react";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { leaderboardService } from "@/services/leaderboard";
 
 export const metadata: Metadata = {
   title: "Leaderboards",
@@ -107,12 +115,20 @@ function LeaderboardSection({
   icon: any;
   color: string;
   bg: string;
-  entries: { rank: number; username: string; displayName?: string | null; value: string; href: string }[];
+  entries: {
+    rank: number;
+    username: string;
+    displayName?: string | null;
+    value: string;
+    href: string;
+  }[];
 }) {
   return (
     <div className="overflow-hidden rounded-xl border bg-card">
       <div className="flex items-center gap-3 border-b px-5 py-4">
-        <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${bg}`}>
+        <div
+          className={`flex h-9 w-9 items-center justify-center rounded-lg ${bg}`}
+        >
           <Icon className={`h-5 w-5 ${color}`} />
         </div>
         <h3 className="font-semibold">{title}</h3>
@@ -131,9 +147,11 @@ function LeaderboardSection({
                 <div
                   className={cn(
                     "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold",
-                    i === 0 && "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+                    i === 0 &&
+                      "bg-amber-500/10 text-amber-600 dark:text-amber-400",
                     i === 1 && "bg-slate-400/10 text-slate-500",
-                    i === 2 && "bg-orange-500/10 text-orange-600 dark:text-orange-400",
+                    i === 2 &&
+                      "bg-orange-500/10 text-orange-600 dark:text-orange-400",
                     i > 2 && "bg-muted text-muted-foreground",
                   )}
                 >
@@ -142,12 +160,16 @@ function LeaderboardSection({
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium truncate">{name}</p>
                 </div>
-                <span className="text-sm font-medium text-muted-foreground">{entry.value}</span>
+                <span className="text-sm font-medium text-muted-foreground">
+                  {entry.value}
+                </span>
               </Link>
             );
           })
         ) : (
-          <div className="px-5 py-8 text-center text-sm text-muted-foreground">No entries yet</div>
+          <div className="px-5 py-8 text-center text-sm text-muted-foreground">
+            No entries yet
+          </div>
         )}
       </div>
     </div>

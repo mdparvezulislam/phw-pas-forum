@@ -49,7 +49,7 @@ export const searchIndexJobs = pgTable(
   (table) => [
     index("search_index_job_status_idx").on(table.status),
     index("search_index_job_entity_idx").on(table.entityType, table.entityId),
-  ]
+  ],
 );
 
 export type SearchIndexJob = typeof searchIndexJobs.$inferSelect;

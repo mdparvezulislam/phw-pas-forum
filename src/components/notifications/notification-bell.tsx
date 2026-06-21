@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { Bell, BellRing } from "lucide-react";
-import { useAuth } from "@/hooks";
+import { useState } from "react";
 import { Button } from "@/components/ui";
+import { useAuth } from "@/hooks";
 
 interface NotificationBellProps {
   unreadCount?: number;

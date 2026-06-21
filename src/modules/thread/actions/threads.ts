@@ -8,6 +8,7 @@ import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
 import { auth } from "@/lib/auth";
 import { slugify } from "@/lib/utils";
 import { requireAuth } from "@/modules/auth/guards";
+import { AIModerationEngine } from "@/modules/ai/moderation/moderation";
 import type {
   PaginatedResult,
   ThreadListOptions,
@@ -90,6 +91,25 @@ export async function createThread(
       publishedAt: parsed.data.status === "PUBLISHED" ? new Date() : null,
     })
     .returning();
+
+  // AI safety checks scan
+  const modScan = await AIModerationEngine.scanContent({
+    targetId: thread.id,
+    targetType: "THREAD",
+    title: parsed.data.title,
+    body: parsed.data.content,
+    userId: user.id,
+  });
+
+  if (modScan.decision === "BLOCKED") {
+    await db
+      .update(schema.threads)
+      .set({ status: "DELETED" })
+      .where(eq(schema.threads.id, thread.id));
+    return {
+      error: `Content blocked by safety policy: ${modScan.explanation}`,
+    };
+  }
 
   if (parsed.data.tags && parsed.data.tags.length > 0) {
     await db.insert(schema.threadTags).values(

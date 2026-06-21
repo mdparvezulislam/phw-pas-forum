@@ -2,12 +2,12 @@ import "server-only";
 
 import { and, desc, eq, sql } from "drizzle-orm";
 import { getDatabase, schema } from "@/db";
+import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
 import type {
   NewReputationTransaction,
   ReputationTransactionType,
 } from "@/db/schema/reputation-transactions";
 import { auditService } from "./audit";
-import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
 
 export const REPUTATION_RULES = {
   LIKE_RECEIVED: 1,
@@ -24,9 +24,7 @@ export const REPUTATION_RULES = {
   SYSTEM_REWARD: 5,
 } as const;
 
-export function getReputationPointsForReaction(
-  reactionType: string,
-): number {
+export function getReputationPointsForReaction(reactionType: string): number {
   const map: Record<string, number> = {
     LIKE: REPUTATION_RULES.LIKE_RECEIVED,
     LOVE: REPUTATION_RULES.LOVE_RECEIVED,
@@ -69,16 +67,20 @@ export class ReputationEngine {
         },
       });
 
-    await auditService.log(input.sourceUserId ?? null, AUDIT_ACTIONS.REPUTATION_CHANGED, {
-      resource: "reputation",
-      resourceId: input.userId,
-      metadata: {
-        points: input.points,
-        type: input.type,
-        entityId: input.entityId,
-        entityType: input.entityType,
-      } as Record<string, unknown>,
-    });
+    await auditService.log(
+      input.sourceUserId ?? null,
+      AUDIT_ACTIONS.REPUTATION_CHANGED,
+      {
+        resource: "reputation",
+        resourceId: input.userId,
+        metadata: {
+          points: input.points,
+          type: input.type,
+          entityId: input.entityId,
+          entityType: input.entityType,
+        } as Record<string, unknown>,
+      },
+    );
   }
 
   async getUserReputation(userId: string) {
@@ -109,11 +111,7 @@ export class ReputationEngine {
     return rep;
   }
 
-  async getReputationHistory(
-    userId: string,
-    limit = 50,
-    offset = 0,
-  ) {
+  async getReputationHistory(userId: string, limit = 50, offset = 0) {
     const db = getDatabase();
     return db.query.reputationTransactions.findMany({
       where: (tx, { eq }) => eq(tx.userId, userId),
@@ -144,7 +142,7 @@ export class ReputationEngine {
     }
 
     const nextLevel = currentLevel
-      ? levels.find((l) => l.minPoints > currentLevel.minPoints) ?? null
+      ? (levels.find((l) => l.minPoints > currentLevel.minPoints) ?? null)
       : null;
 
     return {

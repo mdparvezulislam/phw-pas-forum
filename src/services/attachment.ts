@@ -20,9 +20,11 @@ export async function getAttachmentById(
   id: string,
 ): Promise<Attachment | null> {
   const db = getDatabase();
-  return (await db.query.attachments.findFirst({
-    where: (a, { eq }) => eq(a.id, id),
-  })) ?? null;
+  return (
+    (await db.query.attachments.findFirst({
+      where: (a, { eq }) => eq(a.id, id),
+    })) ?? null
+  );
 }
 
 export async function getAttachmentsByUser(
@@ -102,9 +104,7 @@ export async function deleteAttachment(id: string): Promise<void> {
 
 export async function hardDeleteAttachment(id: string): Promise<void> {
   const db = getDatabase();
-  await db
-    .delete(schema.attachments)
-    .where(eq(schema.attachments.id, id));
+  await db.delete(schema.attachments).where(eq(schema.attachments.id, id));
 }
 
 export async function linkAttachmentToPost(

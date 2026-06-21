@@ -1,5 +1,5 @@
+import { Award, CheckCircle2, Lock, Star, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Award, Star, Lock, CheckCircle2, Trophy } from "lucide-react";
 
 interface BadgeDisplay {
   id: string;
@@ -26,7 +26,9 @@ export function AchievementGallery({
   title = "Badges",
   emptyMessage = "No badges yet",
 }: AchievementGalleryProps) {
-  const earnedSet = earnedBadgeIds ?? new Set(badges.filter((b) => b.earnedAt).map((b) => b.id));
+  const earnedSet =
+    earnedBadgeIds ??
+    new Set(badges.filter((b) => b.earnedAt).map((b) => b.id));
 
   if (badges.length === 0) {
     return (
@@ -59,7 +61,11 @@ export function AchievementGallery({
               <div
                 className={cn(
                   "flex h-12 w-12 items-center justify-center rounded-xl text-2xl",
-                  isEarned ? (badge.color ? `${badge.color}/10` : "bg-primary/10") : "bg-muted",
+                  isEarned
+                    ? badge.color
+                      ? `${badge.color}/10`
+                      : "bg-primary/10"
+                    : "bg-muted",
                 )}
               >
                 {isEarned ? (
@@ -118,7 +124,8 @@ export function TrophyGallery({
   emptyMessage = "No trophies yet",
 }: TrophyGalleryProps) {
   const earnedSet =
-    earnedTrophyIds ?? new Set(trophies.filter((t) => t.earnedAt).map((t) => t.id));
+    earnedTrophyIds ??
+    new Set(trophies.filter((t) => t.earnedAt).map((t) => t.id));
 
   if (trophies.length === 0) {
     return (
@@ -167,7 +174,9 @@ export function TrophyGallery({
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-semibold">{trophy.title}</span>
-                  {isEarned && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />}
+                  {isEarned && (
+                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                  )}
                 </div>
                 {trophy.description && (
                   <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2">

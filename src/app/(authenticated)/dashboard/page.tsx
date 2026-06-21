@@ -1,24 +1,25 @@
-import type { Metadata } from "next";
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import { auth } from "@/lib/auth";
-import { getDashboardData } from "@/services/user-dashboard";
 import {
-  DashboardHero,
-  ActivityTimeline,
-  UserEmptyState,
-  DashboardSkeleton,
-} from "@/components/user";
-import {
-  MessageSquare,
-  Bell,
-  Eye,
-  Bookmark,
-  ShoppingBag,
-  BarChart3,
-  Trophy,
   ArrowUpRight,
+  BarChart3,
+  Bell,
+  Bookmark,
+  Eye,
+  MessageSquare,
+  ShoppingBag,
+  Trophy,
 } from "lucide-react";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import {
+  ActivityTimeline,
+  DashboardHero,
+  DashboardSkeleton,
+  UserEmptyState,
+} from "@/components/user";
+import { auth } from "@/lib/auth";
+import { AIRecommendationFeed } from "@/modules/ai/components/AIRecommendationFeed";
+import { getDashboardData } from "@/services/user-dashboard";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -56,12 +57,54 @@ export default async function DashboardPage() {
       {/* Quick Links */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {[
-          { icon: Bell, label: "Notifications", count: data.unreadCount, href: "/notifications", color: "text-primary", bg: "bg-primary/10" },
-          { icon: MessageSquare, label: "Messages", count: data.unreadMessages, href: "/conversations", color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-500/10" },
-          { icon: Eye, label: "Watching", count: data.stats.threadCount, href: "/watched", color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500/10" },
-          { icon: Bookmark, label: "Bookmarks", count: data.stats.threadCount, href: "/bookmarks", color: "text-pink-600 dark:text-pink-400", bg: "bg-pink-500/10" },
-          { icon: ShoppingBag, label: "Orders", count: 0, href: "/orders", color: "text-purple-600 dark:text-purple-400", bg: "bg-purple-500/10" },
-          { icon: Trophy, label: "Achievements", count: data.stats.badgeCount + data.stats.trophyCount, href: "/achievements", color: "text-amber-600 dark:text-amber-400", bg: "bg-amber-500/10" },
+          {
+            icon: Bell,
+            label: "Notifications",
+            count: data.unreadCount,
+            href: "/notifications",
+            color: "text-primary",
+            bg: "bg-primary/10",
+          },
+          {
+            icon: MessageSquare,
+            label: "Messages",
+            count: data.unreadMessages,
+            href: "/conversations",
+            color: "text-blue-600 dark:text-blue-400",
+            bg: "bg-blue-500/10",
+          },
+          {
+            icon: Eye,
+            label: "Watching",
+            count: data.stats.threadCount,
+            href: "/watched",
+            color: "text-emerald-600 dark:text-emerald-400",
+            bg: "bg-emerald-500/10",
+          },
+          {
+            icon: Bookmark,
+            label: "Bookmarks",
+            count: data.stats.threadCount,
+            href: "/bookmarks",
+            color: "text-pink-600 dark:text-pink-400",
+            bg: "bg-pink-500/10",
+          },
+          {
+            icon: ShoppingBag,
+            label: "Orders",
+            count: 0,
+            href: "/orders",
+            color: "text-purple-600 dark:text-purple-400",
+            bg: "bg-purple-500/10",
+          },
+          {
+            icon: Trophy,
+            label: "Achievements",
+            count: data.stats.badgeCount + data.stats.trophyCount,
+            href: "/achievements",
+            color: "text-amber-600 dark:text-amber-400",
+            bg: "bg-amber-500/10",
+          },
         ].map((item) => {
           const Icon = item.icon;
           return (
@@ -70,12 +113,16 @@ export default async function DashboardPage() {
               href={item.href}
               className="flex items-center gap-3 rounded-xl border bg-card p-4 transition-all hover:border-primary/20 hover:shadow-md"
             >
-              <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${item.bg}`}>
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-xl ${item.bg}`}
+              >
                 <Icon className={`h-5 w-5 ${item.color}`} />
               </div>
               <div>
                 <p className="text-sm font-semibold">{item.label}</p>
-                <p className="text-xs text-muted-foreground">{item.count} items</p>
+                <p className="text-xs text-muted-foreground">
+                  {item.count} items
+                </p>
               </div>
             </Link>
           );
@@ -88,7 +135,10 @@ export default async function DashboardPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Recent Activity</h2>
-            <Link href={`/profile/${data.user.username}`} className="flex items-center gap-1 text-sm text-primary hover:underline">
+            <Link
+              href={`/profile/${data.user.username}`}
+              className="flex items-center gap-1 text-sm text-primary hover:underline"
+            >
               View Profile
               <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
@@ -104,6 +154,8 @@ export default async function DashboardPage() {
 
         {/* Sidebar */}
         <div className="space-y-4">
+          <AIRecommendationFeed />
+
           {/* Recent Badges */}
           {data.recentBadges.length > 0 && (
             <div className="rounded-xl border bg-card p-5">
@@ -136,7 +188,9 @@ export default async function DashboardPage() {
               <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Reputation
               </h3>
-              <p className="text-3xl font-bold">{data.stats.reputationPoints.toLocaleString()}</p>
+              <p className="text-3xl font-bold">
+                {data.stats.reputationPoints.toLocaleString()}
+              </p>
               {data.levelInfo?.level && (
                 <div className="mt-3">
                   <div className="flex items-center justify-between text-xs text-muted-foreground">

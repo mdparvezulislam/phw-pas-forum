@@ -37,7 +37,9 @@ export function ITraderCard({ sellerId }: { sellerId: string }) {
 
   return (
     <div className="rounded-lg border bg-card p-6">
-      <h3 className="mb-4 text-sm font-medium text-muted-foreground">iTrader Feedback</h3>
+      <h3 className="mb-4 text-sm font-medium text-muted-foreground">
+        iTrader Feedback
+      </h3>
       {feedback.length === 0 ? (
         <p className="text-sm text-muted-foreground">No iTrader feedback yet</p>
       ) : (
@@ -54,11 +56,18 @@ export function ITraderCard({ sellerId }: { sellerId: string }) {
                         : "text-yellow-600"
                   }`}
                 >
-                  {item.rating === "POSITIVE" ? "+" : item.rating === "NEGATIVE" ? "-" : "~"}{" "}
+                  {item.rating === "POSITIVE"
+                    ? "+"
+                    : item.rating === "NEGATIVE"
+                      ? "-"
+                      : "~"}{" "}
                   {item.rating}
                 </span>
                 <span className="text-xs text-muted-foreground">
-                  by {item.fromUser?.displayName ?? item.fromUser?.username ?? "Unknown"}
+                  by{" "}
+                  {item.fromUser?.displayName ??
+                    item.fromUser?.username ??
+                    "Unknown"}
                 </span>
               </div>
               <p className="text-sm">{item.comment}</p>

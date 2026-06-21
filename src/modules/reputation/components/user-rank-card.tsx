@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { UserReputation } from "@/db/schema/user-reputation";
 import type { UserLevel } from "@/db/schema/user-levels";
+import type { UserReputation } from "@/db/schema/user-reputation";
 
 interface UserRankCardProps {
   user: {

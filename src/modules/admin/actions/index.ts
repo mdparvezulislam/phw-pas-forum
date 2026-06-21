@@ -1,26 +1,30 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAuth, requireRole, requirePermission } from "@/modules/auth/guards";
-import { RoleName, Permission } from "@/types/rbac";
-import { adminMetricsService } from "@/services/admin-metrics";
-import { adminStaffService } from "@/services/admin-staff";
-import { adminSettingsService } from "@/services/admin-settings";
-import { adminModerationService } from "@/services/admin-moderation";
-import {
-  searchUsersSchema,
-  banUserSchema,
-  warnUserSchema,
-  createModeratorNoteSchema,
-  assignRoleSchema,
-  updateSettingsSchema,
-  createFeatureFlagSchema,
-  updateFeatureFlagSchema,
-  createAnnouncementSchema,
-  resolveReportSchema,
-} from "@/validations/admin";
-import { auditService } from "@/services/audit";
 import { AUDIT_ACTIONS } from "@/db/schema/audit-logs";
+import {
+  requireAuth,
+  requirePermission,
+  requireRole,
+} from "@/modules/auth/guards";
+import { adminMetricsService } from "@/services/admin-metrics";
+import { adminModerationService } from "@/services/admin-moderation";
+import { adminSettingsService } from "@/services/admin-settings";
+import { adminStaffService } from "@/services/admin-staff";
+import { auditService } from "@/services/audit";
+import { Permission, RoleName } from "@/types/rbac";
+import {
+  assignRoleSchema,
+  banUserSchema,
+  createAnnouncementSchema,
+  createFeatureFlagSchema,
+  createModeratorNoteSchema,
+  resolveReportSchema,
+  searchUsersSchema,
+  updateFeatureFlagSchema,
+  updateSettingsSchema,
+  warnUserSchema,
+} from "@/validations/admin";
 
 // ===================== DASHBOARD =====================
 
@@ -60,7 +64,12 @@ export async function searchUsersAction(input: unknown) {
   try {
     const user = await requirePermission(Permission.USER_MANAGE);
     const params = searchUsersSchema.parse(input);
-    const data = await adminStaffService.searchUsers(params.query, params.role, params.page, params.limit);
+    const data = await adminStaffService.searchUsers(
+      params.query,
+      params.role,
+      params.page,
+      params.limit,
+    );
     return { success: true, data };
   } catch (error: any) {
     return { success: false, error: error.message || String(error) };
@@ -128,7 +137,11 @@ export async function assignUserRoleAction(input: unknown) {
   try {
     const user = await requirePermission(Permission.USER_MANAGE);
     const params = assignRoleSchema.parse(input);
-    await adminStaffService.assignStaffRole(params.userId, params.roleId, user.id);
+    await adminStaffService.assignStaffRole(
+      params.userId,
+      params.roleId,
+      user.id,
+    );
     revalidatePath("/admin/users");
     revalidatePath("/admin/staff");
     return { success: true };
@@ -284,7 +297,11 @@ export async function toggleFeatureFlagAction(input: unknown) {
   try {
     const user = await requirePermission(Permission.ADMIN_MANAGE_FEATURE_FLAGS);
     const params = updateFeatureFlagSchema.parse(input);
-    await adminSettingsService.toggleFeatureFlag(params.flagId, params.enabled, user.id);
+    await adminSettingsService.toggleFeatureFlag(
+      params.flagId,
+      params.enabled,
+      user.id,
+    );
     revalidatePath("/admin/settings");
     return { success: true };
   } catch (error: any) {
@@ -346,7 +363,11 @@ export async function getStaffActivityAnalyticsAction(days = 7) {
 
 // ===================== AUDIT LOGS =====================
 
-export async function getAuditLogsAction(page = 1, limit = 50, action?: string) {
+export async function getAuditLogsAction(
+  page = 1,
+  limit = 50,
+  action?: string,
+) {
   try {
     await requirePermission(Permission.ADMIN_MANAGE_AUDIT);
     const { getDatabase, schema } = await import("@/db");

@@ -1,10 +1,10 @@
 "use client";
 
+import { AlertCircle, ArrowLeft, CheckCircle2, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useActionState } from "react";
 import { cn } from "@/lib/utils";
 import { verifyEmail } from "@/modules/auth/actions";
-import { Loader2, AlertCircle, CheckCircle2, ArrowLeft } from "lucide-react";
 
 interface VerifyEmailFormProps {
   token: string;

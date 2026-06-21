@@ -20,8 +20,10 @@ export const conversationMessageEditHistory = pgTable(
   (table) => [
     index("msg_edit_message_idx").on(table.messageId),
     index("msg_edit_editor_idx").on(table.editedBy),
-  ]
+  ],
 );
 
-export type ConversationMessageEditHistory = typeof conversationMessageEditHistory.$inferSelect;
-export type NewConversationMessageEditHistory = typeof conversationMessageEditHistory.$inferInsert;
+export type ConversationMessageEditHistory =
+  typeof conversationMessageEditHistory.$inferSelect;
+export type NewConversationMessageEditHistory =
+  typeof conversationMessageEditHistory.$inferInsert;

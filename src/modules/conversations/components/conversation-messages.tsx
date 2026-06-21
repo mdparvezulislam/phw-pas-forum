@@ -48,7 +48,9 @@ export function ConversationMessages({
   currentUserId,
 }: ConversationMessagesProps) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
-  const [typingUsers, setTypingUsers] = useState<Record<string, { name: string; expiresAt: number }>>({});
+  const [typingUsers, setTypingUsers] = useState<
+    Record<string, { name: string; expiresAt: number }>
+  >({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [_, startTransition] = useTransition();
@@ -100,12 +102,18 @@ export function ConversationMessages({
       const payload = event.payload as any;
       setMessages((prev) => {
         if (prev.some((m) => m.id === payload.id)) return prev;
-        return [...prev, {
-          ...payload,
-          createdAt: new Date(payload.createdAt),
-          editedAt: payload.editedAt ? new Date(payload.editedAt) : null,
-          readReceipts: payload.readReceipts.map((r: any) => ({ ...r, readAt: new Date(r.readAt) })),
-        }];
+        return [
+          ...prev,
+          {
+            ...payload,
+            createdAt: new Date(payload.createdAt),
+            editedAt: payload.editedAt ? new Date(payload.editedAt) : null,
+            readReceipts: payload.readReceipts.map((r: any) => ({
+              ...r,
+              readAt: new Date(r.readAt),
+            })),
+          },
+        ];
       });
 
       // Remove typing indicator if sender was typing
@@ -125,7 +133,12 @@ export function ConversationMessages({
         });
       }
     } else if (event.type === "MESSAGE_EDIT") {
-      const payload = event.payload as { messageId: string; contentJson: any; isEdited: boolean; editedAt: string };
+      const payload = event.payload as {
+        messageId: string;
+        contentJson: any;
+        isEdited: boolean;
+        editedAt: string;
+      };
       setMessages((prev) =>
         prev.map((m) =>
           m.id === payload.messageId
@@ -135,8 +148,8 @@ export function ConversationMessages({
                 isEdited: payload.isEdited,
                 editedAt: payload.editedAt ? new Date(payload.editedAt) : null,
               }
-            : m
-        )
+            : m,
+        ),
       );
     } else if (event.type === "MESSAGE_DELETE") {
       const payload = event.payload as { messageId: string };
@@ -146,14 +159,29 @@ export function ConversationMessages({
             ? {
                 ...m,
                 isDeleted: true,
-                contentJson: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "This message was deleted." }] }] },
+                contentJson: {
+                  type: "doc",
+                  content: [
+                    {
+                      type: "paragraph",
+                      content: [
+                        { type: "text", text: "This message was deleted." },
+                      ],
+                    },
+                  ],
+                },
                 attachments: [],
               }
-            : m
-        )
+            : m,
+        ),
       );
     } else if (event.type === "READ_RECEIPT") {
-      const payload = event.payload as { messageId: string; userId: string; displayName: string; readAt: string };
+      const payload = event.payload as {
+        messageId: string;
+        userId: string;
+        displayName: string;
+        readAt: string;
+      };
       setMessages((prev) =>
         prev.map((m) => {
           if (m.id !== payload.messageId) return m;
@@ -171,10 +199,15 @@ export function ConversationMessages({
               },
             ],
           };
-        })
+        }),
       );
     } else if (event.type === "TYPING_STATUS") {
-      const payload = event.payload as { userId: string; username: string; displayName: string; isTyping: boolean };
+      const payload = event.payload as {
+        userId: string;
+        username: string;
+        displayName: string;
+        isTyping: boolean;
+      };
       if (payload.userId === currentUserId) return;
 
       setTypingUsers((prev) => {
@@ -196,7 +229,8 @@ export function ConversationMessages({
     const users = Object.values(typingUsers);
     if (users.length === 0) return "";
     if (users.length === 1) return `${users[0].name} is typing...`;
-    if (users.length === 2) return `${users[0].name} and ${users[1].name} are typing...`;
+    if (users.length === 2)
+      return `${users[0].name} and ${users[1].name} are typing...`;
     return "Several people are typing...";
   };
 

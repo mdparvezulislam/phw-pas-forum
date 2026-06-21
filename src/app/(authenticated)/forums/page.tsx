@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import { CategoryCard } from "@/components/forum";
-import { ForumStats } from "@/components/forum";
-import { ActivityFeed } from "@/components/forum";
-import { EmptyForumState } from "@/components/forum";
+import {
+  ActivityFeed,
+  CategoryCard,
+  EmptyForumState,
+  ForumStats,
+} from "@/components/forum";
 import { getCategoriesWithForums, getStats } from "@/services/forum-stats";
 
 export const metadata: Metadata = {
@@ -37,7 +39,8 @@ export default async function ForumsHomePage() {
         <div className="px-6 py-8 sm:px-8">
           <h1 className="text-2xl font-bold sm:text-3xl">Community Forums</h1>
           <p className="mt-2 max-w-xl text-muted-foreground">
-            Join discussions, share knowledge, and connect with thousands of professionals.
+            Join discussions, share knowledge, and connect with thousands of
+            professionals.
           </p>
         </div>
       </div>

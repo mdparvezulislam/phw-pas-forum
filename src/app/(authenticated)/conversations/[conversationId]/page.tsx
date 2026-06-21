@@ -1,13 +1,13 @@
-import { redirect, notFound } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { and, eq, ne } from "drizzle-orm";
+import { notFound, redirect } from "next/navigation";
 import { getDatabase, schema } from "@/db";
-import { eq, and, ne } from "drizzle-orm";
-import { conversationService } from "@/services/conversation";
+import { auth } from "@/lib/auth";
 import {
   ConversationHeader,
   ConversationMessages,
   MessageComposer,
 } from "@/modules/conversations/components";
+import { conversationService } from "@/services/conversation";
 
 interface ConversationPageProps {
   params: Promise<{
@@ -15,7 +15,9 @@ interface ConversationPageProps {
   }>;
 }
 
-export default async function ConversationDetailPage({ params }: ConversationPageProps) {
+export default async function ConversationDetailPage({
+  params,
+}: ConversationPageProps) {
   const session = await auth();
   if (!session?.user?.id) {
     redirect("/auth/login");
@@ -31,7 +33,7 @@ export default async function ConversationDetailPage({ params }: ConversationPag
     where: and(
       eq(schema.conversationParticipants.conversationId, conversationId),
       eq(schema.conversationParticipants.userId, userId),
-      eq(schema.conversationParticipants.isLeft, false)
+      eq(schema.conversationParticipants.isLeft, false),
     ),
     with: {
       conversation: true,
@@ -43,15 +45,19 @@ export default async function ConversationDetailPage({ params }: ConversationPag
   }
 
   // 2. Fetch conversation messages
-  const messageResult = await conversationService.getMessages(conversationId, userId, {
-    limit: 50,
-  });
+  const messageResult = await conversationService.getMessages(
+    conversationId,
+    userId,
+    {
+      limit: 50,
+    },
+  );
 
   // 3. Fetch active participants
   const participantRecords = await db.query.conversationParticipants.findMany({
     where: and(
       eq(schema.conversationParticipants.conversationId, conversationId),
-      eq(schema.conversationParticipants.isLeft, false)
+      eq(schema.conversationParticipants.isLeft, false),
     ),
     with: {
       user: {
@@ -66,7 +72,8 @@ export default async function ConversationDetailPage({ params }: ConversationPag
   const otherParticipants = participantsList.filter((p) => p.id !== userId);
   const conversationTitle = participation.conversation.title
     ? participation.conversation.title
-    : otherParticipants.map((p) => p.displayName || p.username).join(", ") || "Direct Message";
+    : otherParticipants.map((p) => p.displayName || p.username).join(", ") ||
+      "Direct Message";
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-background">

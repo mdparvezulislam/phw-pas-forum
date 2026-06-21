@@ -16,11 +16,16 @@ export class ConversationService {
   }) {
     const db = getDatabase();
     const type = params.type ?? "PRIVATE";
-    const allParticipantIds = Array.from(new Set([params.creatorId, ...params.participantIds]));
+    const allParticipantIds = Array.from(
+      new Set([params.creatorId, ...params.participantIds]),
+    );
 
     // Check if a direct message conversation already exists between the two users
     if (type === "PRIVATE" && allParticipantIds.length === 2) {
-      const existing = await this.findExistingPrivateConversation(allParticipantIds[0], allParticipantIds[1]);
+      const existing = await this.findExistingPrivateConversation(
+        allParticipantIds[0],
+        allParticipantIds[1],
+      );
       if (existing) {
         // If it exists, just send the message to the existing one!
         await this.sendMessage({
@@ -53,7 +58,7 @@ export class ConversationService {
           isArchived: false,
           isMuted: false,
           isLeft: false,
-        }))
+        })),
       );
 
       // Create first message
@@ -75,12 +80,10 @@ export class ConversationService {
         .where(eq(schema.conversations.id, conv.id));
 
       // Mark first message as read for the sender
-      await tx
-        .insert(schema.messageReadReceipts)
-        .values({
-          messageId: msg.id,
-          userId: params.creatorId,
-        });
+      await tx.insert(schema.messageReadReceipts).values({
+        messageId: msg.id,
+        userId: params.creatorId,
+      });
 
       await tx
         .update(schema.conversationParticipants)
@@ -90,8 +93,8 @@ export class ConversationService {
         .where(
           and(
             eq(schema.conversationParticipants.conversationId, conv.id),
-            eq(schema.conversationParticipants.userId, params.creatorId)
-          )
+            eq(schema.conversationParticipants.userId, params.creatorId),
+          ),
         );
 
       // Auditing
@@ -163,17 +166,20 @@ export class ConversationService {
       .from(schema.conversations)
       .innerJoin(
         schema.conversationParticipants,
-        eq(schema.conversations.id, schema.conversationParticipants.conversationId)
+        eq(
+          schema.conversations.id,
+          schema.conversationParticipants.conversationId,
+        ),
       )
       .where(
         and(
           eq(schema.conversations.type, "PRIVATE"),
-          eq(schema.conversationParticipants.isLeft, false)
-        )
+          eq(schema.conversationParticipants.isLeft, false),
+        ),
       )
       .groupBy(schema.conversations.id)
       .having(
-        sql`count(case when ${schema.conversationParticipants.userId} in (${userId1}, ${userId2}) then 1 end) = 2`
+        sql`count(case when ${schema.conversationParticipants.userId} in (${userId1}, ${userId2}) then 1 end) = 2`,
       );
 
     if (result.length > 0) {
@@ -196,17 +202,23 @@ export class ConversationService {
     // Verify sender is participant and has not left
     const participant = await db.query.conversationParticipants.findFirst({
       where: and(
-        eq(schema.conversationParticipants.conversationId, params.conversationId),
+        eq(
+          schema.conversationParticipants.conversationId,
+          params.conversationId,
+        ),
         eq(schema.conversationParticipants.userId, params.senderId),
-        eq(schema.conversationParticipants.isLeft, false)
+        eq(schema.conversationParticipants.isLeft, false),
       ),
     });
 
     if (!participant) {
-      throw new Error("Unauthorized: Sender is not a participant of this conversation");
+      throw new Error(
+        "Unauthorized: Sender is not a participant of this conversation",
+      );
     }
 
-    const hasAttachments = !!params.attachmentIds && params.attachmentIds.length > 0;
+    const hasAttachments =
+      !!params.attachmentIds && params.attachmentIds.length > 0;
 
     return await db.transaction(async (tx) => {
       const [msg] = await tx
@@ -226,7 +238,7 @@ export class ConversationService {
           params.attachmentIds.map((attId) => ({
             messageId: msg.id,
             attachmentId: attId,
-          }))
+          })),
         );
 
         attachmentsList = await tx
@@ -241,7 +253,10 @@ export class ConversationService {
           .from(schema.conversationAttachments)
           .innerJoin(
             schema.attachments,
-            eq(schema.conversationAttachments.attachmentId, schema.attachments.id)
+            eq(
+              schema.conversationAttachments.attachmentId,
+              schema.attachments.id,
+            ),
           )
           .where(eq(schema.conversationAttachments.messageId, msg.id));
       }
@@ -256,12 +271,10 @@ export class ConversationService {
         .where(eq(schema.conversations.id, params.conversationId));
 
       // Mark as read for sender
-      await tx
-        .insert(schema.messageReadReceipts)
-        .values({
-          messageId: msg.id,
-          userId: params.senderId,
-        });
+      await tx.insert(schema.messageReadReceipts).values({
+        messageId: msg.id,
+        userId: params.senderId,
+      });
 
       await tx
         .update(schema.conversationParticipants)
@@ -271,9 +284,12 @@ export class ConversationService {
         })
         .where(
           and(
-            eq(schema.conversationParticipants.conversationId, params.conversationId),
-            eq(schema.conversationParticipants.userId, params.senderId)
-          )
+            eq(
+              schema.conversationParticipants.conversationId,
+              params.conversationId,
+            ),
+            eq(schema.conversationParticipants.userId, params.senderId),
+          ),
         );
 
       // For other participants, reset archived flag if they are active
@@ -284,10 +300,13 @@ export class ConversationService {
         })
         .where(
           and(
-            eq(schema.conversationParticipants.conversationId, params.conversationId),
+            eq(
+              schema.conversationParticipants.conversationId,
+              params.conversationId,
+            ),
             ne(schema.conversationParticipants.userId, params.senderId),
-            eq(schema.conversationParticipants.isLeft, false)
-          )
+            eq(schema.conversationParticipants.isLeft, false),
+          ),
         );
 
       // Audit log
@@ -326,12 +345,16 @@ export class ConversationService {
       });
 
       // Refresh conversations list for all participants
-      const activeParticipants = await tx.query.conversationParticipants.findMany({
-        where: and(
-          eq(schema.conversationParticipants.conversationId, params.conversationId),
-          eq(schema.conversationParticipants.isLeft, false)
-        ),
-      });
+      const activeParticipants =
+        await tx.query.conversationParticipants.findMany({
+          where: and(
+            eq(
+              schema.conversationParticipants.conversationId,
+              params.conversationId,
+            ),
+            eq(schema.conversationParticipants.isLeft, false),
+          ),
+        });
 
       for (const part of activeParticipants) {
         realtimeService.publish(`user:${part.userId}`, {
@@ -357,7 +380,8 @@ export class ConversationService {
     });
 
     if (!msg) throw new Error("Message not found");
-    if (msg.senderId !== userId) throw new Error("Unauthorized to edit this message");
+    if (msg.senderId !== userId)
+      throw new Error("Unauthorized to edit this message");
     if (msg.isDeleted) throw new Error("Cannot edit a deleted message");
 
     await db.transaction(async (tx) => {
@@ -417,18 +441,31 @@ export class ConversationService {
         .update(schema.conversationMessages)
         .set({
           isDeleted: true,
-          contentJson: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "This message was deleted." }] }] },
+          contentJson: {
+            type: "doc",
+            content: [
+              {
+                type: "paragraph",
+                content: [{ type: "text", text: "This message was deleted." }],
+              },
+            ],
+          },
         })
         .where(eq(schema.conversationMessages.id, messageId));
 
       // Delete attachments linked to this message
-      await tx.delete(schema.conversationAttachments).where(eq(schema.conversationAttachments.messageId, messageId));
+      await tx
+        .delete(schema.conversationAttachments)
+        .where(eq(schema.conversationAttachments.messageId, messageId));
 
       // Audit log
       await auditService.log(userId, "conversation:message_delete", {
         resource: "conversation_message",
         resourceId: messageId,
-        metadata: { conversationId: msg.conversationId, moderatorAction: isModerator && msg.senderId !== userId },
+        metadata: {
+          conversationId: msg.conversationId,
+          moderatorAction: isModerator && msg.senderId !== userId,
+        },
       });
 
       // Realtime update
@@ -449,7 +486,7 @@ export class ConversationService {
       where: and(
         eq(schema.conversationParticipants.conversationId, conversationId),
         eq(schema.conversationParticipants.userId, userId),
-        eq(schema.conversationParticipants.isLeft, false)
+        eq(schema.conversationParticipants.isLeft, false),
       ),
     });
 
@@ -460,7 +497,7 @@ export class ConversationService {
       const existing = await tx.query.messageReadReceipts.findFirst({
         where: and(
           eq(schema.messageReadReceipts.messageId, messageId),
-          eq(schema.messageReadReceipts.userId, userId)
+          eq(schema.messageReadReceipts.userId, userId),
         ),
       });
 
@@ -479,8 +516,8 @@ export class ConversationService {
         .where(
           and(
             eq(schema.conversationParticipants.conversationId, conversationId),
-            eq(schema.conversationParticipants.userId, userId)
-          )
+            eq(schema.conversationParticipants.userId, userId),
+          ),
         );
 
       const user = await tx.query.users.findFirst({
@@ -516,7 +553,7 @@ export class ConversationService {
     const participants = await db.query.conversationParticipants.findMany({
       where: and(
         eq(schema.conversationParticipants.userId, userId),
-        eq(schema.conversationParticipants.isLeft, false)
+        eq(schema.conversationParticipants.isLeft, false),
       ),
       with: {
         conversation: true,
@@ -534,7 +571,11 @@ export class ConversationService {
   }
 
   // 6. Add Participant
-  async addParticipant(conversationId: string, userId: string, actorId: string) {
+  async addParticipant(
+    conversationId: string,
+    userId: string,
+    actorId: string,
+  ) {
     const db = getDatabase();
 
     // Verify actor is participant
@@ -542,17 +583,18 @@ export class ConversationService {
       where: and(
         eq(schema.conversationParticipants.conversationId, conversationId),
         eq(schema.conversationParticipants.userId, actorId),
-        eq(schema.conversationParticipants.isLeft, false)
+        eq(schema.conversationParticipants.isLeft, false),
       ),
     });
 
-    if (!actorPart) throw new Error("Unauthorized: Actor is not in conversation");
+    if (!actorPart)
+      throw new Error("Unauthorized: Actor is not in conversation");
 
     // Check if already participant
     const existing = await db.query.conversationParticipants.findFirst({
       where: and(
         eq(schema.conversationParticipants.conversationId, conversationId),
-        eq(schema.conversationParticipants.userId, userId)
+        eq(schema.conversationParticipants.userId, userId),
       ),
     });
 
@@ -609,7 +651,7 @@ export class ConversationService {
       where: and(
         eq(schema.conversationParticipants.conversationId, conversationId),
         eq(schema.conversationParticipants.userId, userId),
-        eq(schema.conversationParticipants.isLeft, false)
+        eq(schema.conversationParticipants.isLeft, false),
       ),
     });
 
@@ -639,7 +681,11 @@ export class ConversationService {
   }
 
   // 8. Archive Conversation
-  async archiveConversation(conversationId: string, userId: string, isArchived: boolean) {
+  async archiveConversation(
+    conversationId: string,
+    userId: string,
+    isArchived: boolean,
+  ) {
     const db = getDatabase();
     await db
       .update(schema.conversationParticipants)
@@ -647,8 +693,8 @@ export class ConversationService {
       .where(
         and(
           eq(schema.conversationParticipants.conversationId, conversationId),
-          eq(schema.conversationParticipants.userId, userId)
-        )
+          eq(schema.conversationParticipants.userId, userId),
+        ),
       );
 
     await auditService.log(userId, "conversation:archive", {
@@ -659,7 +705,11 @@ export class ConversationService {
   }
 
   // 9. Mute Conversation
-  async muteConversation(conversationId: string, userId: string, isMuted: boolean) {
+  async muteConversation(
+    conversationId: string,
+    userId: string,
+    isMuted: boolean,
+  ) {
     const db = getDatabase();
     await db
       .update(schema.conversationParticipants)
@@ -667,8 +717,8 @@ export class ConversationService {
       .where(
         and(
           eq(schema.conversationParticipants.conversationId, conversationId),
-          eq(schema.conversationParticipants.userId, userId)
-        )
+          eq(schema.conversationParticipants.userId, userId),
+        ),
       );
   }
 
@@ -676,7 +726,7 @@ export class ConversationService {
   async getMessages(
     conversationId: string,
     userId: string,
-    options: { limit?: number; cursor?: string } = {}
+    options: { limit?: number; cursor?: string } = {},
   ) {
     const db = getDatabase();
     const limit = options.limit ?? 50;
@@ -686,15 +736,22 @@ export class ConversationService {
       where: and(
         eq(schema.conversationParticipants.conversationId, conversationId),
         eq(schema.conversationParticipants.userId, userId),
-        eq(schema.conversationParticipants.isLeft, false)
+        eq(schema.conversationParticipants.isLeft, false),
       ),
     });
 
-    if (!part) throw new Error("Unauthorized: You are not a participant in this conversation");
+    if (!part)
+      throw new Error(
+        "Unauthorized: You are not a participant in this conversation",
+      );
 
-    const whereConditions = [eq(schema.conversationMessages.conversationId, conversationId)];
+    const whereConditions = [
+      eq(schema.conversationMessages.conversationId, conversationId),
+    ];
     if (options.cursor) {
-      whereConditions.push(lt(schema.conversationMessages.createdAt, new Date(options.cursor)));
+      whereConditions.push(
+        lt(schema.conversationMessages.createdAt, new Date(options.cursor)),
+      );
     }
 
     const items = await db.query.conversationMessages.findMany({
@@ -708,7 +765,14 @@ export class ConversationService {
         attachments: {
           with: {
             attachment: {
-              columns: { id: true, fileName: true, originalName: true, mimeType: true, fileSize: true, url: true },
+              columns: {
+                id: true,
+                fileName: true,
+                originalName: true,
+                mimeType: true,
+                fileSize: true,
+                url: true,
+              },
             },
           },
         },
@@ -724,7 +788,9 @@ export class ConversationService {
 
     const hasMore = items.length > limit;
     const paginatedItems = hasMore ? items.slice(0, limit) : items;
-    const nextCursor = hasMore ? paginatedItems[paginatedItems.length - 1].createdAt.toISOString() : null;
+    const nextCursor = hasMore
+      ? paginatedItems[paginatedItems.length - 1].createdAt.toISOString()
+      : null;
 
     // Normalize attachments
     const normalizedItems = paginatedItems.map((item) => ({
@@ -748,7 +814,7 @@ export class ConversationService {
   // 11. Query conversations list
   async getConversations(
     userId: string,
-    options: { limit?: number; cursor?: string; isArchived?: boolean } = {}
+    options: { limit?: number; cursor?: string; isArchived?: boolean } = {},
   ) {
     const db = getDatabase();
     const limit = options.limit ?? 20;
@@ -761,7 +827,9 @@ export class ConversationService {
     ];
 
     if (options.cursor) {
-      participantConditions.push(lt(schema.conversationParticipants.joinedAt, new Date(options.cursor)));
+      participantConditions.push(
+        lt(schema.conversationParticipants.joinedAt, new Date(options.cursor)),
+      );
     }
 
     const participations = await db.query.conversationParticipants.findMany({
@@ -771,7 +839,12 @@ export class ConversationService {
         conversation: {
           with: {
             creator: {
-              columns: { id: true, username: true, displayName: true, image: true },
+              columns: {
+                id: true,
+                username: true,
+                displayName: true,
+                image: true,
+              },
             },
           },
         },
@@ -808,11 +881,16 @@ export class ConversationService {
         where: and(
           eq(schema.conversationParticipants.conversationId, conv.id),
           ne(schema.conversationParticipants.userId, userId),
-          eq(schema.conversationParticipants.isLeft, false)
+          eq(schema.conversationParticipants.isLeft, false),
         ),
         with: {
           user: {
-            columns: { id: true, username: true, displayName: true, image: true },
+            columns: {
+              id: true,
+              username: true,
+              displayName: true,
+              image: true,
+            },
           },
         },
       });
@@ -831,11 +909,15 @@ export class ConversationService {
     }
 
     // Sort by lastActivityAt descending
-    resultItems.sort((a, b) => b.lastActivityAt.getTime() - a.lastActivityAt.getTime());
+    resultItems.sort(
+      (a, b) => b.lastActivityAt.getTime() - a.lastActivityAt.getTime(),
+    );
 
     const hasMore = resultItems.length > limit;
     const paginatedItems = hasMore ? resultItems.slice(0, limit) : resultItems;
-    const nextCursor = hasMore ? participations[limit - 1].joinedAt.toISOString() : null;
+    const nextCursor = hasMore
+      ? participations[limit - 1].joinedAt.toISOString()
+      : null;
 
     return {
       items: paginatedItems,

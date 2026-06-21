@@ -1,11 +1,11 @@
 import {
+  CheckCircle2,
+  Clock,
+  Repeat,
   ShoppingBag,
   Star,
-  Clock,
-  Users,
   TrendingUp,
-  CheckCircle2,
-  Repeat,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -62,17 +62,14 @@ export function SellerStats({
       icon: CheckCircle2,
       label: "Completion Rate",
       value:
-        (stats.completionRate ?? 0) > 0
-          ? `${stats.completionRate}%`
-          : "N/A",
+        (stats.completionRate ?? 0) > 0 ? `${stats.completionRate}%` : "N/A",
       color: "text-purple-600 dark:text-purple-400",
       bg: "bg-purple-500/10",
     },
     {
       icon: Clock,
       label: "Response Time",
-      value:
-        (stats.responseTime ?? 0) > 0 ? `${stats.responseTime}h` : "N/A",
+      value: (stats.responseTime ?? 0) > 0 ? `${stats.responseTime}h` : "N/A",
       color: "text-orange-600 dark:text-orange-400",
       bg: "bg-orange-500/10",
     },
@@ -129,12 +126,16 @@ export function SellerStats({
               >
                 <Icon className={cn("h-4 w-4", item.color)} />
               </div>
-              <span className="text-xs text-muted-foreground">{item.label}</span>
+              <span className="text-xs text-muted-foreground">
+                {item.label}
+              </span>
             </div>
             <div className="mt-2 flex items-baseline gap-1">
               <span className="text-2xl font-bold">{item.value}</span>
               {item.sub && (
-                <span className="text-xs text-muted-foreground">{item.sub}</span>
+                <span className="text-xs text-muted-foreground">
+                  {item.sub}
+                </span>
               )}
             </div>
           </div>

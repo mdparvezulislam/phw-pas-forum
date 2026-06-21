@@ -35,10 +35,12 @@ export const DOCUMENT_MAX_SIZE = 10 * 1024 * 1024;
 
 export const uploadSchema = z.object({
   fileName: z.string().min(1).max(255),
-  mimeType: z.string().refine(
-    (type) => (ALLOWED_MIME_TYPES as readonly string[]).includes(type),
-    "File type not allowed",
-  ),
+  mimeType: z
+    .string()
+    .refine(
+      (type) => (ALLOWED_MIME_TYPES as readonly string[]).includes(type),
+      "File type not allowed",
+    ),
   fileSize: z
     .number()
     .min(1, "File is empty")
@@ -84,8 +86,10 @@ export function formatFileSize(bytes: number): string {
 export function getMimeTypeCategory(
   mimeType: string,
 ): "image" | "video" | "document" | "unknown" {
-  if ((IMAGE_MIME_TYPES as readonly string[]).includes(mimeType)) return "image";
-  if ((VIDEO_MIME_TYPES as readonly string[]).includes(mimeType)) return "video";
+  if ((IMAGE_MIME_TYPES as readonly string[]).includes(mimeType))
+    return "image";
+  if ((VIDEO_MIME_TYPES as readonly string[]).includes(mimeType))
+    return "video";
   if ((DOCUMENT_MIME_TYPES as readonly string[]).includes(mimeType))
     return "document";
   return "unknown";

@@ -1,13 +1,16 @@
+import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ListingGrid,
   ListingGridSkeleton,
   MarketplaceEmptyState,
 } from "@/components/marketplace";
-import { getMarketplaceListings, getMarketplaceCategories } from "@/services/marketplace";
-import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import {
+  getMarketplaceCategories,
+  getMarketplaceListings,
+} from "@/services/marketplace";
 
 interface CategoryPageProps {
   params: Promise<{ slug: string }>;
@@ -24,8 +27,7 @@ export async function generateMetadata(
 
   return {
     title: `${category.name} - Marketplace`,
-    description:
-      category.description ?? `Browse ${category.name} services.`,
+    description: category.description ?? `Browse ${category.name} services.`,
     openGraph: {
       title: `${category.name} | Marketplace`,
       description: category.description ?? undefined,
@@ -65,9 +67,7 @@ export default async function CategoryPage(props: CategoryPageProps) {
       <div className="overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/5 via-card to-premium/5">
         <div className="px-6 py-8 sm:px-8">
           <div className="flex items-center gap-3">
-            {category.icon && (
-              <span className="text-3xl">{category.icon}</span>
-            )}
+            {category.icon && <span className="text-3xl">{category.icon}</span>}
             <div>
               <h1 className="text-2xl font-bold">{category.name}</h1>
               {category.description && (
@@ -78,7 +78,8 @@ export default async function CategoryPage(props: CategoryPageProps) {
             </div>
           </div>
           <p className="mt-3 text-sm text-muted-foreground">
-            {result.total.toLocaleString()} service{result.total !== 1 ? "s" : ""} available
+            {result.total.toLocaleString()} service
+            {result.total !== 1 ? "s" : ""} available
           </p>
         </div>
       </div>

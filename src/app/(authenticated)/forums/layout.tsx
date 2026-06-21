@@ -14,13 +14,19 @@ export default async function ForumsLayout({
 
   return (
     <div className="relative flex min-h-screen flex-col">
-      <Header />
-      <main className="flex-1">
-        <div className="container mx-auto max-w-screen-2xl px-4 py-6">
-          {children}
-        </div>
-      </main>
-      <Footer />
+      {/* Desktop view */}
+      <div className="hidden md:flex min-h-screen flex-col">
+        <Header />
+        <main className="flex-1">
+          <div className="container mx-auto max-w-screen-2xl px-4 py-6">
+            {children}
+          </div>
+        </main>
+        <Footer />
+      </div>
+
+      {/* Mobile view */}
+      <div className="block md:hidden">{children}</div>
     </div>
   );
 }

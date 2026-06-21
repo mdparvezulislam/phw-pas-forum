@@ -105,7 +105,7 @@ function Tooltip({
             "fixed z-tooltip animate-in fade-in-0 zoom-in-95",
             "rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground shadow-md",
             "pointer-events-none",
-            className
+            className,
           )}
           style={{
             left: position.x,

@@ -1,10 +1,10 @@
 "use server";
 
-import { and, eq, sql, desc } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { hasPermission } from "@/config/rbac";
-import { getDatabase, schema } from "@/db";
 import { FILE_LIMITS } from "@/constants";
+import { getDatabase, schema } from "@/db";
 import { storage } from "@/lib/r2";
 import { requireAuth } from "@/modules/auth/guards";
 import { auditService } from "@/services/audit";
@@ -16,8 +16,7 @@ export async function getSignedUploadUrl(
   mimeType: string,
   fileSize: number,
 ): Promise<
-  | { uploadUrl: string; key: string; url: string }
-  | { error: string }
+  { uploadUrl: string; key: string; url: string } | { error: string }
 > {
   const user = await requireAuth();
 
@@ -156,7 +155,12 @@ export async function getUserAttachments(
   userId: string,
   page: number = 1,
   perPage: number = 20,
-): Promise<{ attachments: any[]; total: number; page: number; perPage: number }> {
+): Promise<{
+  attachments: any[];
+  total: number;
+  page: number;
+  perPage: number;
+}> {
   const db = getDatabase();
 
   const whereCondition = and(

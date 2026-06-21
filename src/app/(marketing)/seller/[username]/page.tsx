@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
-  SellerProfileHeader,
-  SellerStats,
   ListingGrid,
+  MarketplaceEmptyState,
   RatingBreakdown,
   ReviewCard,
-  MarketplaceEmptyState,
+  SellerProfileHeader,
+  SellerStats,
 } from "@/components/marketplace";
 import { getSellerByUsername } from "@/services/marketplace";
 

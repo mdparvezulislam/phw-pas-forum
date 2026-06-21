@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
 import { Download, FileText, Lock, ShieldAlert } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import type React from "react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface Attachment {
@@ -28,14 +28,18 @@ interface PremiumResourceCardProps {
   onDownload?: (resourceId: string) => void;
 }
 
-export function PremiumResourceCard({ resource, hasAccess, onDownload }: PremiumResourceCardProps) {
+export function PremiumResourceCard({
+  resource,
+  hasAccess,
+  onDownload,
+}: PremiumResourceCardProps) {
   // Format file size
   const formatBytes = (bytes?: number) => {
     if (!bytes) return "0 Bytes";
     const k = 1024;
     const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / k ** i).toFixed(2)) + " " + sizes[i];
   };
 
   // Determine badge colors based on required plan level
@@ -48,10 +52,12 @@ export function PremiumResourceCard({ resource, hasAccess, onDownload }: Premium
   let planBadge = "bg-zinc-800 text-zinc-400 border-zinc-700";
 
   if (isVip) {
-    borderGlow = "border-indigo-950 hover:border-indigo-500/30 bg-indigo-950/10";
+    borderGlow =
+      "border-indigo-950 hover:border-indigo-500/30 bg-indigo-950/10";
     planBadge = "bg-indigo-500/10 text-indigo-400 border-indigo-500/20";
   } else if (isVipPlus) {
-    borderGlow = "border-violet-950 hover:border-violet-500/30 bg-violet-950/10";
+    borderGlow =
+      "border-violet-950 hover:border-violet-500/30 bg-violet-950/10";
     planBadge = "bg-violet-500/10 text-violet-400 border-violet-500/20";
   } else if (isElite) {
     borderGlow = "border-amber-950 hover:border-amber-500/35 bg-amber-950/10";
@@ -72,7 +78,7 @@ export function PremiumResourceCard({ resource, hasAccess, onDownload }: Premium
     <div
       className={cn(
         "flex flex-col justify-between p-6 rounded-xl border transition-all duration-300 shadow-lg",
-        borderGlow
+        borderGlow,
       )}
     >
       <div>
@@ -80,7 +86,12 @@ export function PremiumResourceCard({ resource, hasAccess, onDownload }: Premium
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-400">
             <FileText className="h-5.5 w-5.5" />
           </div>
-          <span className={cn("text-[10px] font-bold tracking-wider uppercase border px-2 py-0.5 rounded-full", planBadge)}>
+          <span
+            className={cn(
+              "text-[10px] font-bold tracking-wider uppercase border px-2 py-0.5 rounded-full",
+              planBadge,
+            )}
+          >
             Requires {resource.requiredPlan}
           </span>
         </div>
@@ -90,12 +101,16 @@ export function PremiumResourceCard({ resource, hasAccess, onDownload }: Premium
         </h4>
 
         <p className="mt-2 text-xs text-zinc-400 line-clamp-3 min-h-[48px]">
-          {resource.description || "No description provided for this premium resource."}
+          {resource.description ||
+            "No description provided for this premium resource."}
         </p>
 
         {resource.attachment && (
           <div className="mt-4 flex items-center justify-between rounded-lg bg-zinc-950/50 p-2.5 border border-zinc-900 text-[11px] text-zinc-500">
-            <span className="truncate max-w-[120px] font-medium" title={resource.attachment.fileName}>
+            <span
+              className="truncate max-w-[120px] font-medium"
+              title={resource.attachment.fileName}
+            >
               {resource.attachment.fileName}
             </span>
             <span className="font-semibold text-zinc-400">

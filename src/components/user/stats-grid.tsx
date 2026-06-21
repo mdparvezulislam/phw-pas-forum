@@ -1,16 +1,16 @@
-import { cn } from "@/lib/utils";
 import {
-  MessageSquare,
-  FileText,
   Award,
-  Star,
-  Heart,
   Bookmark,
   Eye,
-  TrendingUp,
-  ShoppingBag,
+  FileText,
+  Heart,
   type LucideIcon,
+  MessageSquare,
+  ShoppingBag,
+  Star,
+  TrendingUp,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface StatItem {
   label: string;
@@ -60,7 +60,9 @@ export function StatsGrid({ stats, columns = 4, className }: StatsGridProps) {
               >
                 <Icon className={cn("h-4 w-4", stat.color)} />
               </div>
-              <span className="text-xs text-muted-foreground">{stat.label}</span>
+              <span className="text-xs text-muted-foreground">
+                {stat.label}
+              </span>
             </div>
             <p className="mt-2 text-2xl font-bold">{stat.value}</p>
           </Wrapper>
@@ -71,10 +73,40 @@ export function StatsGrid({ stats, columns = 4, className }: StatsGridProps) {
 }
 
 export const forumStats = [
-  { label: "Threads", icon: FileText, color: "text-primary", bg: "bg-primary/10" },
-  { label: "Posts", icon: MessageSquare, color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-500/10" },
-  { label: "Badges", icon: Award, color: "text-amber-600 dark:text-amber-400", bg: "bg-amber-500/10" },
-  { label: "Trophies", icon: Star, color: "text-purple-600 dark:text-purple-400", bg: "bg-purple-500/10" },
-  { label: "Watching", icon: Eye, color: "text-emerald-600 dark:text-emerald-400", bg: "bg-emerald-500/10" },
-  { label: "Bookmarks", icon: Bookmark, color: "text-pink-600 dark:text-pink-400", bg: "bg-pink-500/10" },
+  {
+    label: "Threads",
+    icon: FileText,
+    color: "text-primary",
+    bg: "bg-primary/10",
+  },
+  {
+    label: "Posts",
+    icon: MessageSquare,
+    color: "text-blue-600 dark:text-blue-400",
+    bg: "bg-blue-500/10",
+  },
+  {
+    label: "Badges",
+    icon: Award,
+    color: "text-amber-600 dark:text-amber-400",
+    bg: "bg-amber-500/10",
+  },
+  {
+    label: "Trophies",
+    icon: Star,
+    color: "text-purple-600 dark:text-purple-400",
+    bg: "bg-purple-500/10",
+  },
+  {
+    label: "Watching",
+    icon: Eye,
+    color: "text-emerald-600 dark:text-emerald-400",
+    bg: "bg-emerald-500/10",
+  },
+  {
+    label: "Bookmarks",
+    icon: Bookmark,
+    color: "text-pink-600 dark:text-pink-400",
+    bg: "bg-pink-500/10",
+  },
 ];

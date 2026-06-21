@@ -41,7 +41,6 @@ export const reputationTransactions = pgTable(
   ],
 );
 
-export type ReputationTransaction =
-  typeof reputationTransactions.$inferSelect;
+export type ReputationTransaction = typeof reputationTransactions.$inferSelect;
 export type NewReputationTransaction =
   typeof reputationTransactions.$inferInsert;

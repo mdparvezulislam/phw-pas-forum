@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 const faqs = [
   {
@@ -37,7 +37,9 @@ export function FAQSection() {
     <section className="border-t border-border py-20">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl">Frequently Asked Questions</h2>
+          <h2 className="text-3xl font-bold sm:text-4xl">
+            Frequently Asked Questions
+          </h2>
           <p className="mt-3 text-muted-foreground">
             Everything you need to know about the platform
           </p>

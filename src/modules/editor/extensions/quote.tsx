@@ -121,7 +121,10 @@ export const Quote = Node.create<QuoteOptions>({
       const attrs = node.attrs as unknown as QuoteAttrs;
 
       return (
-        <div className="quote-block my-3 rounded-lg border border-primary/20 bg-muted/30 overflow-hidden" data-type="quote">
+        <div
+          className="quote-block my-3 rounded-lg border border-primary/20 bg-muted/30 overflow-hidden"
+          data-type="quote"
+        >
           <div className="flex items-center gap-3 border-b border-primary/10 bg-muted/50 px-4 py-2">
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-bold">
               {(attrs.username || "?").charAt(0).toUpperCase()}
@@ -131,9 +134,7 @@ export const Quote = Node.create<QuoteOptions>({
                 <span className="font-semibold text-foreground">
                   {attrs.username || "Unknown"}
                 </span>
-                <span className="text-muted-foreground">
-                  said:
-                </span>
+                <span className="text-muted-foreground">said:</span>
               </div>
               {attrs.postNumber && (
                 <a

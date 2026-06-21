@@ -1,4 +1,4 @@
-import { Star, CheckCircle, ThumbsUp, ThumbsDown, Minus } from "lucide-react";
+import { CheckCircle, Minus, Star, ThumbsDown, ThumbsUp } from "lucide-react";
 import { cn, formatDateRelative } from "@/lib/utils";
 
 interface ReviewCardProps {
@@ -128,8 +128,10 @@ export function RatingBreakdown({
         {/* Bars */}
         <div className="flex-1 space-y-1.5">
           {[5, 4, 3, 2, 1].map((star) => {
-            const count = defaultBreakdown[star as keyof typeof defaultBreakdown];
-            const percentage = reviewCount > 0 ? (count / reviewCount) * 100 : 0;
+            const count =
+              defaultBreakdown[star as keyof typeof defaultBreakdown];
+            const percentage =
+              reviewCount > 0 ? (count / reviewCount) * 100 : 0;
             return (
               <div key={star} className="flex items-center gap-2 text-xs">
                 <span className="w-3 text-right text-muted-foreground">

@@ -1,4 +1,4 @@
-import { Flame, ArrowRight } from "lucide-react";
+import { ArrowRight, Flame } from "lucide-react";
 import Link from "next/link";
 import { ListingCard } from "./listing-card";
 

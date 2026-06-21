@@ -1,11 +1,11 @@
 "use client";
 
+import { AlertCircle, CheckCircle2, Eye, EyeOff, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useActionState, useState } from "react";
+import { PasswordStrength } from "@/components/auth";
 import { cn } from "@/lib/utils";
 import { register } from "@/modules/auth/actions";
-import { PasswordStrength } from "@/components/auth";
-import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 
 export function RegisterForm() {
   const [state, formAction, pending] = useActionState(register, undefined);
@@ -18,7 +18,10 @@ export function RegisterForm() {
     <form action={formAction} className="space-y-5">
       {/* Username */}
       <div className="space-y-1.5">
-        <label htmlFor="username" className="text-xs font-medium text-muted-foreground">
+        <label
+          htmlFor="username"
+          className="text-xs font-medium text-muted-foreground"
+        >
           Username
         </label>
         <input
@@ -36,13 +39,18 @@ export function RegisterForm() {
           )}
         />
         {state?.fieldErrors?.username && (
-          <p className="text-xs text-destructive">{state.fieldErrors.username[0]}</p>
+          <p className="text-xs text-destructive">
+            {state.fieldErrors.username[0]}
+          </p>
         )}
       </div>
 
       {/* Email */}
       <div className="space-y-1.5">
-        <label htmlFor="email" className="text-xs font-medium text-muted-foreground">
+        <label
+          htmlFor="email"
+          className="text-xs font-medium text-muted-foreground"
+        >
           Email
         </label>
         <input
@@ -59,13 +67,18 @@ export function RegisterForm() {
           )}
         />
         {state?.fieldErrors?.email && (
-          <p className="text-xs text-destructive">{state.fieldErrors.email[0]}</p>
+          <p className="text-xs text-destructive">
+            {state.fieldErrors.email[0]}
+          </p>
         )}
       </div>
 
       {/* Password */}
       <div className="space-y-1.5">
-        <label htmlFor="password" className="text-xs font-medium text-muted-foreground">
+        <label
+          htmlFor="password"
+          className="text-xs font-medium text-muted-foreground"
+        >
           Password
         </label>
         <div className="relative">
@@ -91,18 +104,27 @@ export function RegisterForm() {
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
             tabIndex={-1}
           >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
           </button>
         </div>
         <PasswordStrength password={password} />
         {state?.fieldErrors?.password && (
-          <p className="text-xs text-destructive">{state.fieldErrors.password[0]}</p>
+          <p className="text-xs text-destructive">
+            {state.fieldErrors.password[0]}
+          </p>
         )}
       </div>
 
       {/* Confirm Password */}
       <div className="space-y-1.5">
-        <label htmlFor="confirmPassword" className="text-xs font-medium text-muted-foreground">
+        <label
+          htmlFor="confirmPassword"
+          className="text-xs font-medium text-muted-foreground"
+        >
           Confirm Password
         </label>
         <div className="relative">
@@ -125,11 +147,17 @@ export function RegisterForm() {
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
             tabIndex={-1}
           >
-            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showConfirmPassword ? (
+              <EyeOff className="h-4 w-4" />
+            ) : (
+              <Eye className="h-4 w-4" />
+            )}
           </button>
         </div>
         {state?.fieldErrors?.confirmPassword && (
-          <p className="text-xs text-destructive">{state.fieldErrors.confirmPassword[0]}</p>
+          <p className="text-xs text-destructive">
+            {state.fieldErrors.confirmPassword[0]}
+          </p>
         )}
       </div>
 
@@ -196,7 +224,10 @@ export function RegisterForm() {
       {/* Login link */}
       <p className="text-center text-xs text-muted-foreground">
         Already have an account?{" "}
-        <Link href="/auth/login" className="font-medium text-primary hover:underline">
+        <Link
+          href="/auth/login"
+          className="font-medium text-primary hover:underline"
+        >
           Sign in
         </Link>
       </p>

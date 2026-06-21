@@ -1,21 +1,54 @@
 "use client";
 
 import React, { useState } from "react";
-import { adminTriggerReindexAction } from "@/modules/search/actions/search";
 import type { SearchIndexEntityType } from "@/db/schema/search-index-jobs";
+import { adminTriggerReindexAction } from "@/modules/search/actions/search";
 
-const COLLECTIONS_LIST: Array<{ label: string; value: SearchIndexEntityType; desc: string }> = [
-  { label: "Forums", value: "FORUM", desc: "Index forum categories, descriptions, titles" },
-  { label: "Threads", value: "THREAD", desc: "Index thread titles, slugs, bodies, tags, categories, forums" },
-  { label: "Replies/Posts", value: "POST", desc: "Index forum reply posts and quote context" },
-  { label: "Members/Users", value: "USER", desc: "Index username, displayName, levels, badge counts" },
+const COLLECTIONS_LIST: Array<{
+  label: string;
+  value: SearchIndexEntityType;
+  desc: string;
+}> = [
+  {
+    label: "Forums",
+    value: "FORUM",
+    desc: "Index forum categories, descriptions, titles",
+  },
+  {
+    label: "Threads",
+    value: "THREAD",
+    desc: "Index thread titles, slugs, bodies, tags, categories, forums",
+  },
+  {
+    label: "Replies/Posts",
+    value: "POST",
+    desc: "Index forum reply posts and quote context",
+  },
+  {
+    label: "Members/Users",
+    value: "USER",
+    desc: "Index username, displayName, levels, badge counts",
+  },
   { label: "Badges", value: "BADGE", desc: "Index badge names, descriptions" },
-  { label: "Trophies", value: "TROPHY", desc: "Index trophies and unlock requirements" },
-  { label: "Conversations", value: "CONVERSATION_MESSAGE", desc: "Index participant isolated DM messages" },
+  {
+    label: "Trophies",
+    value: "TROPHY",
+    desc: "Index trophies and unlock requirements",
+  },
+  {
+    label: "Conversations",
+    value: "CONVERSATION_MESSAGE",
+    desc: "Index participant isolated DM messages",
+  },
 ];
 
 export default function AdminSearchPage() {
-  const [statuses, setStatuses] = useState<Record<string, { loading: boolean; error?: string; success?: boolean; message?: string }>>({});
+  const [statuses, setStatuses] = useState<
+    Record<
+      string,
+      { loading: boolean; error?: string; success?: boolean; message?: string }
+    >
+  >({});
   const [globalStatus, setGlobalStatus] = useState<string | null>(null);
 
   const handleReindex = async (entityType: SearchIndexEntityType) => {
@@ -40,25 +73,36 @@ export default function AdminSearchPage() {
     } catch (err: any) {
       setStatuses((prev) => ({
         ...prev,
-        [entityType]: { loading: false, error: err.message || "Failed to trigger reindexing" },
+        [entityType]: {
+          loading: false,
+          error: err.message || "Failed to trigger reindexing",
+        },
       }));
     }
   };
 
   const handleReindexAll = async () => {
-    setGlobalStatus("Reindexing all collections sequentially. This runs in the background...");
+    setGlobalStatus(
+      "Reindexing all collections sequentially. This runs in the background...",
+    );
     for (const item of COLLECTIONS_LIST) {
       await handleReindex(item.value);
     }
-    setGlobalStatus("Triggered bulk reindexing background sync for all collections.");
+    setGlobalStatus(
+      "Triggered bulk reindexing background sync for all collections.",
+    );
   };
 
   return (
     <div className="space-y-6 max-w-4xl">
       <div className="flex items-center justify-between border-b pb-4">
         <div>
-          <h2 className="text-xl font-bold text-foreground">Typesense Search Settings</h2>
-          <p className="text-sm text-muted-foreground">Manage and rebuild Typesense search indices.</p>
+          <h2 className="text-xl font-bold text-foreground">
+            Typesense Search Settings
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Manage and rebuild Typesense search indices.
+          </p>
         </div>
         <button
           onClick={handleReindexAll}
@@ -88,10 +132,14 @@ export default function AdminSearchPage() {
                 <h3 className="font-semibold text-foreground">{item.label}</h3>
                 <p className="text-xs text-muted-foreground">{item.desc}</p>
                 {state.success && (
-                  <p className="text-xs text-emerald-500 font-medium">✅ {state.message || "Bulk sync started!"}</p>
+                  <p className="text-xs text-emerald-500 font-medium">
+                    ✅ {state.message || "Bulk sync started!"}
+                  </p>
                 )}
                 {state.error && (
-                  <p className="text-xs text-destructive font-medium">❌ Error: {state.error}</p>
+                  <p className="text-xs text-destructive font-medium">
+                    ❌ Error: {state.error}
+                  </p>
                 )}
               </div>
 
