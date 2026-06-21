@@ -1,10 +1,38 @@
 import type { Metadata } from "next";
+import { Award, Plus } from "lucide-react";
+import { PageHeader, SectionCard } from "@/components/admin";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select } from "@/components/ui/select";
 import { getDatabase, schema } from "@/db";
 import { createBadge } from "@/modules/reputation/actions";
 
 export const metadata: Metadata = {
   title: "Manage Badges",
 };
+
+const COLOR_OPTIONS = [
+  { value: "slate", label: "Slate" },
+  { value: "blue", label: "Blue" },
+  { value: "emerald", label: "Emerald" },
+  { value: "amber", label: "Amber" },
+  { value: "red", label: "Red" },
+  { value: "purple", label: "Purple" },
+  { value: "pink", label: "Pink" },
+  { value: "cyan", label: "Cyan" },
+];
+
+const CATEGORY_OPTIONS = [
+  { value: "ACHIEVEMENT", label: "Achievement" },
+  { value: "POSTING", label: "Posting" },
+  { value: "COMMUNITY", label: "Community" },
+  { value: "MARKETPLACE", label: "Marketplace" },
+  { value: "PREMIUM", label: "Premium" },
+  { value: "MODERATOR", label: "Moderator" },
+  { value: "SPECIAL_EVENT", label: "Special Event" },
+];
 
 export default async function AdminBadgesPage() {
   const db = getDatabase();
@@ -14,139 +42,99 @@ export default async function AdminBadgesPage() {
 
   return (
     <div className="space-y-8">
-      <div className="rounded-lg border p-4">
-        <h2 className="mb-4 font-semibold">Create Badge</h2>
+      <PageHeader
+        title="Badges"
+        description="Create and manage badge definitions for community recognition"
+        icon={<Award className="h-5 w-5" />}
+      />
+
+      <SectionCard
+        title="Create Badge"
+        icon={<Plus className="h-4 w-4" />}
+      >
         <form
           action={
             createBadge.bind(null, undefined) as unknown as (
               formData: FormData,
             ) => void
           }
-          className="space-y-3"
+          className="space-y-4"
         >
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label htmlFor="name" className="mb-1 block text-sm font-medium">
-                Name
-              </label>
-              <input
-                id="name"
-                name="name"
-                required
-                className="w-full rounded border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-              />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="name">Name</Label>
+              <Input id="name" name="name" required />
             </div>
-            <div>
-              <label htmlFor="slug" className="mb-1 block text-sm font-medium">
-                Slug
-              </label>
-              <input
-                id="slug"
-                name="slug"
-                required
-                pattern="[a-z0-9-]+"
-                className="w-full rounded border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-              />
+            <div className="space-y-1.5">
+              <Label htmlFor="slug">Slug</Label>
+              <Input id="slug" name="slug" required pattern="[a-z0-9-]+" />
             </div>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label htmlFor="icon" className="mb-1 block text-sm font-medium">
-                Icon (emoji)
-              </label>
-              <input
-                id="icon"
-                name="icon"
-                required
-                className="w-full rounded border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-              />
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="icon">Icon (emoji)</Label>
+              <Input id="icon" name="icon" required />
             </div>
-            <div>
-              <label htmlFor="color" className="mb-1 block text-sm font-medium">
-                Color
-              </label>
-              <select
-                id="color"
-                name="color"
-                className="w-full rounded border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-              >
-                <option value="slate">Slate</option>
-                <option value="blue">Blue</option>
-                <option value="emerald">Emerald</option>
-                <option value="amber">Amber</option>
-                <option value="red">Red</option>
-                <option value="purple">Purple</option>
-                <option value="pink">Pink</option>
-                <option value="cyan">Cyan</option>
-              </select>
+            <div className="space-y-1.5">
+              <Label htmlFor="color">Color</Label>
+              <Select id="color" name="color" options={COLOR_OPTIONS} />
             </div>
           </div>
-          <div>
-            <label
-              htmlFor="description"
-              className="mb-1 block text-sm font-medium"
-            >
-              Description
-            </label>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="description">Description</Label>
             <textarea
               id="description"
               name="description"
               rows={2}
               maxLength={500}
-              className="w-full rounded border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+              className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             />
           </div>
-          <div className="flex items-center gap-4">
-            <div>
-              <label
-                htmlFor="category"
-                className="mb-1 block text-sm font-medium"
-              >
-                Category
-              </label>
-              <select
-                id="category"
-                name="category"
-                className="rounded border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-              >
-                <option value="ACHIEVEMENT">Achievement</option>
-                <option value="POSTING">Posting</option>
-                <option value="COMMUNITY">Community</option>
-                <option value="MARKETPLACE">Marketplace</option>
-                <option value="PREMIUM">Premium</option>
-                <option value="MODERATOR">Moderator</option>
-                <option value="SPECIAL_EVENT">Special Event</option>
-              </select>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="category">Category</Label>
+              <Select id="category" name="category" options={CATEGORY_OPTIONS} />
             </div>
-            <div className="flex items-center gap-2 pt-5">
+            <div className="flex items-center gap-2 pt-6">
               <input
                 id="isSystem"
                 name="isSystem"
                 type="checkbox"
                 value="true"
-                className="rounded border bg-background"
+                className="h-4 w-4 rounded border-input"
               />
-              <label htmlFor="isSystem" className="text-sm">
+              <Label htmlFor="isSystem" className="text-sm font-normal">
                 System badge (auto-awarded)
-              </label>
+              </Label>
             </div>
           </div>
-          <button
-            type="submit"
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            Create Badge
-          </button>
-        </form>
-      </div>
 
-      <div>
-        <h2 className="mb-4 font-semibold">Existing Badges</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {allBadges.map((badge) => (
-            <div key={badge.id} className="rounded-lg border bg-card p-4">
-              <div className="flex items-start gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-xl">
+          <Button type="submit">
+            <Plus className="mr-2 h-4 w-4" />
+            Create Badge
+          </Button>
+        </form>
+      </SectionCard>
+
+      <SectionCard
+        title="Existing Badges"
+        actions={<Badge variant="secondary">{allBadges.length}</Badge>}
+      >
+        {allBadges.length === 0 ? (
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            No badges created yet.
+          </p>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {allBadges.map((badge) => (
+              <div
+                key={badge.id}
+                className="flex items-start gap-3 rounded-lg border p-4 transition-colors hover:bg-muted/50"
+              >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-xl">
                   {badge.icon}
                 </span>
                 <div className="min-w-0 flex-1">
@@ -155,26 +143,24 @@ export default async function AdminBadgesPage() {
                     {badge.slug}
                   </div>
                   {badge.description && (
-                    <div className="mt-1 text-xs text-muted-foreground">
+                    <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
                       {badge.description}
-                    </div>
+                    </p>
                   )}
-                  <div className="mt-2 flex items-center gap-2 text-xs">
-                    <span className="rounded-full bg-muted px-1.5 py-0.5 capitalize">
-                      {badge.category.toLowerCase()}
-                    </span>
+                  <div className="mt-2 flex items-center gap-2">
+                    <Badge variant="secondary" size="sm">
+                      {badge.category.replace("_", " ")}
+                    </Badge>
                     {badge.isSystem && (
-                      <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-primary">
-                        System
-                      </span>
+                      <Badge variant="info" size="sm">System</Badge>
                     )}
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
+            ))}
+          </div>
+        )}
+      </SectionCard>
     </div>
   );
 }

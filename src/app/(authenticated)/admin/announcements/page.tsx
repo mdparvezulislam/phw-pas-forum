@@ -1,7 +1,24 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { Megaphone, Plus, Calendar } from "lucide-react";
+import { PageHeader, SectionCard } from "@/components/admin";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { canModerate } from "@/config/rbac";
 import { auth } from "@/lib/auth";
 import { announcementService } from "@/services/announcement";
+import type { AnnouncementType } from "@/db/schema/announcements";
+
+export const metadata: Metadata = {
+  title: "Announcements",
+};
+
+const TYPE_VARIANT_MAP: Record<AnnouncementType, "info" | "warning" | "destructive" | "success"> = {
+  INFO: "info",
+  WARNING: "warning",
+  DANGER: "destructive",
+  SUCCESS: "success",
+};
 
 export default async function AdminAnnouncementsPage() {
   const session = await auth();
@@ -17,76 +34,73 @@ export default async function AdminAnnouncementsPage() {
   const announcements = await announcementService.getAnnouncements();
 
   return (
-    <div className="container max-w-4xl py-8">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold">Announcements</h1>
-          <p className="text-muted-foreground mt-1">
-            Manage community announcements
-          </p>
-        </div>
-        <a
-          href="/admin/announcements/new"
-          className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-        >
-          New Announcement
-        </a>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="Announcements"
+        description="Manage community announcements and broadcasts"
+        icon={<Megaphone className="h-5 w-5" />}
+        actions={
+          <Button asChild>
+            <a href="/admin/announcements/new">
+              <Plus className="mr-2 h-4 w-4" />
+              New Announcement
+            </a>
+          </Button>
+        }
+      />
 
-      {announcements.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">No announcements yet</p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {announcements.map((announcement) => (
-            <div
-              key={announcement.id}
-              className={`border rounded-lg p-4 ${
-                announcement.isActive ? "border-green-500" : ""
-              }`}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
+      <SectionCard
+        title="All Announcements"
+        description={`${announcements.length} total`}
+      >
+        {announcements.length === 0 ? (
+          <p className="py-8 text-center text-sm text-muted-foreground">
+            No announcements yet. Create your first announcement to get started.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {announcements.map((announcement) => (
+              <div
+                key={announcement.id}
+                className="flex items-start justify-between gap-4 rounded-lg border p-4 transition-colors hover:bg-muted/50"
+              >
+                <div className="min-w-0 flex-1 space-y-1.5">
+                  <div className="flex flex-wrap items-center gap-2">
                     <h3 className="font-semibold">{announcement.title}</h3>
-                    <span
-                      className={`px-2 py-0.5 text-xs rounded ${
-                        announcement.type === "DANGER"
-                          ? "bg-red-100 text-red-800"
-                          : announcement.type === "WARNING"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : announcement.type === "SUCCESS"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-blue-100 text-blue-800"
-                      }`}
-                    >
+                    <Badge variant={TYPE_VARIANT_MAP[announcement.type]} size="sm">
                       {announcement.type}
-                    </span>
-                    {!announcement.isActive && (
-                      <span className="px-2 py-0.5 text-xs rounded bg-gray-100 text-gray-800">
-                        Draft
-                      </span>
-                    )}
+                    </Badge>
+                    <Badge
+                      variant={announcement.isActive ? "success" : "secondary"}
+                      size="sm"
+                    >
+                      {announcement.isActive ? "Active" : "Draft"}
+                    </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="line-clamp-2 text-sm text-muted-foreground">
                     {announcement.content}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    {announcement.isPermanent
-                      ? "Permanent"
-                      : announcement.startsAt && announcement.endsAt
-                        ? `${announcement.startsAt.toLocaleDateString()} - ${announcement.endsAt.toLocaleDateString()}`
-                        : "No schedule"}
-                  </p>
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Calendar className="h-3.5 w-3.5" />
+                    {announcement.isPermanent ? (
+                      <span>Permanent</span>
+                    ) : announcement.startsAt && announcement.endsAt ? (
+                      <span>
+                        {announcement.startsAt.toLocaleDateString()} &ndash;{" "}
+                        {announcement.endsAt.toLocaleDateString()}
+                      </span>
+                    ) : (
+                      <span>No schedule</span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <a
-                    href={`/admin/announcements/${announcement.id}`}
-                    className="text-sm text-primary hover:underline"
-                  >
-                    Edit
-                  </a>
+
+                <div className="flex shrink-0 items-center gap-2">
+                  <Button variant="ghost" size="sm" asChild>
+                    <a href={`/admin/announcements/${announcement.id}`}>
+                      Edit
+                    </a>
+                  </Button>
                   {announcement.isActive ? (
                     <form
                       action={async () => {
@@ -97,12 +111,9 @@ export default async function AdminAnnouncementsPage() {
                         );
                       }}
                     >
-                      <button
-                        type="submit"
-                        className="text-sm text-yellow-600 hover:underline"
-                      >
+                      <Button variant="outline" size="sm" type="submit">
                         Unpublish
-                      </button>
+                      </Button>
                     </form>
                   ) : (
                     <form
@@ -114,20 +125,17 @@ export default async function AdminAnnouncementsPage() {
                         );
                       }}
                     >
-                      <button
-                        type="submit"
-                        className="text-sm text-green-600 hover:underline"
-                      >
+                      <Button variant="default" size="sm" type="submit">
                         Publish
-                      </button>
+                      </Button>
                     </form>
                   )}
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </SectionCard>
     </div>
   );
 }

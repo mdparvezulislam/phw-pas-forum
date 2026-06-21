@@ -21,6 +21,9 @@ import {
   ScrollText,
   UsersRound,
   Settings,
+  Flag,
+  Activity,
+  Cpu,
   type LucideIcon,
 } from "lucide-react";
 
@@ -125,22 +128,22 @@ export const ADMIN_NAV: AdminNavSection[] = [
     items: [
       {
         href: "/admin/marketplace",
-        label: "Rules",
+        label: "Overview",
         icon: Store,
-        description: "Marketplace settings and rules",
-        keywords: ["listings", "compliance"],
+        description: "Marketplace dashboard and rules",
+        keywords: ["listings", "compliance", "settings"],
       },
       {
         href: "/admin/orders",
         label: "Orders",
         icon: ShoppingCart,
-        description: "Order management",
+        description: "Order management and fulfillment",
       },
       {
         href: "/admin/disputes",
         label: "Disputes",
         icon: Gavel,
-        description: "Dispute resolution",
+        description: "Dispute resolution and claims",
         keywords: ["refunds", "claims"],
       },
     ],
@@ -225,14 +228,33 @@ export const ADMIN_NAV: AdminNavSection[] = [
     ],
   },
   {
+    label: "Operations",
+    items: [
+      {
+        href: "/admin/operations",
+        label: "System Health",
+        icon: Activity,
+        description: "Infrastructure and service health",
+        keywords: ["status", "uptime", "redis", "database", "typesense"],
+      },
+    ],
+  },
+  {
     label: "System",
     items: [
+      {
+        href: "/admin/feature-flags",
+        label: "Feature Flags",
+        icon: Flag,
+        description: "Toggle features and manage rollouts",
+        keywords: ["toggles", "flags", "rollout"],
+      },
       {
         href: "/admin/settings",
         label: "Settings",
         icon: Settings,
         description: "Platform configuration",
-        keywords: ["config", "integrations", "feature flags"],
+        keywords: ["config", "integrations"],
       },
     ],
   },

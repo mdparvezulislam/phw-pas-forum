@@ -2,7 +2,12 @@
 
 import { Check, Key, Settings, ShieldAlert, ShieldCheck } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui";
+import { PageHeader, SectionCard } from "@/components/admin";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 
 export default function AdminMarketplaceSettings() {
   const [success, setSuccess] = useState(false);
@@ -20,163 +25,156 @@ export default function AdminMarketplaceSettings() {
 
   return (
     <form onSubmit={handleSave} className="space-y-8">
-      <div>
-        <h2 className="text-xl font-bold">
-          Marketplace Governance Configuration
-        </h2>
-        <p className="text-sm text-muted-foreground font-sans">
-          Tune automated risk scoring thresholds, compliance checklists, and
-          seller verification rules.
-        </p>
-      </div>
+      <PageHeader
+        title="Marketplace"
+        description="Marketplace governance, compliance rules, and seller verification"
+        icon={<Settings className="h-5 w-5" />}
+      />
 
       {success && (
-        <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-2xl text-sm flex items-center gap-2 animate-pulse font-sans">
-          <Check className="w-4 h-4" />
-          Settings updated successfully! Configurations applied dynamically to
-          new listing submissions.
+        <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400 animate-in fade-in slide-in-from-top-1">
+          <Check className="h-4 w-4 shrink-0" />
+          Settings updated successfully. Configurations applied to new listing
+          submissions.
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Compliance checklist card */}
-        <div className="border rounded-2xl p-6 bg-card/30 backdrop-blur space-y-4 border-muted/20">
-          <h3 className="font-bold text-sm flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            iModBot Compliance Baseline
-          </h3>
-          <p className="text-xs text-muted-foreground font-sans">
-            Configure the baseline rules that marketplace threads must meet to
-            receive a passing compliance score.
-          </p>
-
-          <div className="space-y-4 pt-2">
-            <div>
-              <label className="block text-xs font-semibold text-muted-foreground mb-1">
-                Minimum Word Count: {minWords} words
-              </label>
-              <input
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* ── Compliance ────────────────────────────────── */}
+        <SectionCard
+          title="iModBot Compliance Baseline"
+          description="Baseline rules marketplace threads must meet for a passing compliance score."
+          icon={<ShieldCheck className="h-4 w-4 text-emerald-400" />}
+        >
+          <div className="space-y-5">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-semibold">
+                  Minimum Word Count
+                </Label>
+                <Badge variant="secondary" className="text-[10px] font-mono">
+                  {minWords} words
+                </Badge>
+              </div>
+              <Input
                 type="range"
-                min="50"
-                max="500"
-                step="10"
+                min={50}
+                max={500}
+                step={10}
                 value={minWords}
                 onChange={(e) => setMinWords(Number(e.target.value))}
-                className="w-full h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
+                className="h-1.5 w-full cursor-pointer accent-primary [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5"
               />
-              <span className="text-[10px] text-muted-foreground font-sans block mt-1">
+              <p className="text-[10px] text-muted-foreground">
                 Threads below this are marked non-compliant.
-              </span>
+              </p>
             </div>
 
-            <div className="flex items-center justify-between pt-2">
-              <div>
-                <label className="block text-xs font-semibold text-foreground">
+            <div className="flex items-center justify-between rounded-lg border p-3">
+              <div className="space-y-0.5">
+                <Label className="text-xs font-semibold">
                   Media Attachment Required
-                </label>
-                <span className="text-[10px] text-muted-foreground font-sans">
+                </Label>
+                <p className="text-[10px] text-muted-foreground">
                   Force presence of at least one image or video.
-                </span>
+                </p>
               </div>
-              <input
-                type="checkbox"
+              <Switch
                 checked={mediaReq}
-                onChange={(e) => setMediaReq(e.target.checked)}
-                className="w-4 h-4 accent-primary"
+                onCheckedChange={setMediaReq}
               />
             </div>
           </div>
-        </div>
+        </SectionCard>
 
-        {/* Risk Assessment card */}
-        <div className="border rounded-2xl p-6 bg-card/30 backdrop-blur space-y-4 border-muted/20">
-          <h3 className="font-bold text-sm flex items-center gap-2">
-            <ShieldAlert className="w-4 h-4 text-rose-400" />
-            Scoring Risk Tolerances
-          </h3>
-          <p className="text-xs text-muted-foreground font-sans">
-            Define limits for link density and text parsing weights that raise
-            thread risk scores.
-          </p>
-
-          <div className="space-y-4 pt-2">
-            <div>
-              <label className="block text-xs font-semibold text-muted-foreground mb-1">
-                Max Allowed External Links: {maxLinks} links
-              </label>
-              <input
+        {/* ── Risk Assessment ───────────────────────────── */}
+        <SectionCard
+          title="Scoring Risk Tolerances"
+          description="Limits for link density and text parsing weights that raise thread risk scores."
+          icon={<ShieldAlert className="h-4 w-4 text-rose-400" />}
+        >
+          <div className="space-y-5">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-semibold">
+                  Max Allowed External Links
+                </Label>
+                <Badge variant="secondary" className="text-[10px] font-mono">
+                  {maxLinks} links
+                </Badge>
+              </div>
+              <Input
                 type="range"
-                min="2"
-                max="25"
-                step="1"
+                min={2}
+                max={25}
+                step={1}
                 value={maxLinks}
                 onChange={(e) => setMaxLinks(Number(e.target.value))}
-                className="w-full h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
+                className="h-1.5 w-full cursor-pointer accent-primary [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5"
               />
-              <span className="text-[10px] text-muted-foreground font-sans block mt-1">
-                Exceeding this threshold penalizes risk index.
-              </span>
+              <p className="text-[10px] text-muted-foreground">
+                Exceeding this threshold penalizes the risk index.
+              </p>
             </div>
 
-            <div>
-              <label className="block text-xs font-semibold text-muted-foreground mb-1">
-                Link Abuse Score Weight: {spamScoreWeight}%
-              </label>
-              <input
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-semibold">
+                  Link Abuse Score Weight
+                </Label>
+                <Badge variant="secondary" className="text-[10px] font-mono">
+                  {spamScoreWeight}%
+                </Badge>
+              </div>
+              <Input
                 type="range"
-                min="10"
-                max="80"
-                step="5"
+                min={10}
+                max={80}
+                step={5}
                 value={spamScoreWeight}
                 onChange={(e) => setSpamScoreWeight(Number(e.target.value))}
-                className="w-full h-1.5 bg-secondary rounded-lg appearance-none cursor-pointer accent-primary"
+                className="h-1.5 w-full cursor-pointer accent-primary [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5"
               />
-              <span className="text-[10px] text-muted-foreground font-sans block mt-1">
+              <p className="text-[10px] text-muted-foreground">
                 Impact weight on overall automated risk check.
-              </span>
+              </p>
             </div>
           </div>
-        </div>
+        </SectionCard>
 
-        {/* Vendor/Role Rules */}
-        <div className="border rounded-2xl p-6 bg-card/30 backdrop-blur space-y-4 lg:col-span-2 border-muted/20">
-          <h3 className="font-bold text-sm flex items-center gap-2">
-            <Key className="w-4 h-4 text-indigo-400" />
-            Vendor Access Policies
-          </h3>
-          <p className="text-xs text-muted-foreground font-sans">
-            Control automated vs. moderator verification triggers based on
-            community trust level and badges.
-          </p>
-
-          <div className="space-y-4 pt-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <label className="block text-xs font-semibold text-foreground">
+        {/* ── Vendor Access ─────────────────────────────── */}
+        <SectionCard
+          title="Vendor Access Policies"
+          description="Control automated vs. moderator verification triggers based on trust level."
+          icon={<Key className="h-4 w-4 text-indigo-400" />}
+          className="lg:col-span-2"
+        >
+          <div className="space-y-5">
+            <div className="flex items-center justify-between rounded-lg border p-3">
+              <div className="space-y-0.5">
+                <Label className="text-xs font-semibold">
                   Auto-approve VIP Thread Submissions
-                </label>
-                <span className="text-[10px] text-muted-foreground font-sans">
+                </Label>
+                <p className="text-[10px] text-muted-foreground">
                   Skip the moderation queue entirely if the thread creator is a
                   VIP or Staff.
-                </span>
+                </p>
               </div>
-              <input
-                type="checkbox"
+              <Switch
                 checked={autoVerifyVIPs}
-                onChange={(e) => setAutoVerifyVIPs(e.target.checked)}
-                className="w-4 h-4 accent-primary"
+                onCheckedChange={setAutoVerifyVIPs}
               />
             </div>
           </div>
-        </div>
+        </SectionCard>
       </div>
 
-      <div className="flex justify-end pt-4 border-t border-muted/20">
+      <div className="flex justify-end border-t pt-4">
         <Button
           type="submit"
-          className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-2.5 rounded-xl text-xs flex items-center gap-1.5 shadow-md"
+          className="gap-1.5 px-6"
         >
-          <Settings className="w-3.5 h-3.5" />
+          <Settings className="h-3.5 w-3.5" />
           Save Configurations
         </Button>
       </div>

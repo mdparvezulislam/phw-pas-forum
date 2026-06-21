@@ -1,5 +1,12 @@
 import { desc } from "drizzle-orm";
 import type { Metadata } from "next";
+import { Award, Sparkles, Trophy } from "lucide-react";
+import { PageHeader, SectionCard } from "@/components/admin";
+import { Avatar } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { getDatabase, schema } from "@/db";
 
 export const metadata: Metadata = {
@@ -35,90 +42,123 @@ export default async function AdminReputationPage() {
 
   return (
     <div className="space-y-8">
-      <div className="rounded-lg border p-4">
-        <h2 className="mb-4 font-semibold">Award Reputation</h2>
+      <PageHeader
+        title="Reputation"
+        description="Manage reputation points and view top contributors"
+        icon={<Sparkles className="h-5 w-5" />}
+      />
+
+      <SectionCard
+        title="Award Reputation"
+        icon={<Sparkles className="h-4 w-4" />}
+        description="Award reputation points to a user"
+      >
         <form
           action="/admin/reputation/award"
           method="POST"
-          className="space-y-3"
+          className="space-y-4"
         >
-          <div>
-            <label htmlFor="userId" className="mb-1 block text-sm font-medium">
-              User ID
-            </label>
-            <input
-              id="userId"
-              name="userId"
-              required
-              className="w-full rounded border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-            />
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="userId">User ID</Label>
+              <Input
+                id="userId"
+                name="userId"
+                placeholder="Enter user ID"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="points">Points</Label>
+              <Input
+                id="points"
+                name="points"
+                type="number"
+                min="1"
+                max="10000"
+                placeholder="1-10000"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reason">Reason (optional)</Label>
+              <Input
+                id="reason"
+                name="reason"
+                placeholder="Reason for awarding"
+              />
+            </div>
           </div>
-          <div>
-            <label htmlFor="points" className="mb-1 block text-sm font-medium">
-              Points
-            </label>
-            <input
-              id="points"
-              name="points"
-              type="number"
-              min="1"
-              max="10000"
-              required
-              className="w-full rounded border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
-          <div>
-            <label htmlFor="reason" className="mb-1 block text-sm font-medium">
-              Reason (optional)
-            </label>
-            <input
-              id="reason"
-              name="reason"
-              className="w-full rounded border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-            />
-          </div>
-          <button
-            type="submit"
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
+          <Button type="submit" className="gap-2">
+            <Award className="h-4 w-4" />
             Award Reputation
-          </button>
+          </Button>
         </form>
-      </div>
+      </SectionCard>
 
-      <div>
-        <h2 className="mb-4 font-semibold">Top Users by Reputation</h2>
-        <div className="rounded-lg border">
-          <div className="divide-y">
-            {topUsers.map((u, i) => (
+      <SectionCard
+        title="Top Contributors"
+        description={`${topUsers.length} users`}
+        icon={<Trophy className="h-4 w-4" />}
+        actions={
+          <Badge variant="secondary">
+            {topUsers.length} total
+          </Badge>
+        }
+      >
+        <div className="divide-y">
+          {topUsers.map((entry, index) => {
+            const rank = index + 1;
+            const displayName = entry.user?.displayName ?? entry.user?.username ?? "Unknown";
+            const username = entry.user?.username ?? "unknown";
+
+            return (
               <div
-                key={u.userId}
-                className="flex items-center justify-between px-4 py-3"
+                key={entry.userId}
+                className="flex items-center gap-4 py-3 first:pt-0 last:pb-0"
               >
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-bold text-muted-foreground">
-                    #{i + 1}
-                  </span>
-                  <div>
-                    <div className="text-sm font-medium">
-                      {u.user?.displayName ?? u.user?.username}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      @{u.user?.username}
-                    </div>
+                <span
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
+                    rank === 1
+                      ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
+                      : rank === 2
+                        ? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                        : rank === 3
+                          ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400"
+                          : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {rank}
+                </span>
+
+                <Avatar className="h-9 w-9">
+                  <div className="flex h-full w-full items-center justify-center rounded-full bg-muted text-xs font-medium">
+                    {username.charAt(0).toUpperCase()}
                   </div>
+                </Avatar>
+
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium">{displayName}</p>
+                  <p className="text-xs text-muted-foreground">@{username}</p>
                 </div>
+
                 <div className="text-right">
-                  <div className="text-sm font-semibold">
-                    {u.reputationPoints.toLocaleString()}
-                  </div>
-                  <div className="text-xs text-muted-foreground">points</div>
+                  <p className="text-sm font-semibold tabular-nums">
+                    {entry.reputationPoints.toLocaleString()}
+                  </p>
+                  <p className="text-xs text-muted-foreground">points</p>
                 </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
+
+          {topUsers.length === 0 && (
+            <p className="py-8 text-center text-sm text-muted-foreground">
+              No reputation entries yet.
+            </p>
+          )}
         </div>
-      </div>
+      </SectionCard>
     </div>
   );
 }

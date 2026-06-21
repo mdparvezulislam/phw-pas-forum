@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
+import { Trophy, Plus, Star } from "lucide-react";
 import { getDatabase, schema } from "@/db";
 import { createTrophy } from "@/modules/reputation/actions";
+import { PageHeader, SectionCard } from "@/components/admin";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 
 export const metadata: Metadata = {
   title: "Manage Trophies",
@@ -14,67 +20,48 @@ export default async function AdminTrophiesPage() {
 
   return (
     <div className="space-y-8">
-      <div className="rounded-lg border p-4">
-        <h2 className="mb-4 font-semibold">Create Trophy</h2>
+      <PageHeader
+        title="Trophies"
+        description="Manage trophy definitions and unlock conditions"
+        icon={<Trophy className="h-5 w-5" />}
+      />
+
+      <SectionCard title="Create Trophy" icon={<Plus className="h-4 w-4" />}>
         <form
           action={
             createTrophy.bind(null, undefined) as unknown as (
               formData: FormData,
             ) => void
           }
-          className="space-y-3"
+          className="space-y-4"
         >
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label htmlFor="title" className="mb-1 block text-sm font-medium">
-                Title
-              </label>
-              <input
-                id="title"
-                name="title"
-                required
-                className="w-full rounded border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-              />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="title">Title</Label>
+              <Input id="title" name="title" required />
             </div>
-            <div>
-              <label htmlFor="icon" className="mb-1 block text-sm font-medium">
-                Icon (emoji)
-              </label>
-              <input
-                id="icon"
-                name="icon"
-                required
-                className="w-full rounded border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-              />
+            <div className="space-y-2">
+              <Label htmlFor="icon">Icon (emoji)</Label>
+              <Input id="icon" name="icon" required />
             </div>
           </div>
-          <div>
-            <label
-              htmlFor="description"
-              className="mb-1 block text-sm font-medium"
-            >
-              Description
-            </label>
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
             <textarea
               id="description"
               name="description"
               rows={2}
               maxLength={500}
-              className="w-full rounded border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+              className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
           </div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div>
-              <label
-                htmlFor="conditionType"
-                className="mb-1 block text-sm font-medium"
-              >
-                Condition Type
-              </label>
+          <div className="grid gap-4 sm:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="conditionType">Condition Type</Label>
               <select
                 id="conditionType"
                 name="conditionType"
-                className="w-full rounded border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <option value="POST_COUNT">Post Count</option>
                 <option value="THREAD_COUNT">Thread Count</option>
@@ -84,81 +71,71 @@ export default async function AdminTrophiesPage() {
                 <option value="HELPFUL_COUNT">Helpful Count</option>
               </select>
             </div>
-            <div>
-              <label
-                htmlFor="conditionValue"
-                className="mb-1 block text-sm font-medium"
-              >
-                Condition Value
-              </label>
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="conditionValue">Condition Value</Label>
+              <Input
                 id="conditionValue"
                 name="conditionValue"
                 type="number"
                 min="1"
                 required
-                className="w-full rounded border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
               />
             </div>
-            <div>
-              <label
-                htmlFor="reputationReward"
-                className="mb-1 block text-sm font-medium"
-              >
-                Rep Reward
-              </label>
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="reputationReward">Rep Reward</Label>
+              <Input
                 id="reputationReward"
                 name="reputationReward"
                 type="number"
                 min="0"
                 defaultValue="10"
-                className="w-full rounded border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
               />
             </div>
           </div>
-          <button
-            type="submit"
-            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
-          >
+          <Button type="submit" size="sm">
+            <Plus className="mr-1.5 h-4 w-4" />
             Create Trophy
-          </button>
+          </Button>
         </form>
-      </div>
+      </SectionCard>
 
-      <div>
-        <h2 className="mb-4 font-semibold">Existing Trophies</h2>
+      <SectionCard
+        title="Existing Trophies"
+        icon={<Trophy className="h-4 w-4" />}
+        actions={<Badge variant="secondary">{allTrophies.length}</Badge>}
+      >
         <div className="grid gap-3 sm:grid-cols-2">
           {allTrophies.map((trophy) => (
-            <div key={trophy.id} className="rounded-lg border bg-card p-4">
-              <div className="flex items-start gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/10 text-xl">
-                  {trophy.icon}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <div className="font-medium">{trophy.title}</div>
-                  {trophy.description && (
-                    <div className="text-xs text-muted-foreground">
-                      {trophy.description}
-                    </div>
-                  )}
-                  <div className="mt-2 flex flex-wrap gap-2 text-xs">
-                    <span className="rounded-full bg-muted px-1.5 py-0.5">
-                      {trophy.conditionType.replace(/_/g, " ")} &ge;{" "}
-                      {trophy.conditionValue}
-                    </span>
-                    {trophy.reputationReward > 0 && (
-                      <span className="rounded-full bg-amber-500/10 px-1.5 py-0.5 text-amber-600 dark:text-amber-400">
-                        +{trophy.reputationReward} rep
-                      </span>
-                    )}
+            <div
+              key={trophy.id}
+              className="flex items-start gap-3 rounded-lg border bg-background p-4"
+            >
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-amber-500/10 text-xl">
+                {trophy.icon}
+              </span>
+              <div className="min-w-0 flex-1">
+                <div className="font-medium">{trophy.title}</div>
+                {trophy.description && (
+                  <div className="mt-0.5 text-xs text-muted-foreground">
+                    {trophy.description}
                   </div>
+                )}
+                <div className="mt-2 flex flex-wrap gap-2 text-xs">
+                  <Badge variant="outline">
+                    {trophy.conditionType.replace(/_/g, " ")} &ge;{" "}
+                    {trophy.conditionValue}
+                  </Badge>
+                  {trophy.reputationReward > 0 && (
+                    <Badge variant="secondary" className="text-amber-600 dark:text-amber-400">
+                      <Star className="mr-1 h-3 w-3" />+{trophy.reputationReward} rep
+                    </Badge>
+                  )}
                 </div>
               </div>
             </div>
           ))}
         </div>
-      </div>
+      </SectionCard>
     </div>
   );
 }

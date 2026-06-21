@@ -1,54 +1,72 @@
 "use client";
 
 import React, { useState } from "react";
-import type { SearchIndexEntityType } from "@/db/schema/search-index-jobs";
+import { PageHeader, SectionCard } from "@/components/admin";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  SearchCode,
+  RefreshCw,
+  CheckCircle,
+  AlertCircle,
+  Loader2,
+} from "lucide-react";
 import { adminTriggerReindexAction } from "@/modules/search/actions/search";
+import type { SearchIndexEntityType } from "@/db/schema/search-index-jobs";
 
 const COLLECTIONS_LIST: Array<{
   label: string;
   value: SearchIndexEntityType;
-  desc: string;
+  description: string;
 }> = [
   {
     label: "Forums",
     value: "FORUM",
-    desc: "Index forum categories, descriptions, titles",
+    description: "Index forum categories, descriptions, titles",
   },
   {
     label: "Threads",
     value: "THREAD",
-    desc: "Index thread titles, slugs, bodies, tags, categories, forums",
+    description: "Index thread titles, slugs, bodies, tags, categories, forums",
   },
   {
-    label: "Replies/Posts",
+    label: "Replies / Posts",
     value: "POST",
-    desc: "Index forum reply posts and quote context",
+    description: "Index forum reply posts and quote context",
   },
   {
-    label: "Members/Users",
+    label: "Members / Users",
     value: "USER",
-    desc: "Index username, displayName, levels, badge counts",
+    description: "Index username, displayName, levels, badge counts",
   },
-  { label: "Badges", value: "BADGE", desc: "Index badge names, descriptions" },
+  {
+    label: "Badges",
+    value: "BADGE",
+    description: "Index badge names, descriptions",
+  },
   {
     label: "Trophies",
     value: "TROPHY",
-    desc: "Index trophies and unlock requirements",
+    description: "Index trophies and unlock requirements",
   },
   {
     label: "Conversations",
     value: "CONVERSATION_MESSAGE",
-    desc: "Index participant isolated DM messages",
+    description: "Index participant-isolated DM messages",
   },
 ];
 
+type CollectionStatus = {
+  loading: boolean;
+  error?: string;
+  success?: boolean;
+  message?: string;
+};
+
 export default function AdminSearchPage() {
-  const [statuses, setStatuses] = useState<
-    Record<
-      string,
-      { loading: boolean; error?: string; success?: boolean; message?: string }
-    >
-  >({});
+  const [statuses, setStatuses] = useState<Record<string, CollectionStatus>>(
+    {},
+  );
   const [globalStatus, setGlobalStatus] = useState<string | null>(null);
 
   const handleReindex = async (entityType: SearchIndexEntityType) => {
@@ -93,72 +111,111 @@ export default function AdminSearchPage() {
     );
   };
 
+  const statusIcon = (state: CollectionStatus) => {
+    if (state.loading) {
+      return <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />;
+    }
+    if (state.error) {
+      return <AlertCircle className="h-4 w-4 text-destructive" />;
+    }
+    if (state.success) {
+      return <CheckCircle className="h-4 w-4 text-emerald-500" />;
+    }
+    return null;
+  };
+
+  const statusBadge = (state: CollectionStatus) => {
+    if (state.loading) {
+      return (
+        <Badge variant="secondary" className="gap-1">
+          <Loader2 className="h-3 w-3 animate-spin" />
+          Syncing
+        </Badge>
+      );
+    }
+    if (state.error) {
+      return (
+        <Badge variant="destructive" className="gap-1">
+          <AlertCircle className="h-3 w-3" />
+          Failed
+        </Badge>
+      );
+    }
+    if (state.success) {
+      return (
+        <Badge variant="secondary" className="gap-1 text-emerald-600 dark:text-emerald-400">
+          <CheckCircle className="h-3 w-3" />
+          Done
+        </Badge>
+      );
+    }
+    return (
+      <Badge variant="outline" className="text-muted-foreground">
+        Idle
+      </Badge>
+    );
+  };
+
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div className="flex items-center justify-between border-b pb-4">
-        <div>
-          <h2 className="text-xl font-bold text-foreground">
-            Typesense Search Settings
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Manage and rebuild Typesense search indices.
-          </p>
-        </div>
-        <button
-          onClick={handleReindexAll}
-          type="button"
-          className="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow hover:bg-primary/90 transition-colors cursor-pointer"
-        >
-          Reindex All Collections
-        </button>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        title="Search Index"
+        description="Manage Typesense search indices and reindex collections"
+        icon={<SearchCode className="h-5 w-5" />}
+        actions={
+          <Button onClick={handleReindexAll} variant="default" size="sm">
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Reindex All
+          </Button>
+        }
+      />
 
       {globalStatus && (
-        <div className="p-4 rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20 text-sm font-medium">
-          ℹ️ {globalStatus}
+        <div className="flex items-center gap-2 rounded-lg border border-blue-500/20 bg-blue-500/10 px-4 py-3 text-sm font-medium text-blue-600 dark:text-blue-400">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          {globalStatus}
         </div>
       )}
 
-      {/* Collections Grid */}
-      <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2">
         {COLLECTIONS_LIST.map((item) => {
           const state = statuses[item.value] || { loading: false };
           return (
-            <div
+            <SectionCard
               key={item.value}
-              className="p-5 border rounded-xl bg-card/50 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-sm"
+              title={item.label}
+              description={item.description}
+              actions={statusBadge(state)}
             >
-              <div className="space-y-1">
-                <h3 className="font-semibold text-foreground">{item.label}</h3>
-                <p className="text-xs text-muted-foreground">{item.desc}</p>
-                {state.success && (
-                  <p className="text-xs text-emerald-500 font-medium">
-                    ✅ {state.message || "Bulk sync started!"}
-                  </p>
-                )}
-                {state.error && (
-                  <p className="text-xs text-destructive font-medium">
-                    ❌ Error: {state.error}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2">
-                {state.loading && (
-                  <span className="text-xs text-muted-foreground animate-pulse font-medium">
-                    Syncing...
-                  </span>
-                )}
-                <button
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  {statusIcon(state)}
+                  {state.success && state.message && (
+                    <span className="text-xs text-emerald-600 dark:text-emerald-400">
+                      {state.message}
+                    </span>
+                  )}
+                  {state.error && (
+                    <span className="text-xs text-destructive">
+                      {state.error}
+                    </span>
+                  )}
+                </div>
+                <Button
                   onClick={() => handleReindex(item.value)}
                   disabled={state.loading}
-                  type="button"
-                  className="inline-flex items-center justify-center rounded-md border bg-background px-4 py-2 text-sm font-medium shadow-sm hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  variant="outline"
+                  size="sm"
                 >
-                  {state.loading ? "Running" : "Reindex"}
-                </button>
+                  {state.loading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                  )}
+                  Reindex
+                </Button>
               </div>
-            </div>
+            </SectionCard>
           );
         })}
       </div>
