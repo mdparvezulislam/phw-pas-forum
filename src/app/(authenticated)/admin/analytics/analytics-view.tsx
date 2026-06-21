@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import {
   SectionCard,
@@ -33,7 +28,11 @@ export interface AnalyticsData {
     averageRating: number;
     trustScore: number;
   }[];
-  activeByPlan: { planName: string; activeCount: number; monthlyPrice: number }[];
+  activeByPlan: {
+    planName: string;
+    activeCount: number;
+    monthlyPrice: number;
+  }[];
   topSearches: { query: string; count: number }[];
 }
 
@@ -212,7 +211,11 @@ export function AnalyticsView({ data }: { data: AnalyticsData }) {
               </p>
             )}
           </SectionCard>
-          <SectionCard title="Plans" description="Pricing and active count" flush>
+          <SectionCard
+            title="Plans"
+            description="Pricing and active count"
+            flush
+          >
             <div className="divide-y">
               {data.activeByPlan.map((p) => (
                 <div

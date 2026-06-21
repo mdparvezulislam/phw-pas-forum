@@ -48,10 +48,7 @@ export default async function AdminBadgesPage() {
         icon={<Award className="h-5 w-5" />}
       />
 
-      <SectionCard
-        title="Create Badge"
-        icon={<Plus className="h-4 w-4" />}
-      >
+      <SectionCard title="Create Badge" icon={<Plus className="h-4 w-4" />}>
         <form
           action={
             createBadge.bind(null, undefined) as unknown as (
@@ -96,7 +93,11 @@ export default async function AdminBadgesPage() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="category">Category</Label>
-              <Select id="category" name="category" options={CATEGORY_OPTIONS} />
+              <Select
+                id="category"
+                name="category"
+                options={CATEGORY_OPTIONS}
+              />
             </div>
             <div className="flex items-center gap-2 pt-6">
               <input
@@ -152,7 +153,9 @@ export default async function AdminBadgesPage() {
                       {badge.category.replace("_", " ")}
                     </Badge>
                     {badge.isSystem && (
-                      <Badge variant="info" size="sm">System</Badge>
+                      <Badge variant="info" size="sm">
+                        System
+                      </Badge>
                     )}
                   </div>
                 </div>

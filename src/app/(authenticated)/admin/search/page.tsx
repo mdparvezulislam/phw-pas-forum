@@ -143,7 +143,10 @@ export default function AdminSearchPage() {
     }
     if (state.success) {
       return (
-        <Badge variant="secondary" className="gap-1 text-emerald-600 dark:text-emerald-400">
+        <Badge
+          variant="secondary"
+          className="gap-1 text-emerald-600 dark:text-emerald-400"
+        >
           <CheckCircle className="h-3 w-3" />
           Done
         </Badge>

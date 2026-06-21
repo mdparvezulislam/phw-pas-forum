@@ -1,0 +1,70 @@
+name: Security Scan
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  trufflehog:
+    name: Secret Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: TruffleHog Secret Scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+          extra_args: --only-verified
+
+  dependabot:
+    name: Dependency Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: "10"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "pnpm"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm audit --audit-level=high
+        continue-on-error: true
+      - name: Generate SBOM
+        run: |
+          pnpm list --depth=0 --json > sbom.json || true
+
+  codeql:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
+  zap-scan:
+    name: DAST Scan
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - name: ZAP Scan
+        uses: zaproxy/action-full-scan@v0
+        with:
+          target: ${{ secrets.STAGING_URL || 'http://localhost:3000' }}
+          rules_file_name: .github/zap-rules.tsv
+          cmd_options: "-a"

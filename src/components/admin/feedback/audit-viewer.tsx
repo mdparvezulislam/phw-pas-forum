@@ -75,7 +75,8 @@ export function AuditViewer({ rows }: { rows: AuditRow[] }) {
       sortable: true,
       sortValue: (r) => r.actorName ?? "",
       searchValue: (r) => r.actorName ?? "",
-      cell: (r) => r.actorName ?? <span className="text-muted-foreground">System</span>,
+      cell: (r) =>
+        r.actorName ?? <span className="text-muted-foreground">System</span>,
     },
     {
       key: "resource",
@@ -86,7 +87,10 @@ export function AuditViewer({ rows }: { rows: AuditRow[] }) {
           <span className="text-xs">
             {r.resource}
             {r.resourceId && (
-              <span className="text-muted-foreground"> · {r.resourceId.slice(0, 8)}</span>
+              <span className="text-muted-foreground">
+                {" "}
+                · {r.resourceId.slice(0, 8)}
+              </span>
             )}
           </span>
         ) : (

@@ -136,7 +136,10 @@ export function AreaTrend({
   const color = accentColor(accent);
   return (
     <ChartContainer height={height} className={className}>
-      <AreaChart data={data} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+      <AreaChart
+        data={data}
+        margin={{ top: 8, right: 8, left: -16, bottom: 0 }}
+      >
         <defs>
           <linearGradient id={`area-${gid}`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={color} stopOpacity={0.3} />
@@ -182,7 +185,10 @@ export function LineTrend({
   const color = accentColor(accent);
   return (
     <ChartContainer height={height} className={className}>
-      <LineChart data={data} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+      <LineChart
+        data={data}
+        margin={{ top: 8, right: 8, left: -16, bottom: 0 }}
+      >
         <CartesianGrid
           vertical={false}
           stroke="var(--color-border)"
@@ -293,7 +299,9 @@ export function Donut({
           {data.map((d, i) => (
             <Cell
               key={d.name}
-              fill={accentColor(d.accent ?? DONUT_ACCENTS[i % DONUT_ACCENTS.length])}
+              fill={accentColor(
+                d.accent ?? DONUT_ACCENTS[i % DONUT_ACCENTS.length],
+              )}
             />
           ))}
         </Pie>
@@ -317,7 +325,10 @@ export function Sparkline({
   const points = data.map((v, i) => ({ i, v }));
   return (
     <ResponsiveContainer width="100%" height={height}>
-      <AreaChart data={points} margin={{ top: 2, right: 0, left: 0, bottom: 0 }}>
+      <AreaChart
+        data={points}
+        margin={{ top: 2, right: 0, left: 0, bottom: 0 }}
+      >
         <defs>
           <linearGradient id={`spark-${gid}`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stopColor={color} stopOpacity={0.4} />

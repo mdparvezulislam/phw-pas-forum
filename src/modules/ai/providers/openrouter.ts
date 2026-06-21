@@ -25,89 +25,104 @@ export class OpenRouterProvider {
     const maxTokens = options.maxTokens ?? 1200;
     const responseJson = options.responseFormat === "json";
 
-    const messages = [];
+    const messages: { role: string; content: string }[] = [];
     if (systemInstruction) {
       messages.push({ role: "system", content: systemInstruction });
     }
     messages.push({ role: "user", content: prompt });
 
-    let lastError: any = null;
-
-    // Model Fallback chain loop (Primary -> Fallbacks)
-    for (const model of models) {
-      let attempts = 3;
-      while (attempts > 0) {
-        try {
-          const res = await fetch(`${baseUrl}/chat/completions`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${apiKey}`,
-              "HTTP-Referer": "https://bhw-pas-forum.com",
-              "X-Title": "BHW PAS Community Platform",
-            },
-            body: JSON.stringify({
-              model,
-              messages,
-              temperature,
-              max_tokens: maxTokens,
-              response_format: responseJson
-                ? { type: "json_object" }
-                : undefined,
-            }),
-          });
-
-          if (!res.ok) {
-            throw new Error(`OpenRouter returned status ${res.status}`);
-          }
-
-          const data = await res.json();
-          const text = data.choices?.[0]?.message?.content ?? "";
-
-          if (!text && data.error) {
-            throw new Error(data.error.message || "Empty completion response");
-          }
-
-          const inputTokens = data.usage?.prompt_tokens ?? 0;
-          const outputTokens = data.usage?.completion_tokens ?? 0;
-          const latencyMs = Date.now() - startTime;
-
-          // Estimate cost in microcents (Free models = 0, standard pricing for premium fallback)
-          const isFree = model.endsWith(":free");
-          const costMicrocents = isFree
-            ? 0
-            : Math.round(inputTokens * 0.15 + outputTokens * 0.6);
-
-          return {
-            text,
-            inputTokens,
-            outputTokens,
-            latencyMs,
-            costMicrocents,
-            success: true,
-          };
-        } catch (err: any) {
-          lastError = err;
-          attempts--;
-          await new Promise((resolve) => setTimeout(resolve, 250));
-        }
-      }
-    }
-
-    // Final fallback to mock if OpenRouter is completely down
-    const mockText = OpenRouterProvider.generateMockResponse(
-      prompt,
-      responseJson,
+    const { openRouterBreaker } = await import(
+      "@/modules/infrastructure/availability/circuit-breaker"
     );
-    return {
-      text: mockText,
-      inputTokens: Math.ceil(prompt.length / 4),
-      outputTokens: Math.ceil(mockText.length / 4),
-      latencyMs: Date.now() - startTime,
-      costMicrocents: 0,
-      success: true,
-      error: `OpenRouter fallback chain exhausted. Error: ${lastError?.message || lastError}`,
-    };
+
+    return openRouterBreaker.execute(
+      async (): Promise<AIResult> => {
+        let lastError: any = null;
+
+        // Model Fallback chain loop (Primary -> Fallbacks)
+        for (const model of models) {
+          let attempts = 3;
+          while (attempts > 0) {
+            try {
+              const res = await fetch(`${baseUrl}/chat/completions`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${apiKey}`,
+                  "HTTP-Referer": "https://bhw-pas-forum.com",
+                  "X-Title": "BHW PAS Community Platform",
+                },
+                body: JSON.stringify({
+                  model,
+                  messages,
+                  temperature,
+                  max_tokens: maxTokens,
+                  response_format: responseJson
+                    ? { type: "json_object" }
+                    : undefined,
+                }),
+              });
+
+              if (!res.ok) {
+                throw new Error(`OpenRouter returned status ${res.status}`);
+              }
+
+              const data = await res.json();
+              const text = data.choices?.[0]?.message?.content ?? "";
+
+              if (!text && data.error) {
+                throw new Error(
+                  data.error.message || "Empty completion response",
+                );
+              }
+
+              const inputTokens = data.usage?.prompt_tokens ?? 0;
+              const outputTokens = data.usage?.completion_tokens ?? 0;
+              const latencyMs = Date.now() - startTime;
+
+              // Estimate cost in microcents (Free models = 0, standard pricing for premium fallback)
+              const isFree = model.endsWith(":free");
+              const costMicrocents = isFree
+                ? 0
+                : Math.round(inputTokens * 0.15 + outputTokens * 0.6);
+
+              return {
+                text,
+                inputTokens,
+                outputTokens,
+                latencyMs,
+                costMicrocents,
+                success: true,
+              };
+            } catch (err: any) {
+              lastError = err;
+              attempts--;
+              await new Promise((resolve) => setTimeout(resolve, 250));
+            }
+          }
+        }
+
+        throw lastError || new Error("OpenRouter fallback chain exhausted");
+      },
+      async (): Promise<AIResult> => {
+        // Fallback to mock if OpenRouter is completely down or circuit is open
+        console.warn("[OpenRouter] Circuit breaker fallback triggered.");
+        const mockText = OpenRouterProvider.generateMockResponse(
+          prompt,
+          responseJson,
+        );
+        return {
+          text: mockText,
+          inputTokens: Math.ceil(prompt.length / 4),
+          outputTokens: Math.ceil(mockText.length / 4),
+          latencyMs: Date.now() - startTime,
+          costMicrocents: 0,
+          success: true,
+          error:
+            "OpenRouter circuit breaker is active / offline. Running in degraded mock mode.",
+        };
+      },
+    );
   }
 
   private static callMock(

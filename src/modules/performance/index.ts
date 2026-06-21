@@ -1,0 +1,16 @@
+export { redisService } from "./cache/redis-service";
+export { cacheService } from "./cache/cache-service";
+export { cacheInvalidator } from "./cache/cache-invalidation";
+export { queueService, QUEUE_NAMES } from "./queue";
+export { queueWorkerManager } from "./queue/workers";
+export { indexStrategyService } from "./database/index-strategy";
+export { queryOptimizerService } from "./database/query-optimizer";
+export { materializedViewService } from "./database/materialized-views";
+export { searchOptimizationService } from "./search";
+export { mediaOptimizationService } from "./media";
+export { enhancedRateLimiter } from "./security/rate-limiter";
+export { enhancedAuditService } from "./security/audit";
+export { sentryService } from "./monitoring/sentry";
+export { structuredLogger } from "./monitoring/structured-logger";
+export { circuitBreaker } from "./reliability/circuit-breaker";
+export { retryService } from "./reliability/retry";

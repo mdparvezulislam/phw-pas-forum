@@ -13,6 +13,7 @@ export const duration = {
   slow: 0.3,
   slower: 0.5,
   slowest: 1,
+  quicker: 0.1,
 } as const;
 
 // ── Easing Curves ──
@@ -43,6 +44,16 @@ export const transitions: Record<string, Transition> = {
     type: "spring",
     stiffness: 400,
     damping: 17,
+  },
+  springSnappy: {
+    type: "spring",
+    stiffness: 500,
+    damping: 30,
+  },
+  springSoft: {
+    type: "spring",
+    stiffness: 150,
+    damping: 15,
   },
 } as const;
 
@@ -347,6 +358,109 @@ export const spin: Variants = {
       duration: 1,
       repeat: Number.POSITIVE_INFINITY,
       ease: "linear",
+    },
+  },
+};
+
+// ── Achievement Reveal ──
+export const achievementReveal: Variants = {
+  hidden: { opacity: 0, scale: 0.3, rotate: -10 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    rotate: 0,
+    transition: { type: "spring", stiffness: 400, damping: 15 },
+  },
+};
+
+// ── Confetti Burst ──
+export const confettiBurst: Variants = {
+  hidden: { opacity: 0, scale: 0 },
+  visible: {
+    opacity: [0, 1, 1, 0],
+    scale: [0, 1.2, 1, 0],
+    transition: { duration: 0.8, ease: "easeOut" },
+  },
+};
+
+// ── Level Up ──
+export const levelUp: Variants = {
+  hidden: { opacity: 0, y: 20, scale: 0.8 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { type: "spring", stiffness: 300, damping: 20 },
+  },
+};
+
+// ── Progress Fill ──
+export const progressFill: Variants = {
+  hidden: { width: 0 },
+  visible: {
+    width: "100%",
+    transition: { duration: 0.8, ease: easing.easeOut },
+  },
+};
+
+// ── Notification Slide ──
+export const notificationSlide: Variants = {
+  idle: { rotate: 0 },
+  ring: {
+    rotate: [0, 15, -15, 10, -10, 5, -5, 0],
+    transition: { duration: 0.5 },
+  },
+};
+
+// ── Count Up ──
+export const countUp = {
+  initial: { opacity: 0, y: 10 },
+  animate: { opacity: 1, y: 0 },
+};
+
+// ── Spotlight ──
+export const spotlight: Variants = {
+  hidden: { opacity: 0, scale: 0.98, y: -10 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { duration: 0.15, ease: easing.easeOut },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.98,
+    y: -10,
+    transition: { duration: 0.1, ease: easing.easeIn },
+  },
+};
+
+// ── Success Pulse ──
+export const successPulse: Variants = {
+  initial: { scale: 1 },
+  animate: {
+    scale: [1, 1.05, 1],
+    transition: { duration: 0.3, ease: "easeInOut" },
+  },
+};
+
+// ── Shake ──
+export const shake: Variants = {
+  initial: { x: 0 },
+  animate: {
+    x: [0, -6, 6, -4, 4, -2, 2, 0],
+    transition: { duration: 0.4 },
+  },
+};
+
+// ── Typing Indicator ──
+export const typingDot: Variants = {
+  animate: {
+    y: [0, -4, 0],
+    transition: {
+      duration: 0.4,
+      repeat: Number.POSITIVE_INFINITY,
+      repeatDelay: 0.2,
     },
   },
 };

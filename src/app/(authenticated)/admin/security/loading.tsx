@@ -17,7 +17,10 @@ export default function SecurityLoading() {
           <div className="h-4 w-40 animate-pulse rounded bg-muted" />
           <div className="mt-4 space-y-3">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-10 w-full animate-pulse rounded bg-muted" />
+              <div
+                key={i}
+                className="h-10 w-full animate-pulse rounded bg-muted"
+              />
             ))}
           </div>
         </div>

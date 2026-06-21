@@ -1,13 +1,37 @@
-import { Ban, AlertTriangle, Lock, Shield, ShieldAlert, Eye } from "lucide-react";
+import { Ban, AlertTriangle, Lock, Shield, ShieldAlert } from "lucide-react";
 import type { Metadata } from "next";
-import { PageHeader, KpiCard, SectionCard } from "@/components/admin";
+import { PageHeader, KpiCard } from "@/components/admin";
 import { Badge } from "@/components/ui/badge";
+import { getSecurityMetricsAction } from "@/modules/infrastructure/actions/ops";
+import { IncidentTimeline } from "@/components/admin/security/security-dashboard-components";
 
 export const metadata: Metadata = {
   title: "Security Center",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminSecurityPage() {
+  const securityRes = await getSecurityMetricsAction();
+
+  const stats =
+    securityRes.success && securityRes.data
+      ? securityRes.data
+      : {
+          activeBans: 0,
+          failedLogins24h: 0,
+          suspiciousLogins24h: 0,
+          failedJobs24h: 0,
+          securityEvents: [],
+        };
+
+  const threatLevel =
+    stats.suspiciousLogins24h > 10
+      ? "High"
+      : stats.suspiciousLogins24h > 2
+        ? "Medium"
+        : "Low";
+
   return (
     <div className="space-y-6">
       <PageHeader
@@ -15,8 +39,17 @@ export default async function AdminSecurityPage() {
         description="Monitor threats, manage bans, and review security events"
         icon={<ShieldAlert className="h-5 w-5" />}
         actions={
-          <Badge variant="success" size="lg">
-            Threat Level: Low
+          <Badge
+            variant={
+              threatLevel === "High"
+                ? "destructive"
+                : threatLevel === "Medium"
+                  ? "warning"
+                  : "success"
+            }
+            size="lg"
+          >
+            Threat Level: {threatLevel}
           </Badge>
         }
       />
@@ -24,97 +57,36 @@ export default async function AdminSecurityPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           title="Active Bans"
-          value={0}
+          value={stats.activeBans}
           icon={Ban}
-          description="Currently banned users"
-          accent="danger"
+          description="Currently restricted accounts"
+          accent={stats.activeBans > 0 ? "danger" : "default"}
         />
         <KpiCard
-          title="Security Alerts"
-          value={0}
+          title="Suspicious Logins"
+          value={stats.suspiciousLogins24h}
           icon={AlertTriangle}
-          description="Active alerts"
-          accent="warning"
+          description="Last 24 hours"
+          accent={stats.suspiciousLogins24h > 0 ? "warning" : "success"}
         />
         <KpiCard
           title="Failed Logins (24h)"
-          value={0}
+          value={stats.failedLogins24h}
           icon={Lock}
-          description="Recent attempts"
-          accent="info"
+          description="Recent brute force risk"
+          accent={stats.failedLogins24h > 10 ? "danger" : "info"}
         />
         <KpiCard
-          title="Blocked IPs"
-          value={0}
+          title="Background Job Failures"
+          value={stats.failedJobs24h}
           icon={Shield}
-          description="IPs on blocklist"
-          accent="primary"
+          description="DLQ alerts last 24h"
+          accent={stats.failedJobs24h > 0 ? "danger" : "success"}
         />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <SectionCard
-          title="Recent Security Events"
-          description="Latest security activity across the platform"
-          icon={<Eye className="h-4 w-4" />}
-        >
-          <div className="flex min-h-[200px] items-center justify-center">
-            <div className="text-center">
-              <Shield className="mx-auto h-12 w-12 text-muted-foreground/50" />
-              <p className="mt-2 text-sm font-medium text-muted-foreground">
-                No recent security events
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground/70">
-                Security events will appear here when detected
-              </p>
-            </div>
-          </div>
-        </SectionCard>
-
-        <SectionCard
-          title="Threat Overview"
-          description="Current threat indicators and status"
-          icon={<ShieldAlert className="h-4 w-4" />}
-        >
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Brute Force Attempts</span>
-                <Badge variant="success">Low</Badge>
-              </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                0 failed attempts in the last hour
-              </p>
-            </div>
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Spam Activity</span>
-                <Badge variant="success">Low</Badge>
-              </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                No spam detected recently
-              </p>
-            </div>
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Suspicious IPs</span>
-                <Badge variant="success">Low</Badge>
-              </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                0 IPs flagged for suspicious activity
-              </p>
-            </div>
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Account Takeovers</span>
-                <Badge variant="success">Low</Badge>
-              </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                No attempted takeovers detected
-              </p>
-            </div>
-          </div>
-        </SectionCard>
+      <div className="grid gap-6">
+        <IncidentTimeline events={stats.securityEvents as any} />
       </div>
     </div>
   );

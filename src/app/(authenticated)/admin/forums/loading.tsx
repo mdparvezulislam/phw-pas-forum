@@ -19,7 +19,10 @@ export default function ForumsLoading() {
       </div>
       <div className="space-y-2">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="flex items-center justify-between rounded-xl border bg-card p-4 shadow-sm">
+          <div
+            key={i}
+            className="flex items-center justify-between rounded-xl border bg-card p-4 shadow-sm"
+          >
             <div className="flex items-center gap-3">
               <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
               <div className="space-y-1">

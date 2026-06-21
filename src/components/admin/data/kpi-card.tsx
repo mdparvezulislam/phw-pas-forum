@@ -87,7 +87,9 @@ export function KpiCard({
       </div>
 
       <div className="mt-2 flex items-baseline gap-2">
-        <p className="text-2xl font-bold tracking-tight tabular-nums">{value}</p>
+        <p className="text-2xl font-bold tracking-tight tabular-nums">
+          {value}
+        </p>
         {trend && (
           <span
             className={cn(

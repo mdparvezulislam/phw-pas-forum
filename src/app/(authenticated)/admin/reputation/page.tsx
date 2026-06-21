@@ -100,16 +100,13 @@ export default async function AdminReputationPage() {
         title="Top Contributors"
         description={`${topUsers.length} users`}
         icon={<Trophy className="h-4 w-4" />}
-        actions={
-          <Badge variant="secondary">
-            {topUsers.length} total
-          </Badge>
-        }
+        actions={<Badge variant="secondary">{topUsers.length} total</Badge>}
       >
         <div className="divide-y">
           {topUsers.map((entry, index) => {
             const rank = index + 1;
-            const displayName = entry.user?.displayName ?? entry.user?.username ?? "Unknown";
+            const displayName =
+              entry.user?.displayName ?? entry.user?.username ?? "Unknown";
             const username = entry.user?.username ?? "unknown";
 
             return (

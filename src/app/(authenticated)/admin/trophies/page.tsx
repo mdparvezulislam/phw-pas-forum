@@ -126,8 +126,12 @@ export default async function AdminTrophiesPage() {
                     {trophy.conditionValue}
                   </Badge>
                   {trophy.reputationReward > 0 && (
-                    <Badge variant="secondary" className="text-amber-600 dark:text-amber-400">
-                      <Star className="mr-1 h-3 w-3" />+{trophy.reputationReward} rep
+                    <Badge
+                      variant="secondary"
+                      className="text-amber-600 dark:text-amber-400"
+                    >
+                      <Star className="mr-1 h-3 w-3" />+
+                      {trophy.reputationReward} rep
                     </Badge>
                   )}
                 </div>

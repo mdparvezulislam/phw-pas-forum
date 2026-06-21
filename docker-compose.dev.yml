@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: bhw-dev-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: bhw
+      POSTGRES_PASSWORD: bhw_password
+      POSTGRES_DB: bhw_pas
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bhw"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: valkey/valkey:8-alpine
+    container_name: bhw-dev-redis
+    restart: unless-stopped
+    command: valkey-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  typesense:
+    image: typesense/typesense:28
+    container_name: bhw-dev-typesense
+    restart: unless-stopped
+    environment:
+      TYPESENSE_API_KEY: dev_typesense_key
+      TYPESENSE_DATA_DIR: /data
+    ports:
+      - "8108:8108"
+    volumes:
+      - typesense_dev_data:/data
+    command: >
+      --data-dir /data
+      --api-key dev_typesense_key
+      --enable-cors
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+  typesense_dev_data:

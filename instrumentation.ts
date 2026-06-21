@@ -49,8 +49,44 @@ export async function register() {
         tracerProvider: provider,
         instrumentations: [getNodeAutoInstrumentations()],
       });
+
+      // Initialize Performance Infrastructure
+      const { queueService } = await import(
+        "@/modules/performance/queue"
+      );
+      const { queueWorkerManager } = await import(
+        "@/modules/performance/queue/workers"
+      );
+      const { cacheInvalidator } = await import(
+        "@/modules/performance/cache/cache-invalidation"
+      );
+      const { registerEventHandler } = await import(
+        "@/lib/event-bus"
+      );
+      const { sentryService } = await import(
+        "@/modules/performance/monitoring/sentry"
+      );
+      const { alertingService } = await import(
+        "@/modules/performance/monitoring/alerting"
+      );
+
+      // Initialize queue system
+      queueService.initialize();
+      queueWorkerManager.initialize();
+      queueWorkerManager.warmup().catch(() => {});
+
+      // Register cache invalidation for events
+      registerEventHandler((event) => cacheInvalidator.handleEvent(event));
+
+      // Initialize monitoring
+      sentryService.initialize();
+
+      // Register alerting rules
+      alertingService.registerDefaultRules();
+
+      console.log("[Instrumentation] Performance infrastructure initialized.");
     } catch (error) {
-      console.warn("[OpenTelemetry] Failed to initialize:", error);
+      console.warn("[Instrumentation] Initialization error:", error);
     }
   }
 }

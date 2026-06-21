@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Flag, ToggleLeft, ToggleRight, BarChart3 } from "lucide-react";
-import { PageHeader, KpiCard, SectionCard, FeatureFlagCard } from "@/components/admin";
+import {
+  PageHeader,
+  KpiCard,
+  SectionCard,
+  FeatureFlagCard,
+} from "@/components/admin";
 import { Badge } from "@/components/ui/badge";
 import { adminSettingsService } from "@/services/admin-settings";
 
@@ -11,20 +16,33 @@ export const metadata: Metadata = {
 
 function categorizeFlag(key: string): string {
   const lower = key.toLowerCase();
-  if (lower.includes("marketplace") || lower.includes("seller") || lower.includes("listing"))
+  if (
+    lower.includes("marketplace") ||
+    lower.includes("seller") ||
+    lower.includes("listing")
+  )
     return "Marketplace";
-  if (lower.includes("forum") || lower.includes("thread") || lower.includes("post"))
+  if (
+    lower.includes("forum") ||
+    lower.includes("thread") ||
+    lower.includes("post")
+  )
     return "Forums";
-  if (lower.includes("auth") || lower.includes("security") || lower.includes("login"))
+  if (
+    lower.includes("auth") ||
+    lower.includes("security") ||
+    lower.includes("login")
+  )
     return "Security";
-  if (lower.includes("premium") || lower.includes("membership") || lower.includes("vip"))
+  if (
+    lower.includes("premium") ||
+    lower.includes("membership") ||
+    lower.includes("vip")
+  )
     return "Memberships";
-  if (lower.includes("search") || lower.includes("typesense"))
-    return "Search";
-  if (lower.includes("ai") || lower.includes("openai"))
-    return "AI";
-  if (lower.includes("mod") || lower.includes("admin"))
-    return "Moderation";
+  if (lower.includes("search") || lower.includes("typesense")) return "Search";
+  if (lower.includes("ai") || lower.includes("openai")) return "AI";
+  if (lower.includes("mod") || lower.includes("admin")) return "Moderation";
   return "General";
 }
 
@@ -34,7 +52,9 @@ export default async function AdminFeatureFlagsPage() {
   const totalFlags = flags.length;
   const enabledFlags = flags.filter((f) => f.enabled).length;
   const disabledFlags = totalFlags - enabledFlags;
-  const inProgressFlags = flags.filter((f) => f.enabled && !f.isKillSwitch).length;
+  const inProgressFlags = flags.filter(
+    (f) => f.enabled && !f.isKillSwitch,
+  ).length;
 
   const flagsByCategory = flags.reduce(
     (acc, flag) => {

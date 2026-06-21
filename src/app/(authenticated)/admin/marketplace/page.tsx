@@ -79,10 +79,7 @@ export default function AdminMarketplaceSettings() {
                   Force presence of at least one image or video.
                 </p>
               </div>
-              <Switch
-                checked={mediaReq}
-                onCheckedChange={setMediaReq}
-              />
+              <Switch checked={mediaReq} onCheckedChange={setMediaReq} />
             </div>
           </div>
         </SectionCard>
@@ -170,10 +167,7 @@ export default function AdminMarketplaceSettings() {
       </div>
 
       <div className="flex justify-end border-t pt-4">
-        <Button
-          type="submit"
-          className="gap-1.5 px-6"
-        >
+        <Button type="submit" className="gap-1.5 px-6">
           <Settings className="h-3.5 w-3.5" />
           Save Configurations
         </Button>

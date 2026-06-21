@@ -138,7 +138,10 @@ export function DataTable<T>({
   // ── Paginate ──
   const pageCount = Math.max(1, Math.ceil(sorted.length / pageSize));
   const safePage = Math.min(page, pageCount - 1);
-  const pageRows = sorted.slice(safePage * pageSize, safePage * pageSize + pageSize);
+  const pageRows = sorted.slice(
+    safePage * pageSize,
+    safePage * pageSize + pageSize,
+  );
 
   const pageIds = pageRows.map(getRowId);
   const allPageSelected =
@@ -312,7 +315,8 @@ export function DataTable<T>({
                     className={cn(
                       "px-4 py-2.5 font-medium text-muted-foreground",
                       alignClass[col.align ?? "left"],
-                      col.sortable && "cursor-pointer select-none hover:text-foreground",
+                      col.sortable &&
+                        "cursor-pointer select-none hover:text-foreground",
                       col.headerClassName,
                     )}
                     onClick={() => handleSort(col)}

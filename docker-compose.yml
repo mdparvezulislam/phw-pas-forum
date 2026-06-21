@@ -1,0 +1,167 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: bhw-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-bhw}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bhw_password}
+      POSTGRES_DB: ${POSTGRES_DB:-bhw_pas}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bhw}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bhw-network
+
+  redis:
+    image: valkey/valkey:8-alpine
+    container_name: bhw-redis
+    restart: unless-stopped
+    command: valkey-server --appendonly yes --save 60 1000
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bhw-network
+
+  typesense:
+    image: typesense/typesense:28
+    container_name: bhw-typesense
+    restart: unless-stopped
+    environment:
+      TYPESENSE_API_KEY: ${TYPESENSE_API_KEY:-bhw_typesense_key}
+      TYPESENSE_DATA_DIR: /data
+    ports:
+      - "${TYPESENSE_PORT:-8108}:8108"
+    volumes:
+      - typesense_data:/data
+    command: >
+      --data-dir /data
+      --api-key ${TYPESENSE_API_KEY:-bhw_typesense_key}
+      --enable-cors
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8108/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+    networks:
+      - bhw-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bhw-app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL:-postgresql://bhw:bhw_password@postgres:5432/bhw_pas}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      TYPESENSE_HOST: typesense
+      TYPESENSE_PORT: 8108
+      TYPESENSE_PROTOCOL: http
+      TYPESENSE_API_KEY: ${TYPESENSE_API_KEY:-bhw_typesense_key}
+      AUTH_SECRET: ${AUTH_SECRET}
+      R2_ENDPOINT: ${R2_ENDPOINT}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY}
+      R2_BUCKET_NAME: ${R2_BUCKET_NAME}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      SENTRY_DSN: ${SENTRY_DSN}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      typesense:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 40s
+      retries: 3
+    networks:
+      - bhw-network
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bhw-worker
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL:-postgresql://bhw:bhw_password@postgres:5432/bhw_pas}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      TYPESENSE_HOST: typesense
+      TYPESENSE_API_KEY: ${TYPESENSE_API_KEY:-bhw_typesense_key}
+      AUTH_SECRET: ${AUTH_SECRET}
+      R2_ENDPOINT: ${R2_ENDPOINT}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY}
+      R2_BUCKET_NAME: ${R2_BUCKET_NAME}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+      SENTRY_DSN: ${SENTRY_DSN}
+      QUEUE_WORKER_ONLY: "true"
+    command: ["node", "worker.js"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - bhw-network
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bhw-scheduler
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: ${DATABASE_URL:-postgresql://bhw:bhw_password@postgres:5432/bhw_pas}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      TYPESENSE_API_KEY: ${TYPESENSE_API_KEY:-bhw_typesense_key}
+      AUTH_SECRET: ${AUTH_SECRET}
+      R2_ENDPOINT: ${R2_ENDPOINT}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY}
+      R2_BUCKET_NAME: ${R2_BUCKET_NAME}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL}
+    command: ["node", "scheduler.js"]
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - bhw-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  typesense_data:
+    driver: local
+
+networks:
+  bhw-network:
+    driver: bridge

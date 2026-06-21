@@ -28,7 +28,10 @@ function normalizeStatus(raw: string) {
   return raw.charAt(0) + raw.slice(1).toLowerCase();
 }
 
-const statusVariant: Record<string, "warning" | "success" | "destructive" | "info" | "secondary"> = {
+const statusVariant: Record<
+  string,
+  "warning" | "success" | "destructive" | "info" | "secondary"
+> = {
   pending: "warning",
   open: "warning",
   resolved: "success",
@@ -72,7 +75,10 @@ const columns: AdminColumn<QueueRow>[] = [
     sortValue: (r) => r.status,
     searchValue: (r) => r.status,
     cell: (r) => (
-      <Badge variant={statusVariant[r.status.toLowerCase()] ?? "secondary"} size="sm">
+      <Badge
+        variant={statusVariant[r.status.toLowerCase()] ?? "secondary"}
+        size="sm"
+      >
         {normalizeStatus(r.status)}
       </Badge>
     ),

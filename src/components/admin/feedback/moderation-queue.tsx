@@ -56,7 +56,11 @@ export function ModerationQueue({
                   {item.title}
                 </Title>
                 {item.tags?.map((tag) => (
-                  <Badge key={tag.label} variant={tag.variant ?? "secondary"} size="sm">
+                  <Badge
+                    key={tag.label}
+                    variant={tag.variant ?? "secondary"}
+                    size="sm"
+                  >
                     {tag.label}
                   </Badge>
                 ))}

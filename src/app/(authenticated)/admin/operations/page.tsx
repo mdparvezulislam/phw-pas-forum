@@ -1,101 +1,67 @@
-import {
-  Activity,
-  Database,
-  HardDrive,
-  Search,
-  Cloud,
-  Cpu,
-  Radio,
-  CheckCircle,
-  AlertTriangle,
-  XCircle,
-} from "lucide-react";
+import { Activity, CheckCircle, AlertTriangle } from "lucide-react";
 import type { Metadata } from "next";
-import { PageHeader, KpiCard, SectionCard } from "@/components/admin";
+import { PageHeader, KpiCard } from "@/components/admin";
 import { Badge } from "@/components/ui/badge";
+import {
+  getSystemHealthAction,
+  getQueueMetricsAction,
+  getCacheMetricsAction,
+  getSearchMetricsAction,
+} from "@/modules/infrastructure/actions/ops";
+import type { HealthCheckReport } from "@/modules/infrastructure/monitoring/health-service";
+import {
+  HealthStatusGrid,
+  QueueMonitor,
+  CacheMonitor,
+  SearchMonitor,
+  PerformanceMetrics,
+} from "@/components/admin/operations/ops-dashboard-components";
 
 export const metadata: Metadata = {
   title: "Operations Center",
 };
 
-type ServiceStatus = "operational" | "degraded" | "down";
+export const dynamic = "force-dynamic";
 
-interface ServiceHealth {
-  name: string;
-  status: ServiceStatus;
-  lastChecked: string;
-  icon: React.ReactNode;
-}
+export default async function AdminOperationsPage() {
+  const [healthRes, queueRes, cacheRes, searchRes] = await Promise.all([
+    getSystemHealthAction(),
+    getQueueMetricsAction(),
+    getCacheMetricsAction(),
+    getSearchMetricsAction(),
+  ]);
 
-const services: ServiceHealth[] = [
-  {
-    name: "PostgreSQL Database",
-    status: "operational",
-    lastChecked: "2 min ago",
-    icon: <Database className="h-4 w-4" />,
-  },
-  {
-    name: "Redis Cache",
-    status: "operational",
-    lastChecked: "1 min ago",
-    icon: <HardDrive className="h-4 w-4" />,
-  },
-  {
-    name: "Typesense Search",
-    status: "operational",
-    lastChecked: "3 min ago",
-    icon: <Search className="h-4 w-4" />,
-  },
-  {
-    name: "Cloudflare R2 Storage",
-    status: "operational",
-    lastChecked: "2 min ago",
-    icon: <Cloud className="h-4 w-4" />,
-  },
-  {
-    name: "AI Providers",
-    status: "operational",
-    lastChecked: "5 min ago",
-    icon: <Cpu className="h-4 w-4" />,
-  },
-  {
-    name: "Ably Realtime",
-    status: "operational",
-    lastChecked: "1 min ago",
-    icon: <Radio className="h-4 w-4" />,
-  },
-];
+  const report = (
+    healthRes.success && healthRes.data
+      ? healthRes.data
+      : {
+          status: "unhealthy",
+          timestamp: new Date().toISOString(),
+          details: {},
+        }
+  ) as HealthCheckReport;
 
-const statusConfig: Record<
-  ServiceStatus,
-  { label: string; badge: "success" | "warning" | "destructive"; icon: React.ReactNode; dotColor: string }
-> = {
-  operational: {
-    label: "Operational",
-    badge: "success",
-    icon: <CheckCircle className="h-3.5 w-3.5" />,
-    dotColor: "bg-success",
-  },
-  degraded: {
-    label: "Degraded",
-    badge: "warning",
-    icon: <AlertTriangle className="h-3.5 w-3.5" />,
-    dotColor: "bg-warning",
-  },
-  down: {
-    label: "Down",
-    badge: "destructive",
-    icon: <XCircle className="h-3.5 w-3.5" />,
-    dotColor: "bg-destructive",
-  },
-};
+  const queueMetrics = queueRes.success && queueRes.data ? queueRes.data : {};
+  const cacheStats =
+    cacheRes.success && cacheRes.data
+      ? cacheRes.data
+      : {
+          enabled: false,
+          memoryUsed: "N/A",
+          keysCount: 0,
+          hitRate: "N/A",
+        };
+  const searchMetrics =
+    searchRes.success && searchRes.data
+      ? searchRes.data
+      : {
+          isOperational: false,
+          latencyMs: 0,
+          pendingJobs: 0,
+          failedJobs: 0,
+        };
 
-function getStatusInfo(status: ServiceStatus) {
-  return statusConfig[status];
-}
-
-export default function AdminOperationsPage() {
-  const allOperational = services.every((s) => s.status === "operational");
+  const allOperational = report.status === "healthy";
 
   return (
     <div className="space-y-6">
@@ -105,7 +71,9 @@ export default function AdminOperationsPage() {
         icon={<Activity className="h-5 w-5" />}
         actions={
           <Badge variant={allOperational ? "success" : "warning"} size="lg">
-            {allOperational ? "All Systems Operational" : "Degraded Performance"}
+            {allOperational
+              ? "All Systems Operational"
+              : "Degraded Performance"}
           </Badge>
         }
       />
@@ -113,7 +81,13 @@ export default function AdminOperationsPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           title="System Status"
-          value={allOperational ? "Operational" : "Degraded"}
+          value={
+            allOperational
+              ? "Healthy"
+              : report.status === "degraded"
+                ? "Degraded"
+                : "Unhealthy"
+          }
           icon={Activity}
           description="Overall platform health"
           accent={allOperational ? "success" : "warning"}
@@ -126,106 +100,36 @@ export default function AdminOperationsPage() {
           accent="success"
         />
         <KpiCard
-          title="Response Time"
-          value="142ms"
+          title="DB Latency"
+          value={
+            report.details.db
+              ? `${Math.round(report.details.db.latencyMs)}ms`
+              : "N/A"
+          }
           icon={Activity}
-          description="Average API latency"
+          description="Average response time"
           accent="info"
         />
         <KpiCard
-          title="Error Rate"
-          value="0.02%"
-          icon={AlertTriangle}
-          description="Last 24 hours"
-          accent="success"
+          title="Search Latency"
+          value={`${searchMetrics.latencyMs}ms`}
+          icon={Activity}
+          description="Query response time"
+          accent="info"
         />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <SectionCard
-          title="Service Health"
-          description="Status of all platform services"
-          icon={<CheckCircle className="h-4 w-4" />}
-          className="lg:col-span-2"
-        >
-          <div className="grid gap-3 sm:grid-cols-2">
-            {services.map((service) => {
-              const statusInfo = getStatusInfo(service.status);
-              return (
-                <div
-                  key={service.name}
-                  className="flex items-center justify-between rounded-lg border p-4"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-                      {service.icon}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium">{service.name}</p>
-                      <p className="text-xs text-muted-foreground">
-                        Last checked {service.lastChecked}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`h-2 w-2 rounded-full ${statusInfo.dotColor}`} />
-                    <Badge variant={statusInfo.badge} size="sm">
-                      {statusInfo.label}
-                    </Badge>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </SectionCard>
+      <HealthStatusGrid report={report as any} />
 
-        <SectionCard
-          title="System Metrics"
-          description="Infrastructure performance"
-          icon={<Cpu className="h-4 w-4" />}
-        >
-          <div className="space-y-4">
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">CPU Usage</span>
-                <span className="text-sm font-semibold tabular-nums">12%</span>
-              </div>
-              <div className="mt-2 h-2 rounded-full bg-muted">
-                <div className="h-2 w-[12%] rounded-full bg-success" />
-              </div>
-            </div>
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Memory Usage</span>
-                <span className="text-sm font-semibold tabular-nums">64%</span>
-              </div>
-              <div className="mt-2 h-2 rounded-full bg-muted">
-                <div className="h-2 w-[64%] rounded-full bg-info" />
-              </div>
-            </div>
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Disk Usage</span>
-                <span className="text-sm font-semibold tabular-nums">43%</span>
-              </div>
-              <div className="mt-2 h-2 rounded-full bg-muted">
-                <div className="h-2 w-[43%] rounded-full bg-info" />
-              </div>
-            </div>
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Active Connections</span>
-                <span className="text-sm font-semibold tabular-nums">1,247</span>
-              </div>
-            </div>
-            <div className="rounded-lg border p-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Queue Depth</span>
-                <span className="text-sm font-semibold tabular-nums">0</span>
-              </div>
-            </div>
-          </div>
-        </SectionCard>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 space-y-6">
+          <QueueMonitor metrics={queueMetrics} onRefresh={() => {}} />
+          <CacheMonitor stats={cacheStats} onRefresh={() => {}} />
+        </div>
+        <div className="space-y-6">
+          <SearchMonitor metrics={searchMetrics} onRefresh={() => {}} />
+          <PerformanceMetrics />
+        </div>
       </div>
     </div>
   );

@@ -91,9 +91,7 @@ export function UsersTable({ users, roles }: UsersTableProps) {
             <p className="truncate text-sm font-medium">
               {u.displayName ?? u.username ?? "Unknown"}
             </p>
-            <p className="truncate text-xs text-muted-foreground">
-              {u.email}
-            </p>
+            <p className="truncate text-xs text-muted-foreground">{u.email}</p>
           </div>
         </div>
       ),

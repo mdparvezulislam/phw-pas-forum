@@ -1,0 +1,10 @@
+{
+  "name": "bhw-pas-performance-tests",
+  "private": true,
+  "scripts": {
+    "load-test": "k6 run load-test.js",
+    "stress-test": "k6 run stress-test.js",
+    "security-test": "k6 run security-test.js",
+    "test": "k6 run load-test.js"
+  }
+}

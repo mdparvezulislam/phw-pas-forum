@@ -13,7 +13,10 @@ export const metadata: Metadata = {
   title: "Announcements",
 };
 
-const TYPE_VARIANT_MAP: Record<AnnouncementType, "info" | "warning" | "destructive" | "success"> = {
+const TYPE_VARIANT_MAP: Record<
+  AnnouncementType,
+  "info" | "warning" | "destructive" | "success"
+> = {
   INFO: "info",
   WARNING: "warning",
   DANGER: "destructive",
@@ -67,7 +70,10 @@ export default async function AdminAnnouncementsPage() {
                 <div className="min-w-0 flex-1 space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="font-semibold">{announcement.title}</h3>
-                    <Badge variant={TYPE_VARIANT_MAP[announcement.type]} size="sm">
+                    <Badge
+                      variant={TYPE_VARIANT_MAP[announcement.type]}
+                      size="sm"
+                    >
                       {announcement.type}
                     </Badge>
                     <Badge
@@ -97,9 +103,7 @@ export default async function AdminAnnouncementsPage() {
 
                 <div className="flex shrink-0 items-center gap-2">
                   <Button variant="ghost" size="sm" asChild>
-                    <a href={`/admin/announcements/${announcement.id}`}>
-                      Edit
-                    </a>
+                    <a href={`/admin/announcements/${announcement.id}`}>Edit</a>
                   </Button>
                   {announcement.isActive ? (
                     <form

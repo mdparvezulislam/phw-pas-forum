@@ -41,7 +41,8 @@ export default async function AdminCategoriesPage() {
         icon={<FolderTree className="h-4 w-4" />}
         actions={
           <Badge variant="secondary">
-            {categories.length} {categories.length === 1 ? "category" : "categories"}
+            {categories.length}{" "}
+            {categories.length === 1 ? "category" : "categories"}
           </Badge>
         }
       >

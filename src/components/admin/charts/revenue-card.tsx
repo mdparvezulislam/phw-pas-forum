@@ -70,7 +70,9 @@ export function RevenueCard({
             )}
           </div>
           {description && (
-            <p className="mt-0.5 text-xs text-muted-foreground">{description}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {description}
+            </p>
           )}
         </div>
       </div>

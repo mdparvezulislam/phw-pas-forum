@@ -59,7 +59,10 @@ export function PermissionMatrix({ className }: { className?: string }) {
           {roles.map((role) => {
             const granted = new Set(ROLE_PERMISSIONS[role] ?? []);
             return (
-              <tr key={role} className="border-b last:border-0 hover:bg-muted/30">
+              <tr
+                key={role}
+                className="border-b last:border-0 hover:bg-muted/30"
+              >
                 <td className="sticky left-0 z-raised bg-card px-4 py-2.5 font-medium">
                   {role.replace(/_/g, " ")}
                 </td>

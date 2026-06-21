@@ -110,10 +110,58 @@ export class SearchService {
       perPage,
     };
 
-    const searchResult = await (typesenseClient as any).search(
-      collectionName,
-      finalQuery,
-      searchParams,
+    const { typesenseBreaker } = await import(
+      "@/modules/infrastructure/availability/circuit-breaker"
+    );
+
+    const searchResult = await typesenseBreaker.execute(
+      async () => {
+        return (typesenseClient as any).search(
+          collectionName,
+          finalQuery,
+          searchParams,
+        );
+      },
+      async () => {
+        console.warn(
+          "[SearchService] Typesense is down. Executing fallback Postgres query.",
+        );
+        const queryPattern = `%${finalQuery}%`;
+        if (contentType === "threads" || contentType === "all") {
+          const rows = await db.query.threads.findMany({
+            where: (t, { and, or, ilike, eq }) =>
+              and(
+                or(
+                  ilike(t.title, queryPattern),
+                  ilike(t.content, queryPattern),
+                ),
+                eq(t.status, "PUBLISHED"),
+              ),
+            limit: perPage,
+            offset: (page - 1) * perPage,
+          });
+          return {
+            hits: rows.map((r: any) => ({
+              document: {
+                id: r.id,
+                title: r.title,
+                slug: r.slug,
+                content: r.content,
+                createdAt: r.createdAt.getTime(),
+              },
+            })),
+            found: rows.length,
+            page,
+            out_of: rows.length,
+          };
+        }
+        return {
+          hits: [],
+          found: 0,
+          page,
+          out_of: 0,
+        };
+      },
     );
 
     // Log query in search analytics

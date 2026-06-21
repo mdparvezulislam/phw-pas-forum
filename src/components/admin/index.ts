@@ -52,7 +52,10 @@ export {
   type ActivityType,
 } from "./feedback/realtime-activity-feed";
 export { SecurityAlert, type AlertSeverity } from "./feedback/security-alert";
-export { FeatureFlagCard, type FeatureFlag } from "./feedback/feature-flag-card";
+export {
+  FeatureFlagCard,
+  type FeatureFlag,
+} from "./feedback/feature-flag-card";
 export { PermissionMatrix } from "./feedback/permission-matrix";
 export { AuditViewer, type AuditRow } from "./feedback/audit-viewer";
 export { ModerationQueue, type QueueItem } from "./feedback/moderation-queue";
